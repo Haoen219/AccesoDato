@@ -4,6 +4,8 @@
  */
 package ejercicioinicial02_alumnos;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,7 +24,7 @@ public class EjercicioInicial02_Alumnos {
     }
     
     public static void main(String[] args) {
-        Alumno a1= new Alumno("Mario", 10, 8, 2.3, 5);
+        Alumno a1= new Alumno("Mario", 4, 2, 2.3, 5);
         Alumno a2= new Alumno("Pepe", 9, 2, 7, 4, 6, 3.3);
         Alumno a3= new Alumno("Manuel", 8, 7, 7, 8,0, 3);
         Alumno a4= new Alumno("David", 4, 8, 9, 2, 1, 8, 8, 9);
@@ -35,10 +37,11 @@ public class EjercicioInicial02_Alumnos {
         alumnos.add(a4);
         alumnos.add(a5);
         
-        System.out.println(a1.compareTo(a1));
-        System.out.println(a1.compareTo(a2));
-        System.out.println(a1.compareTo(a3));
-        System.out.println(a3.compareTo(a4));
+        System.out.println("Lista sin ordenar:");
+        imprimir(alumnos);
+
+        Collections.sort(alumnos);
+        System.out.println("Lista ordenada:");
         imprimir(alumnos);
     }
     

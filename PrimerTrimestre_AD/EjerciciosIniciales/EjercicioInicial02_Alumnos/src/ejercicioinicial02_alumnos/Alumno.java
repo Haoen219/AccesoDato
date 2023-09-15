@@ -26,23 +26,22 @@ public class Alumno implements Comparable<Alumno> {
             }
         }
         this.porcentajeAprobado=(this.aprobados*100)/this.notas.size();
-        System.out.println(this.porcentajeAprobado);
     }
     
     @Override
     public int compareTo(Alumno o) {
         int resultado=0;
         if (this.getPorcentajeAprobado()<o.getPorcentajeAprobado()) {
-            resultado=-1;
+            resultado=1;
         }else if (this.getPorcentajeAprobado()>o.getPorcentajeAprobado()) {
-            resultado=1; 
+            resultado=-1; 
         }else resultado=0;
         
         if(resultado==0){
             if (this.getAprobados()<o.getAprobados()) {
-                resultado=-1; 
+                resultado=1; 
             }else if (this.getAprobados()>o.getAprobados()) {
-                resultado=1;
+                resultado=-1;
             }else resultado=0;
         }
         return resultado;
