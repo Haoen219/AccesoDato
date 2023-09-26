@@ -12,9 +12,11 @@ import java.util.ArrayList;
  */
 public class Modulo {
     private String nombre;
+    final private int ID;
     private ArrayList alumnos= new ArrayList();
     
-    public Modulo(String nombre){
-        
+    public Modulo(String nombre, int ID){
+        this.nombre=nombre;
+        this.ID=ID;
     }
 }

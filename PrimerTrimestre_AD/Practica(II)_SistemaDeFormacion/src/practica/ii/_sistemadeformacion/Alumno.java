@@ -4,6 +4,7 @@
  */
 package practica.ii._sistemadeformacion;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Map;
 public class Alumno {
     private String nombre;
     final private int NIA;
-    private Map matricula;
+    private ArrayList<Modulo> matricula= new ArrayList<>();
     
     public Alumno(String nombre, int NIA){
         this.nombre=nombre;
@@ -22,5 +23,9 @@ public class Alumno {
     
     public void imprimir(){
         System.out.printf("NIA: %-8d Nombre: %-30s", this.NIA, this.nombre);
+        for (Modulo comodin : matricula) {
+            System.out.println("Matricula: ");
+            //comodin.imprimirAlumno;
+        }
     }
 }

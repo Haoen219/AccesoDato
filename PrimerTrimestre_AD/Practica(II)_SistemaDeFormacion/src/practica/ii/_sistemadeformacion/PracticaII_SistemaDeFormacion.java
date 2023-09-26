@@ -39,7 +39,7 @@ public class PracticaII_SistemaDeFormacion {
         return opcion;
     }
     //ALUMNOS
-    public static void darAltaAlumno(TreeMap alumnos){
+    public static void darAltaAlumno(TreeMap<Integer, Alumno> alumnos){
         Scanner sc= new Scanner(System.in);
         System.out.print("Introduzca el nombre del alumno: ");
         String nombre=sc.nextLine();
@@ -51,7 +51,7 @@ public class PracticaII_SistemaDeFormacion {
             System.out.println("####Error, ya existe ese nia en la base de datos.");
         }
     }
-    public static void darBajaAlumno(TreeMap alumnos){
+    public static void darBajaAlumno(TreeMap<Integer, Alumno> alumnos){
         Scanner sc= new Scanner(System.in);
         System.out.print("Introduzca el NIA del alumno: ");
         int nia=sc.nextInt();
@@ -68,11 +68,36 @@ public class PracticaII_SistemaDeFormacion {
         }
         System.out.println("\n--Fin de la lista");
     }
+    //MODULOS
+    public static void darAltaModulo(TreeMap<Integer, Modulo> modulos){
+        Scanner sc= new Scanner(System.in);
+        System.out.print("Introduzca el nombre del m?dulo: ");
+        String nombre=sc.nextLine();
+        System.out.println(nombre);
+        int id=0;
+        if(modulos.isEmpty()){
+            id=1;
+        }else{
+            id=modulos.lastKey()+1;
+        }
+//        System.out.println(id);
+        if(modulos.put(id,new Modulo(nombre,id))==null){
+            System.out.println("----Se ha dado de alta al m?dulo "+nombre);
+        }else{
+            System.out.println("####Error, ya existe ese ID en la base de datos.");
+        }
+    }
+    public static void darBajaModulo(TreeMap<Integer, Modulo> modulos){
+        
+    }
+    public static void listarModulo(TreeMap<Integer, Modulo> modulos){
+        
+    }
     
     public static void main(String[] args) {
         Scanner sc= new Scanner(System.in);
-        TreeMap alumnos= new TreeMap();
-        ArrayList<Modulo> modulos= new ArrayList<>();
+        TreeMap<Integer, Alumno> alumnos= new TreeMap();
+        TreeMap<Integer, Modulo> modulos= new TreeMap();
         int opcion=1;
         int opcion2=1;
         
@@ -93,10 +118,16 @@ public class PracticaII_SistemaDeFormacion {
                     listarAlumno(alumnos);
                     break;
                 case 4:
+                    System.out.println("\n-Dar de alta modulo-");
+                    darAltaModulo(modulos);
                     break;
                 case 5:
+                    System.out.println("\n-Dar de baja modulo-");
+                    darBajaModulo(modulos);
                      break;
                 case 6:
+                    System.out.println("\n-Listar modulos-");
+                    listarModulo(modulos);
                     break;
                 case 7:
                     break;
