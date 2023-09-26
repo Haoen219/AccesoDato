@@ -1,0 +1,91 @@
+INICIO Clase EjercicioInicial02_Alumnos
+	
+	FUNCIÓN imprimir (List<Alumno> alumnos)
+
+		DESDE i=0 hasta hacer tamaño de alumnos
+			CREAR objeto Alumno comodin <-- objeto Alumno posicionado en el valor de i en alumnos
+			MOSTRAR "(i+1). (NombreComodin) - Total: (CantidadModulosComodin) - Aprobados:(AprobadosComodin) - Porcentaje:(PorcentajeAprobadoComodin)"
+			i <-- i+1
+		SIGUIENTE
+
+	FIN FUNCIÓN
+
+	MAIN
+	
+		CREAR a1, a2, a3, a4, a5 como objetos Alumno
+		CREAR objeto List<Alumno> alumnos <-- a1, a2, a3, a4, a5
+
+		MOSTRAR "Lista sin ordenar:"
+		LLAMAR función imprimir con alumnos
+
+		LLAMAR función IMPORTADA Collections.sort con alumnos
+		MOSTRAR "Lista ordenada:"
+		LLAMAR función imprimir con alumnos
+
+	FIN MAIN
+
+FIN
+
+
+
+
+
+
+INICIO Clase Alumno implementa Comparable<Alumno>
+	
+	CREAR String nombre
+	CREAR objeto ArrayList<Double> notas
+	CREAR Entero aprobados
+	CREAR Float porcentajeAprobado
+
+	FUNCIÓN BUILDER (String nombre, double... notas)
+	
+		nombre (local) <- nombre
+		DESDE double a como primera entrada de notas, hasta el último
+
+			notas (local) añade entrada <-- a
+
+			SI a es mayor o igual que 5
+				aprobados (local) <-- aprobados+1
+			FIN SI
+
+		SIGUIENTE
+	
+		porcentajeAprobado (local) <-- Porcentaje del numero de asignaturas aprobadas a la cantidad total
+
+	FIN FUNCIÓN
+
+
+	OVERRIDE
+	FUNCION compareTo(Alumno o)
+		CREAR Entero resultado <-- 0
+		
+		SI porcentajeAprobado (local) < porcentajeAprobado de o
+			resultado <-- 1
+		SINO SI porcentajeAprobado (local) > porcentajeAprobado de o
+			resultado <-- -1
+		SINO
+			resultado <-- 0
+		FIN SI
+
+
+		SI aprobados (local) < aprobados de o
+			resultado <-- 1
+		SINO SI aprobados (local) > aprobados de o
+			resultado <-- -1
+		SINO
+			resultado <-- 0
+		FIN SI
+
+		
+		DEVOLVER resultado
+
+	FIN FUNCIÓN
+	
+	GETTER
+		-getNotas
+		-getAprobados
+		-getPorcentajeAprobado
+		-getNombre
+	FIN GETTER
+FIN
