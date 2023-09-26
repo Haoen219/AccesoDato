@@ -12,6 +12,20 @@ import java.util.Map;
  * @author 2DAM_Zhang_Haoen
  */
 public class Alumno {
+
+    /**
+     * @return the nombre
+     */
+    public String getNombre() {
+        return nombre;
+    }
+
+    /**
+     * @return the NIA
+     */
+    public int getNIA() {
+        return NIA;
+    }
     private String nombre;
     final private int NIA;
     private ArrayList<Modulo> matricula= new ArrayList<>();
@@ -22,7 +36,7 @@ public class Alumno {
     }
     
     public void imprimirLista(){
-        System.out.printf("NIA: %-8d Nombre: %-30s", this.NIA, this.nombre);
+        System.out.printf("NIA: %-8d Nombre: %-30s\n", this.getNIA(), this.getNombre());
         for (Modulo comodin : matricula) {
             System.out.println("Matricula: ");
             //comodin.imprimirAlumno;
@@ -30,10 +44,10 @@ public class Alumno {
     }
     
     public void imprimirAlumno(){
-        System.out.printf("NIA: %-8d Nombre: %-30s", this.NIA, this.nombre);
+        System.out.printf("NIA: %-8d Nombre: %-30s", this.getNIA(), this.getNombre());
         for (Modulo comodin : matricula) {
             System.out.println("Matricula: ");
-            //comodin.imprimirAlumno;
+            comodin.imprimirNotas(this.NIA);
         }
     }
 }

@@ -103,16 +103,38 @@ public class PracticaII_SistemaDeFormacion {
         System.out.println("\n--Fin de la lista");
     }
     public static void matricularAlumno(TreeMap<Integer, Modulo> modulos, TreeMap<Integer, Alumno> alumnos){
-        
+        Scanner sc= new Scanner(System.in);
+        final int NOTAPORDEFECTO=0;
+        System.out.print("Introduzca el ID del m?dulo: ");
+        int id=sc.nextInt();
+        System.out.println("Introduzca el NIA del alumno a matricular: ");
+        int nia=sc.nextInt();
+        if(modulos.get(id).matricularAlumno(alumnos.get(nia), NOTAPORDEFECTO)==0){
+            System.out.println("----Se ha matriculado el alumno "+
+                    alumnos.get(nia).getNombre()+" al m?dulo de "+
+                    modulos.get(id).getNombre());
+        }else{
+            System.out.println("####Error, no se ha podido matricular.");
+        }
     }
     //EVALUAR
-    public static void cualificar(){
-        
+    public static void cualificar(TreeMap<Integer, Modulo> modulos, TreeMap<Integer, Alumno> alumnos){
+        Scanner sc= new Scanner(System.in);
+        System.out.println("Introduzca el NIA del alumno a cualificar: ");
+        int nia=sc.nextInt();
+        alumnos.get(nia).imprimirAlumno();
+        System.out.print("Introduzca el ID del m?dulo: ");
+        int id=sc.nextInt();
     }
-    public static void modificar(){
-        
+    public static void modificar(TreeMap<Integer, Modulo> modulos, TreeMap<Integer, Alumno> alumnos){
+        Scanner sc= new Scanner(System.in);
+        System.out.println("Introduzca el NIA del alumno a modificar: ");
+        int nia=sc.nextInt();
+        alumnos.get(nia).imprimirAlumno();
+        System.out.print("Introduzca el ID del m?dulo: ");
+        int id=sc.nextInt();
     }
-    public static void imprimirBoletin(){
+    public static void imprimirBoletin(TreeMap<Integer, Modulo> modulos, TreeMap<Integer, Alumno> alumnos){
         
     }
     
@@ -155,12 +177,19 @@ public class PracticaII_SistemaDeFormacion {
                     matricularAlumno(modulos, alumnos);
                     break;
                 case 8:
+                    System.out.println("\n-Matricular alumno-");
+                    cualificar(modulos, alumnos);
                     break;
                 case 9:
+                    System.out.println("\n-Matricular alumno-");
+                    modificar(modulos, alumnos);
                     break;
                 case 10:
+                    System.out.println("\n-Matricular alumno-");
+                    imprimirBoletin(modulos, alumnos);
                     break;
                 case 0:
+                    System.out.println("\n***Saliendo del programa...");
                     break;
                 default:
                     break;
