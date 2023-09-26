@@ -21,7 +21,15 @@ public class Alumno {
         this.NIA=NIA;
     }
     
-    public void imprimir(){
+    public void imprimirLista(){
+        System.out.printf("NIA: %-8d Nombre: %-30s", this.NIA, this.nombre);
+        for (Modulo comodin : matricula) {
+            System.out.println("Matricula: ");
+            //comodin.imprimirAlumno;
+        }
+    }
+    
+    public void imprimirAlumno(){
         System.out.printf("NIA: %-8d Nombre: %-30s", this.NIA, this.nombre);
         for (Modulo comodin : matricula) {
             System.out.println("Matricula: ");

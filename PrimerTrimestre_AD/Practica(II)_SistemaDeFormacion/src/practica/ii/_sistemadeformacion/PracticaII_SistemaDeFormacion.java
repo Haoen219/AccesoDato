@@ -4,8 +4,6 @@
  */
 package practica.ii._sistemadeformacion;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Scanner;
 import java.util.TreeMap;
 
@@ -64,7 +62,7 @@ public class PracticaII_SistemaDeFormacion {
     public static void listarAlumno(TreeMap<Integer, Alumno> alumnos){
         System.out.println("--Lista de Alumnos: ");
         for (int comodin : alumnos.keySet()) {
-            alumnos.get(comodin).imprimir();
+            alumnos.get(comodin).imprimirLista();
         }
         System.out.println("\n--Fin de la lista");
     }
@@ -88,9 +86,33 @@ public class PracticaII_SistemaDeFormacion {
         }
     }
     public static void darBajaModulo(TreeMap<Integer, Modulo> modulos){
-        
+        Scanner sc= new Scanner(System.in);
+        System.out.print("Introduzca el ID del m?dulo: ");
+        int id=sc.nextInt();
+        if(modulos.remove(id)!=null){
+            System.out.println("----Se ha dado de baja al m?dulo con ID "+id);
+        }else{
+            System.out.println("####Error, no se ha encontrado al m?dulo.");
+        }
     }
     public static void listarModulo(TreeMap<Integer, Modulo> modulos){
+        System.out.println("--Lista de Alumnos: ");
+        for (int comodin : modulos.keySet()) {
+            modulos.get(comodin).imprimirLista();
+        }
+        System.out.println("\n--Fin de la lista");
+    }
+    public static void matricularAlumno(TreeMap<Integer, Modulo> modulos, TreeMap<Integer, Alumno> alumnos){
+        
+    }
+    //EVALUAR
+    public static void cualificar(){
+        
+    }
+    public static void modificar(){
+        
+    }
+    public static void imprimirBoletin(){
         
     }
     
@@ -99,7 +121,6 @@ public class PracticaII_SistemaDeFormacion {
         TreeMap<Integer, Alumno> alumnos= new TreeMap();
         TreeMap<Integer, Modulo> modulos= new TreeMap();
         int opcion=1;
-        int opcion2=1;
         
         System.out.println("--BIENVENIDO AL SISTEMA DE FORMACI?N--");
         do{
@@ -130,6 +151,8 @@ public class PracticaII_SistemaDeFormacion {
                     listarModulo(modulos);
                     break;
                 case 7:
+                    System.out.println("\n-Matricular alumno-");
+                    matricularAlumno(modulos, alumnos);
                     break;
                 case 8:
                     break;

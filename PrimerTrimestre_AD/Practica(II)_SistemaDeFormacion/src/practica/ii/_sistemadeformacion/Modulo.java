@@ -13,10 +13,22 @@ import java.util.ArrayList;
 public class Modulo {
     private String nombre;
     final private int ID;
-    private ArrayList alumnos= new ArrayList();
+    private ArrayList<Alumno> alumnos= new ArrayList();
     
     public Modulo(String nombre, int ID){
         this.nombre=nombre;
         this.ID=ID;
+    }
+    
+    public void imprimirLista(){
+        System.out.printf("ID: %-8d Nombre: %-30s", this.ID, this.nombre);
+        System.out.println("Alumnos matriculados: ");
+        for (Alumno comodin : alumnos) {
+            System.out.println("");
+        }
+    }
+    
+    public void imprimirModulo(){
+        //imprimir modulo individual de un alumno con sus notas.
     }
 }
