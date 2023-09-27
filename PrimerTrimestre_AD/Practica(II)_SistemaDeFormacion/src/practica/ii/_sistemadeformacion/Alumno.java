@@ -12,20 +12,6 @@ import java.util.Map;
  * @author 2DAM_Zhang_Haoen
  */
 public class Alumno {
-
-    /**
-     * @return the nombre
-     */
-    public String getNombre() {
-        return nombre;
-    }
-
-    /**
-     * @return the NIA
-     */
-    public int getNIA() {
-        return NIA;
-    }
     private String nombre;
     final private int NIA;
     private ArrayList<Modulo> matricula= new ArrayList<>();
@@ -49,5 +35,13 @@ public class Alumno {
             System.out.println("Matricula: ");
             comodin.imprimirNotas(this.NIA);
         }
+    }
+    
+    
+    public String getNombre() {
+        return nombre;
+    }
+    public int getNIA() {
+        return NIA;
     }
 }

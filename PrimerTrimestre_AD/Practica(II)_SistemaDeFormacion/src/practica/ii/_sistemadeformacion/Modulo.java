@@ -12,7 +12,7 @@ import java.util.Map;
  *
  * @author 2DAM_Zhang_Haoen
  */
-public class Modulo {
+public class Modulo{
     private String nombre;
     final private int ID;
     private Map<Integer, Alumno> alumnos= new HashMap();
@@ -31,7 +31,19 @@ public class Modulo {
         }
     }
     
-    public int matricularAlumno(Alumno alumno, int nota){
+    public int matricularAlumno(Alumno alumno){
+        if(this.alumnos.put(alumno.getNIA(), alumno)==null && this.alumnosNota.put(alumno, null)==null){
+            return 0;
+        }
+        return -1;
+    }
+    public int desmatricularAlumno(Alumno alumno, int nota){
+        if(this.alumnos.put(alumno.getNIA(), alumno)==null && this.alumnosNota.put(alumno, nota)==null){
+            return 0;
+        }
+        return -1;
+    }
+    public int cualificarAlumno(Alumno alumno, int nota){
         if(this.alumnos.put(alumno.getNIA(), alumno)==null && this.alumnosNota.put(alumno, nota)==null){
             return 0;
         }
@@ -42,16 +54,10 @@ public class Modulo {
         System.out.printf("\t-%-5d %-10s Nota: %-2d"+this.ID, this.nombre, this.alumnosNota.get(this.alumnos.get(nia)));
     }
 
-    /**
-     * @return the nombre
-     */
+    
     public String getNombre() {
         return nombre;
     }
-
-    /**
-     * @return the ID
-     */
     public int getID() {
         return ID;
     }
