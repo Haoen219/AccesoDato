@@ -49,7 +49,7 @@ public class Alumno {
                 this.NIA, this.nombre,this.modulos.entrySet().size());
     }
     public void imprimirMatricula(){
-        System.out.printf("NIA: %-8d Nombre: %-30s\n", this.getNIA(), this.getNombre());
+        System.out.printf("\tNIA: %-8d Nombre: %-30s\n", this.getNIA(), this.getNombre());
         System.out.println("Matricula: ");
         for (int entry : modulos.keySet()) {
             System.out.printf("\tID: %-8d %-20s Nota: %2d |Calificaci?n: %-10s\n", modulos.get(entry).getID(),
