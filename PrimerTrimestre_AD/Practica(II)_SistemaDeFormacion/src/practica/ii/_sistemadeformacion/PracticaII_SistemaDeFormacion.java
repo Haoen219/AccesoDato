@@ -77,6 +77,10 @@ public class PracticaII_SistemaDeFormacion {
         System.out.print("Introduzca el ID del m?dulo: ");
         return sc.nextInt();
     }
+    
+    
+    
+    
     //ALUMNOS
     public static void darAltaAlumno(TreeMap<Integer, Alumno> alumnos){
         Scanner sc= new Scanner(System.in);
@@ -107,6 +111,10 @@ public class PracticaII_SistemaDeFormacion {
         }
         System.out.println("\n--Fin de la lista");
     }
+    
+    
+    
+    
     //MODULOS
     public static void darAltaModulo(TreeMap<Integer, Modulo> modulos){
         Scanner sc= new Scanner(System.in);
@@ -119,7 +127,6 @@ public class PracticaII_SistemaDeFormacion {
         }else{
             id=modulos.lastKey()+1;
         }
-//        System.out.println(id);
         if(modulos.put(id,new Modulo(nombre,id))==null){
             System.out.println("----Se ha dado de alta al m?dulo "+nombre);
         }else{
@@ -137,14 +144,12 @@ public class PracticaII_SistemaDeFormacion {
     }
     public static void listarModulo(TreeMap<Integer, Modulo> modulos){
         System.out.println("\n-Listar modulos-");
-        System.out.println("--Lista de Alumnos: ");
         for (int comodin : modulos.keySet()) {
             modulos.get(comodin).imprimirLista();
         }
         System.out.println("\n--Fin de la lista");
     }
     public static void matricularAlumno(TreeMap<Integer, Modulo> modulos, TreeMap<Integer, Alumno> alumnos){
-        Scanner sc= new Scanner(System.in);
         System.out.println("\n-Matricular alumno-");
         int id=pedirModulo();
         int nia=pedirAlumno();
@@ -156,20 +161,37 @@ public class PracticaII_SistemaDeFormacion {
             System.out.println("####Error, no se ha podido matricular");
         }
     }
+    
+    
+    
+    
     //EVALUAR
-    public static void cualificar(TreeMap<Integer, Modulo> modulos, TreeMap<Integer, Alumno> alumnos){
+    public static void calificar(TreeMap<Integer, Modulo> modulos, TreeMap<Integer, Alumno> alumnos){
         Scanner sc= new Scanner(System.in);
         System.out.println("\n-Cualificar notas alumno-");
-        int nia=pedirAlumno();
-        alumnos.get(nia).imprimirAlumno();
-        int id=pedirModulo();
-        System.out.println("Nota: ");
-        int nota=sc.nextInt();
-        if(modulos.get(id).cualificarAlumno(alumnos.get(nia), nota)==0){
-            System.out.println("----Se ha cualificado a "+alumnos.get(nia).getNombre()+" en "+modulos.get(id).getNombre());
-        }else{
-            System.out.println("####Error, no se ha podido procesar");
-        }
+        int opcion=1;
+        do{
+            int nia=pedirAlumno();
+            alumnos.get(nia).imprimirAlumno();
+            int id=pedirModulo();
+            System.out.print("Cualificaci?n: \n\t0-Cancelar y volver\n\t1-Suspendido\n2-Bien\n\t3-Notable\n\t4-Excelente\nOpci?n: ");
+            String calificacion="";
+            opcion=sc.nextInt();
+            switch(opcion){
+                case 0 -> System.out.println("Volviendo...");
+                case 1 -> calificacion="Suspendido";
+                case 2 -> calificacion="Bien";
+                case 3 -> calificacion="Notable";
+                case 4 -> calificacion="Excelente";
+                default -> System.out.println("No se introdujo un valor valido, volviendo...");
+            }
+            if(alumnos.get(nia).calificarModulo(modulos.get(id), calificacion)==0){
+                System.out.println("----Se ha cualificado a "+alumnos.get(nia).getNombre()+" en "+modulos.get(id).getNombre());
+            }else{
+                System.out.println("####Error, no se ha podido procesar");
+            } 
+        }while(opcion>0);
+        
     }
     public static void modificar(TreeMap<Integer, Modulo> modulos, TreeMap<Integer, Alumno> alumnos){
         Scanner sc= new Scanner(System.in);
@@ -179,7 +201,7 @@ public class PracticaII_SistemaDeFormacion {
         int id=pedirModulo();
         System.out.println("Nota: ");
         int nota=sc.nextInt();
-        if(modulos.get(id).cualificarAlumno(alumnos.get(nia), nota)==0){
+        if(modulos.get(id).modificarAlumno(alumnos.get(nia), nota)==0){
             System.out.println("----Se ha cualificado a "+alumnos.get(nia).getNombre()+" en "+modulos.get(id).getNombre());
         }else{
             System.out.println("####Error, no se ha podido procesar");
@@ -189,7 +211,7 @@ public class PracticaII_SistemaDeFormacion {
         Scanner sc= new Scanner(System.in);
         System.out.println("\n-Imprimir bolet?n-");
         int nia=pedirAlumno();
-//        alumnos.get(nia).imprimirAlumno();
+        alumnos.get(nia).imprimirMatricula();
     }
     
     
@@ -230,7 +252,7 @@ public class PracticaII_SistemaDeFormacion {
                     //Evaluar
                     switch(menu2(opcion)){
                         case 0 -> System.out.println("Volviendo al menu previo...");
-                        case 1 -> cualificar(modulos, alumnos);
+                        case 1 -> calificar(modulos, alumnos);
                         case 2 -> modificar(modulos, alumnos);
                         case 3 -> imprimirBoletin(modulos, alumnos);
                         default -> System.out.println("Opci?n no valida, volviendo...");

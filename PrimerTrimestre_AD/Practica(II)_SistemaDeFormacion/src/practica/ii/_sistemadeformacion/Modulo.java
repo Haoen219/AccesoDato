@@ -18,19 +18,13 @@ public class Modulo{
     private Map<Integer, Alumno> alumnos= new TreeMap();
     private Map<Alumno, Integer> alumnosNota= new HashMap();
     
+    //Builder
     public Modulo(String nombre, int ID){
         this.nombre=nombre;
         this.ID=ID;
     }
     
-    public void imprimirLista(){
-        System.out.printf("ID: %-8d Nombre: %-30s", this.getID(), this.getNombre());
-        System.out.println("Alumnos matriculados: ");
-        for (int comodin : alumnos.keySet()) {
-            System.out.println("");
-        }
-    }
-    
+    //Alumno
     public int matricularAlumno(Alumno alumno){
         if(this.alumnos.put(alumno.getNIA(), alumno)==null && this.alumnosNota.put(alumno, null)==null){
             return 0;
@@ -43,17 +37,31 @@ public class Modulo{
         }
         return -1;
     }
-    public int cualificarAlumno(Alumno alumno, int nota){
+    public int modificarAlumno(Alumno alumno, int nota){
         if(this.alumnos.put(alumno.getNIA(), alumno)==null && this.alumnosNota.put(alumno, nota)==null){
             return 0;
         }
         return -1;
     }
     
+    //Imprimir
+    public void imprimirModulo(){
+        System.out.printf("ID: %-8d %-30s Alumnos: %-2d\n",
+                this.ID, this.nombre,this.alumnos.entrySet().size());
+    }
+    public void imprimirLista(){
+        System.out.printf("ID: %-8d Nombre: %-30s", this.getID(), this.getNombre());
+        System.out.println("Alumnos matriculados: ");
+        for (int comodin : alumnos.keySet()) {
+            this.alumnos.get(comodin).imprimirAlumno();
+        }
+    }
+    
     public void imprimirNotas(int nia){
         System.out.printf("\t-%-5d %-10s Nota: %-2d"+this.ID, this.nombre, this.alumnosNota.get(this.alumnos.get(nia)));
     }
 
+    //Getter
     public int getNotaAlumno(int nia) {
         return this.alumnosNota.get(this.alumnos.get(nia));
     }
