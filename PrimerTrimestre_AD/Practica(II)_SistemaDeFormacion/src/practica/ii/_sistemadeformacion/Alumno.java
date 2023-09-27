@@ -4,8 +4,8 @@
  */
 package practica.ii._sistemadeformacion;
 
-import java.util.ArrayList;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  *
@@ -14,27 +14,38 @@ import java.util.Map;
 public class Alumno {
     private String nombre;
     final private int NIA;
-    private ArrayList<Modulo> matricula= new ArrayList<>();
+    private Map<Integer, Modulo> modulos= new TreeMap();
     
     public Alumno(String nombre, int NIA){
         this.nombre=nombre;
         this.NIA=NIA;
     }
     
-    public void imprimirLista(){
-        System.out.printf("NIA: %-8d Nombre: %-30s\n", this.getNIA(), this.getNombre());
-        for (Modulo comodin : matricula) {
-            System.out.println("Matricula: ");
-            //comodin.imprimirAlumno;
+    public int matricularModulo(Modulo modulo){
+        if(this.modulos.put(modulo.getID(), modulo)==null){
+            return 0;
         }
+        return -1;
     }
     
     public void imprimirAlumno(){
-        System.out.printf("NIA: %-8d Nombre: %-30s", this.getNIA(), this.getNombre());
-        for (Modulo comodin : matricula) {
-            System.out.println("Matricula: ");
-            comodin.imprimirNotas(this.NIA);
+        System.out.printf("NIA: %-8d Nombre: %-30s\n", this.getNIA(), this.getNombre());
+    }
+    
+    public void imprimirMatricula(){
+        System.out.printf("NIA: %-8d Nombre: %-30s\n", this.getNIA(), this.getNombre());
+        System.out.println("Matricula: ");
+        for (int entry : modulos.keySet()) {
+            System.out.printf("\tID: %-8d %-20s Nota: %2d\n", modulos.get(entry).getID(),
+                    modulos.get(entry).getNombre(), modulos.get(entry).getNotaAlumno(NIA));
+            System.out.println("\tID: "+modulos.get(entry).getID()+" "+modulos.get(entry).getNombre()+" Nota:");
+            modulos.get(entry).getID();
         }
+        
+//        for (Modulo comodin : matricula) {
+//            System.out.println("Matricula: ");
+//            comodin.imprimirNotas(this.NIA);
+//        }
     }
     
     

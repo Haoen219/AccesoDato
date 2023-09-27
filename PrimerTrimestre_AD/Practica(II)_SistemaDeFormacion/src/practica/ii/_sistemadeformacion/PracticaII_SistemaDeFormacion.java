@@ -103,7 +103,7 @@ public class PracticaII_SistemaDeFormacion {
         System.out.println("\n-Listar alumnos-");
         System.out.println("--Lista de Alumnos: ");
         for (int comodin : alumnos.keySet()) {
-            alumnos.get(comodin).imprimirLista();
+            alumnos.get(comodin).imprimirAlumno();
         }
         System.out.println("\n--Fin de la lista");
     }

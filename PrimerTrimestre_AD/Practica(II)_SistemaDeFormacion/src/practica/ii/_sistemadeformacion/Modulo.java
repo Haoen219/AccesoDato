@@ -4,9 +4,9 @@
  */
 package practica.ii._sistemadeformacion;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  *
@@ -15,7 +15,7 @@ import java.util.Map;
 public class Modulo{
     private String nombre;
     final private int ID;
-    private Map<Integer, Alumno> alumnos= new HashMap();
+    private Map<Integer, Alumno> alumnos= new TreeMap();
     private Map<Alumno, Integer> alumnosNota= new HashMap();
     
     public Modulo(String nombre, int ID){
@@ -37,8 +37,8 @@ public class Modulo{
         }
         return -1;
     }
-    public int desmatricularAlumno(Alumno alumno, int nota){
-        if(this.alumnos.put(alumno.getNIA(), alumno)==null && this.alumnosNota.put(alumno, nota)==null){
+    public int desmatricularAlumno(Alumno alumno){
+        if(this.alumnos.remove(alumno.getNIA())==null && this.alumnosNota.remove( alumno)==null){
             return 0;
         }
         return -1;
@@ -54,7 +54,9 @@ public class Modulo{
         System.out.printf("\t-%-5d %-10s Nota: %-2d"+this.ID, this.nombre, this.alumnosNota.get(this.alumnos.get(nia)));
     }
 
-    
+    public int getNotaAlumno(int nia) {
+        return this.alumnosNota.get(this.alumnos.get(nia));
+    }
     public String getNombre() {
         return nombre;
     }
