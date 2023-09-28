@@ -46,19 +46,28 @@ public class Modulo{
     
     //Imprimir
     public void imprimirModulo(){
-        System.out.printf("ID: %-8d %-30s Alumnos: %-2d\n",
-                this.ID, this.nombre,this.alumnos.entrySet().size());
+        System.out.printf("\tID: %-8d %-20s Alumnos: ",
+                this.ID, this.nombre);
+        if(this.alumnos.isEmpty()){
+            System.out.println("0");
+        }else{
+            System.out.println(this.alumnos.size());
+        }
     }
     public void imprimirLista(){
-        System.out.printf("ID: %-8d Nombre: %-30s", this.getID(), this.getNombre());
-        System.out.println("Alumnos matriculados: ");
-        for (int comodin : alumnos.keySet()) {
-            this.alumnos.get(comodin).imprimirAlumno();
+        System.out.printf("ID: %-8d Nombre: %-20s", this.getID(), this.getNombre());
+        if(this.alumnos.isEmpty()){
+            System.out.println("-No hay alumnos matriculados-");
+        }else{
+            System.out.println("Alumnos matriculados: ");
+            for (int comodin : alumnos.keySet()) {
+                this.alumnos.get(comodin).imprimirAlumno();
+            }
         }
     }
     
     public void imprimirNotas(int nia){
-        System.out.printf("\t-%-5d %-10s Nota: %-2d"+this.ID, this.nombre, this.alumnosNota.get(this.alumnos.get(nia)));
+        System.out.printf("\t-%-5d %-20s Nota: %-2d"+this.ID, this.nombre, this.alumnosNota.get(this.alumnos.get(nia)));
     }
 
     //Getter

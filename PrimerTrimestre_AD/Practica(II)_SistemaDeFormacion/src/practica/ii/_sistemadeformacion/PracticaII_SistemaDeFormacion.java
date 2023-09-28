@@ -80,15 +80,25 @@ public class PracticaII_SistemaDeFormacion {
 //        System.out.println("\n--Fin de la lista");
 //    }
     
-    public static int pedirAlumno(){
+    public static int pedirAlumno(TreeMap<Integer, Alumno> alumnos){
         Scanner sc= new Scanner(System.in);
-        System.out.println("Introduzca el NIA del alumno: ");
-        return sc.nextInt();
+        int nia=0;
+        do{
+            System.out.println("Introduzca el NIA del alumno: ");
+            nia=sc.nextInt();
+            if(!alumnos.containsKey(nia)) System.out.println("El NIA indicado no existe");
+        }while(!alumnos.containsKey(nia));
+        return nia;
     }
-    public static int pedirModulo(){
+    public static int pedirModulo(TreeMap<Integer, Modulo> modulos){
         Scanner sc= new Scanner(System.in);
-        System.out.print("Introduzca el ID del m?dulo: ");
-        return sc.nextInt();
+        int id=0;
+        do{
+            System.out.println("Introduzca el ID del m?dulo: ");
+            id=sc.nextInt();
+            if(!modulos.containsKey(id)) System.out.println("El ID indicado no existe");
+        }while(!modulos.containsKey(id));
+        return id;
     }
     
     
@@ -100,7 +110,8 @@ public class PracticaII_SistemaDeFormacion {
         System.out.println("\n-Dar de alta alumno-");
         System.out.print("Introduzca el nombre del alumno: ");
         String nombre=sc.nextLine();
-        int nia=pedirAlumno();
+        System.out.print("Introduzca NIA del alumno: ");
+        int nia=sc.nextInt();
         if(alumnos.put(nia,new Alumno(nombre,nia))==null){
             System.out.println("----Se ha dado de alta al alumno "+nombre+" con NIA "+nia);
         }else{
@@ -109,7 +120,7 @@ public class PracticaII_SistemaDeFormacion {
     }
     public static void darBajaAlumno(TreeMap<Integer, Modulo> modulos, TreeMap<Integer, Alumno> alumnos){
         System.out.println("\n-Dar de baja alumno-");
-        int nia=pedirAlumno();
+        int nia=pedirAlumno(alumnos);
         if(alumnos.remove(nia)!=null){
             System.out.println("----Se ha dado de baja al NIA "+nia);
         }else{
@@ -122,7 +133,7 @@ public class PracticaII_SistemaDeFormacion {
         for (int comodin : alumnos.keySet()) {
             alumnos.get(comodin).imprimirAlumno();
         }
-        System.out.println("\n--Fin de la lista");
+        System.out.println("--Fin de la lista");
     }
     
     
@@ -148,30 +159,30 @@ public class PracticaII_SistemaDeFormacion {
     }
     public static void darBajaModulo(TreeMap<Integer, Modulo> modulos, TreeMap<Integer, Alumno> alumnos){
         System.out.println("\n-Dar de baja modulo-");
-        int id=pedirModulo();
+        int id=pedirModulo(modulos);
         if(modulos.remove(id)!=null){
             System.out.println("----Se ha dado de baja al m?dulo con ID "+id);
         }else{
-            System.out.println("####Error, no se ha encontrado al m?dulo");
+            System.out.println("##Error, no se ha podido proceder");
         }
     }
     public static void listarModulo(TreeMap<Integer, Modulo> modulos){
         System.out.println("\n-Listar modulos-");
         for (int comodin : modulos.keySet()) {
-            modulos.get(comodin).imprimirLista();
+            modulos.get(comodin).imprimirModulo();
         }
-        System.out.println("\n--Fin de la lista");
+        System.out.println("--Fin de la lista");
     }
     public static void matricularAlumno(TreeMap<Integer, Modulo> modulos, TreeMap<Integer, Alumno> alumnos){
         System.out.println("\n-Matricular alumno-");
-        int id=pedirModulo();
-        int nia=pedirAlumno();
-        if(modulos.get(id).matricularAlumno(alumnos.get(nia))==0){
+        int id=pedirModulo(modulos);
+        int nia=pedirAlumno(alumnos);
+        if(modulos.get(id).matricularAlumno(alumnos.get(nia))==0 && alumnos.get(nia).matricularModulo(modulos.get(id))==0){
             System.out.println("----Se ha matriculado el alumno "+
-                    alumnos.get(nia).getNombre()+" al m?dulo de "+
-                    modulos.get(id).getNombre());
+                alumnos.get(nia).getNombre()+" al m?dulo de "+
+                modulos.get(id).getNombre());
         }else{
-            System.out.println("####Error, no se ha podido matricular");
+            System.out.println("##Ya existe ese alumno en el m?dulo");
         }
     }
     
@@ -182,11 +193,11 @@ public class PracticaII_SistemaDeFormacion {
     public static void calificar(TreeMap<Integer, Modulo> modulos, TreeMap<Integer, Alumno> alumnos){
         Scanner sc= new Scanner(System.in);
         System.out.println("\n-Cualificar notas alumno-");
-        int opcion=1;
+        int opcion=1, id=0, nia=0;
         do{
-            int nia=pedirAlumno();
-            alumnos.get(nia).imprimirAlumno();
-            int id=pedirModulo();
+            id=pedirModulo(modulos);
+            nia=pedirAlumno(alumnos);
+            
             String calificacion="";
             opcion=menuCalificacion();
             switch(opcion){
@@ -195,7 +206,7 @@ public class PracticaII_SistemaDeFormacion {
                 case 2 -> calificacion="Bien";
                 case 3 -> calificacion="Notable";
                 case 4 -> calificacion="Excelente";
-                default -> System.out.println("No se introdujo un valor valido, volviendo...");
+                default -> System.out.println("No se introdujo un valor valido");
             }
             if(alumnos.get(nia).calificarModulo(modulos.get(id), calificacion)==0){
                 System.out.println("----Se ha cualificado a "+alumnos.get(nia).getNombre()+" en "+modulos.get(id).getNombre());
@@ -208,11 +219,12 @@ public class PracticaII_SistemaDeFormacion {
     public static void modificar(TreeMap<Integer, Modulo> modulos, TreeMap<Integer, Alumno> alumnos){
         Scanner sc= new Scanner(System.in);
         System.out.println("\n-Modificar notas alumno-");
-        int nia=pedirAlumno();
-        alumnos.get(nia).imprimirAlumno();
-        int id=pedirModulo();
+        int id=pedirModulo(modulos);
+        int nia=pedirAlumno(alumnos);
+        
         System.out.println("Nota: ");
         int nota=sc.nextInt();
+        
         if(modulos.get(id).modificarAlumno(alumnos.get(nia), nota)==0){
             System.out.println("----Se ha cualificado a "+alumnos.get(nia).getNombre()+" en "+modulos.get(id).getNombre());
         }else{
@@ -221,7 +233,7 @@ public class PracticaII_SistemaDeFormacion {
     }
     public static void imprimirBoletin(TreeMap<Integer, Modulo> modulos, TreeMap<Integer, Alumno> alumnos){
         System.out.println("\n-Imprimir bolet?n-");
-        int nia=pedirAlumno();
+        int nia=pedirAlumno(alumnos);
         alumnos.get(nia).imprimirMatricula();
     }
     
@@ -231,76 +243,102 @@ public class PracticaII_SistemaDeFormacion {
     public static void main(String[] args) {
         TreeMap<Integer, Alumno> alumnos= new TreeMap();
         TreeMap<Integer, Modulo> modulos= new TreeMap();
-        int opcion=0;
+        int opcion=1, opcion2=1;
         System.out.println("--BIENVENIDO AL SISTEMA DE FORMACI?N--");
-        try{
-            do{
+        do{
+            try{
                 opcion=menu1();
                 switch(opcion){
                     case 0 -> System.out.println("\n***Saliendo del programa...");
                     case 1 -> {
                         //Mantener Alumno
-                        switch(menu2(opcion)){
-                            case 0 -> System.out.println("Volviendo al menu previo...");
-                            case 1 -> darAltaAlumno(alumnos);
-                            case 2 -> {
-                                if(!alumnos.isEmpty()){
-                                    darBajaAlumno(modulos, alumnos);
-                                }else System.out.println("Su lista de alumnos esta vacio.\nVolviendo...");
+                        do{
+                            try{
+                                opcion2=menu2(opcion);
+                                switch(opcion2){
+                                    case 0 -> System.out.println("Volviendo al menu previo...");
+                                    case 1 -> darAltaAlumno(alumnos);
+                                    case 2 -> {
+                                        if(!alumnos.isEmpty()){
+                                            darBajaAlumno(modulos, alumnos);
+                                        }else System.out.println("--Su lista de alumnos esta vacio");
+                                    }
+                                    case 3 -> {
+                                        if(!alumnos.isEmpty()){
+                                            listarAlumno(alumnos);
+                                        }else System.out.println("--Su lista de alumnos esta vacio");
+                                    }
+                                    default -> System.out.println("Opci?n no valida");
+                                }
+                            }catch(InputMismatchException ex){
+                                System.out.println("###ERROR: ha introducido un valor que no es entero.");
+                            }catch(Exception ex){
+                                System.out.println("###ERROR: ha ocurrido un error inesperado.\n"+ex.getLocalizedMessage());
                             }
-                            case 3 -> {
-                                if(!alumnos.isEmpty()){
-                                    listarAlumno(alumnos);
-                                }else System.out.println("Su lista de alumnos esta vacio.\nVolviendo...");
-                            }
-                            default -> System.out.println("Opci?n no valida, volviendo...");
-                        }
+                        }while(opcion2>0);
                     }
                     case 2 -> {
                         //Mantener Modulo
-                        switch(menu2(opcion)){
-                            case 0 -> System.out.println("Volviendo al menu previo...");
-                            case 1 -> darAltaModulo(modulos);
-                            case 2 -> {
-                                if(!modulos.isEmpty()){
-                                    darBajaModulo(modulos, alumnos);
-                                }else System.out.println("Su lista de modulos esta vacio.\nVolviendo...");
+                        do{
+                            try{
+                                opcion2=menu2(opcion);
+                                switch(opcion2){
+                                    case 0 -> System.out.println("Volviendo al menu previo...");
+                                    case 1 -> darAltaModulo(modulos);
+                                    case 2 -> {
+                                        if(!modulos.isEmpty()){
+                                            darBajaModulo(modulos, alumnos);
+                                        }else System.out.println("--Su lista de modulos esta vacio");
+                                    }
+                                    case 3 -> {
+                                        if(!modulos.isEmpty()){
+                                            listarModulo(modulos);
+                                        }else System.out.println("--Su lista de modulos esta vacio");
+                                    }
+                                    case 4 -> {
+                                        if(!modulos.isEmpty()){
+                                            matricularAlumno(modulos, alumnos);
+                                        }else System.out.println("--Su lista de modulos esta vacio");
+                                    }
+                                    default -> System.out.println("Opci?n no valida");
+                                }
+                            }catch(InputMismatchException ex){
+                                System.out.println("###ERROR: ha introducido un valor que no es entero.");
+                            }catch(Exception ex){
+                                System.out.println("###ERROR: ha ocurrido un error inesperado.\n"+ex.getLocalizedMessage());
                             }
-                            case 3 -> {
-                                if(!modulos.isEmpty()){
-                                    listarModulo(modulos);
-                                }else System.out.println("Su lista de modulos esta vacio.\nVolviendo...");
-                            }
-                            case 4 -> {
-                                if(!modulos.isEmpty()){
-                                    matricularAlumno(modulos, alumnos);
-                                }else System.out.println("Su lista de modulos esta vacio.\nVolviendo...");
-                            }
-                            default -> System.out.println("Opci?n no valida, volviendo...");
-                        }
+                        }while(opcion2>0);
                     }
                     case 3 -> {
                         //Evaluar
-                        if(!alumnos.isEmpty()){
-                            switch(menu2(opcion)){
-                                case 0 -> System.out.println("Volviendo al menu previo...");
-                                case 1 -> calificar(modulos, alumnos);
-                                case 2 -> modificar(modulos, alumnos);
-                                case 3 -> imprimirBoletin(modulos, alumnos);
-                                default -> System.out.println("Opci?n no valida, volviendo...");
+                        do{
+                            try{
+                                opcion2=menu2(opcion);
+                                if(!alumnos.isEmpty()){
+                                    switch(opcion2){
+                                        case 0 -> System.out.println("Volviendo al menu previo...");
+                                        case 1 -> calificar(modulos, alumnos);
+                                        case 2 -> modificar(modulos, alumnos);
+                                        case 3 -> imprimirBoletin(modulos, alumnos);
+                                        default -> System.out.println("Opci?n no valida");
+                                    }
+                                }else{
+                                    System.out.println("--Su lista de alumnos esta vacio, no hay nada que evaluar");
+                                }
+                            }catch(InputMismatchException ex){
+                                System.out.println("###ERROR: ha introducido un valor que no es entero.");
+                            }catch(Exception ex){
+                                System.out.println("###ERROR: ha ocurrido un error inesperado.\n"+ex.getLocalizedMessage());
                             }
-                        }else{
-                            System.out.println("Su lista de alumnos esta vacio, no hay nada que evaluar.\nVolviendo...");
-                        }
+                        }while(opcion2>0);
                     }
                     default -> System.out.println("Opci?n no valida, reintente...");
                 }
-            }while(opcion>0);
-        }catch(InputMismatchException ex){
-            System.out.println("###ERROR: ha introducido un valor que no es entero.\n"+ex.getLocalizedMessage());
-        }catch(Exception ex){
-            System.out.println("###ERROR: ha ocurrido un error inesperado.\n"+ex.getLocalizedMessage());
-        }
+            }catch(InputMismatchException ex){
+                System.out.println("###ERROR: ha introducido un valor que no es entero.\n");
+            }catch(Exception ex){
+                System.out.println("###ERROR: ha ocurrido un error inesperado.\n"+ex.getLocalizedMessage());
+            }
+        }while(opcion>0);
     }
-    
 }
