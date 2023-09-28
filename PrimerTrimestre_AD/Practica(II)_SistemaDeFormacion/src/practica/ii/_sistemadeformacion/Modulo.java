@@ -16,7 +16,7 @@ public class Modulo{
     private String nombre;
     final private int ID;
     private Map<Integer, Alumno> alumnos= new TreeMap();
-    private Map<Alumno, Integer> alumnosNota= new HashMap();
+    private Map<Integer, Integer> alumnosNota= new HashMap();
     
     //Builder
     public Modulo(String nombre, int ID){
@@ -26,7 +26,7 @@ public class Modulo{
     
     //Alumno
     public int matricularAlumno(Alumno alumno){
-        if(this.alumnos.put(alumno.getNIA(), alumno)==null && this.alumnosNota.put(alumno, null)==null){
+        if(this.alumnos.put(alumno.getNIA(), alumno)==null && this.alumnosNota.put(alumno.getNIA(), null)==null){
             return 0;
         }
         return -1;
@@ -38,7 +38,7 @@ public class Modulo{
         return -1;
     }
     public int modificarAlumno(Alumno alumno, int nota){
-        if(this.alumnos.put(alumno.getNIA(), alumno)==null && this.alumnosNota.put(alumno, nota)==null){
+        if(this.alumnos.put(alumno.getNIA(), alumno)==null && this.alumnosNota.put(alumno.getNIA(), nota)==null){
             return 0;
         }
         return -1;
@@ -72,7 +72,7 @@ public class Modulo{
 
     //Getter
     public int getNotaAlumno(int nia) {
-        return this.alumnosNota.get(this.alumnos.get(nia));
+        return this.alumnosNota.get(this.alumnosNota.get(nia));
     }
     public String getNombre() {
         return nombre;

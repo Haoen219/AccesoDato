@@ -70,15 +70,6 @@ public class PracticaII_SistemaDeFormacion {
     
     
     
-//    //Funciones genericas
-//    public void listar(TreeMap<Integer, AlumnosYModulos> elemento){
-//        System.out.println("\n-Listar "+elemento.get(1).getClass()+"-");
-//        System.out.println("--Lista de "+elemento.get(1).getClass()+": ");
-//        for (int entry : elemento.keySet()) {
-//            elemento.get(entry).imprimirLista();
-//        }
-//        System.out.println("\n--Fin de la lista");
-//    }
     
     public static int pedirAlumno(TreeMap<Integer, Alumno> alumnos){
         Scanner sc= new Scanner(System.in);
@@ -137,7 +128,11 @@ public class PracticaII_SistemaDeFormacion {
     }
     
     
-    
+    /**
+     * 
+     * HAZ QUE SE ELIMINE EL MODULO DEL ALUMNO CUANDO DAS BAJA AL MODULO
+     * 
+     **/
     
     //MODULOS
     public static void darAltaModulo(TreeMap<Integer, Modulo> modulos){
