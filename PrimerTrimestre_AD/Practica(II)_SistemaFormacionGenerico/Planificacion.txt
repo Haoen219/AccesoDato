@@ -28,3 +28,28 @@ RELACION:
 		ArrayList del ID de los modulos
 			con esto podremos enviar de vuelta al MAIN
 			para que este llame a los diferentes modulos
+
+	(posible plan)
+	Crear una nueva clase que guarda todos los modulos y alumnos
+	en vez de tenerlos en el main. Y crear metodos getAlumno(nia)
+	y getModulo(id).
+
+		Metodos que tendria:
+			addAlumno
+			addModulo
+			removeAlumno
+			removeModulo
+			getAlumno
+			getModulo
+
+
+RESUMIDO:
+BaseDeDato: Guarda todos los Alumnos y Modulos Existentes
+Matricula: Guarda el alumno al que referencia (nia) y los modulos (ID's)
+	   con sus notas (Array de double)
+
+Interfaz: funciones:
+		darDeAlta()
+		darDeBaja()
+		imprimir()
+		imprimirDetalle()
