@@ -1,0 +1,30 @@
+CLASES:
+	MAIN
+	ALUMNO
+	MATRICULA
+	MODULO
+		INTERFAZ ALUMNO MODULO
+
+RELACION:
+
+		INTERFAZ
+	___________|____________
+       |			|
+     ALUMNO		     MODULO
+       |
+   MATRICULA
+
+	MATRICULA: 1 por alumno, registra todos
+		   los modulos que tiene dicho alumno,
+		   asi como las 3 notas de este modulo.
+		   Tambien guarda la cualificacion.
+
+	MAIN: guarda todos los alumnos y los modulos
+	      que se han creado. Alamacenados en un Map,
+	      con su INT como identificador llave.
+
+	Variables de la matricula:
+		NIA del alumno
+		ArrayList del ID de los modulos
+			con esto podremos enviar de vuelta al MAIN
+			para que este llame a los diferentes modulos
