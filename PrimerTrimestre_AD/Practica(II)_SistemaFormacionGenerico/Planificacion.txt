@@ -35,12 +35,16 @@ RELACION:
 	y getModulo(id).
 
 		Metodos que tendria:
-			addAlumno
-			addModulo
-			removeAlumno
-			removeModulo
+			addAlumno()
+			addModulo()
+			removeAlumno()
+			removeModulo()
 			getAlumno
 			getModulo
+
+			PARA ACTUALIZAR ALUMNOS Y MODULOS AL DAR DE BAJA
+				actualizarAlumnos()
+				actualizarModulos()
 
 
 RESUMIDO:
