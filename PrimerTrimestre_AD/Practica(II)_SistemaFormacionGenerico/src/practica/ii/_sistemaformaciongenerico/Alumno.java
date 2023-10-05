@@ -19,7 +19,7 @@ public class Alumno extends AlumnoModulo{
     }
 
     //ALUMNO
-    public static Alumno darDeAlta() {
+    public Alumno darDeAlta() {
         Scanner sc= new Scanner(System.in);
         System.out.println("\n-Dar de alta alumno-");
         System.out.print("Introduzca el nombre del alumno: ");
@@ -29,12 +29,20 @@ public class Alumno extends AlumnoModulo{
         
         return (new Alumno(nombre, nia));
     }
-    public static int darDeBaja() {
+    public int darDeBaja() {
         Scanner sc= new Scanner(System.in);
         System.out.println("\n-Dar de baja alumno-");
         System.out.print("Introduzca NIA del alumno: ");
         
         return sc.nextInt();
+    }
+    
+    //MATRICULA
+    public int comprobarModulos(int id){
+        if(this.matricula.comprobarModulos(id)==0){
+            return 0;
+        }
+        return -1;
     }
     
     //MODULO
@@ -51,14 +59,27 @@ public class Alumno extends AlumnoModulo{
     public int imprimirDetallado() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    public static int menu() {
+    public int menu() {
         Scanner sc= new Scanner(System.in);
         System.out.println("");
-        System.out.println("|-----Mantener M?dulos-----|");
+        System.out.println("|-----Mantener Alumnos-----|");
         System.out.println("|0| Volver al menu previo  |");
         System.out.println("|1| Dar de alta            |");
         System.out.println("|2| Dar de baja            |");
         System.out.println("|3| Listar                 |");
+        System.out.println("|"+"-".repeat(26)+"|");
+        System.out.print("OPCI?N: ");
+        int opcion=sc.nextInt();
+        return opcion;
+    }
+    public int menuEvaluar() {
+        Scanner sc= new Scanner(System.in);
+        System.out.println("");
+        System.out.println("|---------Evaluar----------|");
+        System.out.println("|0| Volver al menu previo  |");
+        System.out.println("|1| Qualificar             |");
+        System.out.println("|2| Modificar              |");
+        System.out.println("|3| Extraer bolet?n        |");
         System.out.println("|"+"-".repeat(26)+"|");
         System.out.print("OPCI?N: ");
         int opcion=sc.nextInt();

@@ -13,8 +13,8 @@ import java.util.TreeMap;
  * @author haoen
  */
 public class BaseDeDatos {
-    private Map<Integer, Alumno> alumnos= new TreeMap();
-    private Map<Integer, Modulo> modulos= new TreeMap();
+    static Map<Integer, Alumno> alumnos= new TreeMap();
+    static Map<Integer, Modulo> modulos= new TreeMap();
     
     public BaseDeDatos(){}
     
@@ -34,7 +34,7 @@ public class BaseDeDatos {
     }
     //ALTA
     public int altaAlumno(){
-        Alumno comodin=Alumno.darDeAlta();
+        Alumno comodin=this.alumnos.get(0).darDeAlta();
         if(this.alumnos.put(comodin.getIDENTIFICADOR(), comodin)==null){
             return 0;
         }
@@ -51,7 +51,7 @@ public class BaseDeDatos {
     public int bajaAlumno(){
         int nia=Alumno.darDeBaja();
         if(this.alumnos.remove(nia)!=null){
-            actualizarAlumno(nia);
+            actualizarModulo(nia);
             return 0;
         }
         return -1;  
@@ -59,16 +59,30 @@ public class BaseDeDatos {
     public int bajaModulo(){
         int id=Modulo.darDeBaja();
         if(this.modulos.remove(id)!=null){
-            actualizarModulo(id);
+            actualizarAlumno(id);
             return 0;
         }
         return -1; 
     }
     //ACTUALIZAR
-    private int actualizarAlumno(int nia){
-        return 0;    
+    private int actualizarAlumno(int id){
+        for (int comodin : this.alumnos.keySet()) {
+            if(this.alumnos.get(comodin).comprobarModulos(id)==-1){
+                System.out.println("*Ha ocurrido un error, no se ha podido eliminar modulo "+
+                        this.modulos.get(id).getNombre()+" de la matricula del alumno "+
+                        this.alumnos.get(id).getNombre());
+            }
+        }
+        return 0;
     }
-    private int actualizarModulo(int id){
+    private int actualizarModulo(int nia){
+//        for (int comodin : this.alumnos.keySet()) {
+//            if(this.alumnos.get(comodin).comprobarModulos(id)==-1){
+//                System.out.println("*Ha ocurrido un error, no se ha podido eliminar modulo "+
+//                        this.modulos.get(id).getNombre()+" de la matricula del alumno "+
+//                        this.alumnos.get(id).getNombre());
+//            }
+//        }
         return 0;
     }
     //GETTER

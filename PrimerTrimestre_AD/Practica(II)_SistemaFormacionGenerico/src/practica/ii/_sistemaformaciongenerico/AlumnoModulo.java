@@ -17,10 +17,10 @@ public abstract class AlumnoModulo{
         this.IDENTIFICADOR=identificador;
     }
     
-    static Object darDeAlta(){
+    Object darDeAlta(){
         return null;
     }
-    static int darDeBaja(){
+    int darDeBaja(){
         return 0;
     }
     int imprimir(){
@@ -30,7 +30,7 @@ public abstract class AlumnoModulo{
     int imprimirDetallado(){
         return 0;
     }
-    static int menu(){
+    int menu(){
         return 0;
     }
     

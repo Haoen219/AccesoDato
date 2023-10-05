@@ -5,12 +5,14 @@
 package practica.ii._sistemaformaciongenerico;
 
 import java.util.Scanner;
+import java.util.TreeSet;
 
 /**
  *
  * @author haoen
  */
 public class Modulo extends AlumnoModulo {
+    private TreeSet<Integer> alumnos= new TreeSet<>();
     
     //Builder
     public Modulo(String nombre, int ID){
@@ -18,7 +20,7 @@ public class Modulo extends AlumnoModulo {
     }
     
     //MODULO
-    public static Modulo darDeAlta() {
+    public Modulo darDeAlta() {
         Scanner sc= new Scanner(System.in);
         System.out.println("\n-Dar de alta modulo-");
         System.out.print("Introduzca el nombre del modulo: ");
@@ -37,6 +39,26 @@ public class Modulo extends AlumnoModulo {
     }
     
     //ALUMNO
+    public int matricularAlumno(int nia){
+        if(this.alumnos.add(nia)){          //devuelve true si funciona
+            return 0;
+        }
+        return -1;
+    }
+    public int anularMatriculaAlumno(int nia){
+        if(this.alumnos.remove(nia)){
+            return 0;
+        }
+        return -1;
+    }
+    private int comprobarAlumnos(int nia){
+        if(this.alumnos.contains(nia)){
+            if(anularMatriculaAlumno(nia)==0){
+                return 0;
+            }
+        }
+        return -1;
+    }
 
     //IMPRIMIR
     @Override
@@ -48,7 +70,7 @@ public class Modulo extends AlumnoModulo {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
-    public static int menu() {
+    public int menu() {
         Scanner sc= new Scanner(System.in);
         System.out.println("");
         System.out.println("|-----Mantener M?dulos-----|");
