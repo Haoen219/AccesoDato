@@ -10,42 +10,48 @@ import java.util.Scanner;
  *
  * @author haoen
  */
-public class Alumno implements InterfazAlumnoModulo{
-    private String nombre;
-    final private int NIA;
+public class Alumno extends AlumnoModulo{
     private Matricula matricula;
     
     //Builder
     public Alumno(String nombre, int NIA){
-        this.nombre=nombre;
-        this.NIA=NIA;
+        super(nombre, NIA);
     }
 
-    @Override
-    public int darDeAlta(int identificador, Object objeto) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    //ALUMNO
+    public static Alumno darDeAlta() {
+        Scanner sc= new Scanner(System.in);
+        System.out.println("\n-Dar de alta alumno-");
+        System.out.print("Introduzca el nombre del alumno: ");
+        String nombre=sc.nextLine();
+        System.out.print("Introduzca NIA del alumno: ");
+        int nia=sc.nextInt();
+        
+        return (new Alumno(nombre, nia));
     }
-    @Override
-    public int darDeBaja(int identificador) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public static int darDeBaja() {
+        Scanner sc= new Scanner(System.in);
+        System.out.println("\n-Dar de baja alumno-");
+        System.out.print("Introduzca NIA del alumno: ");
+        
+        return sc.nextInt();
     }
     
-    public int crearMatricula(){
-        
-    }
+    //MODULO
+    
+//    public int crearMatricula(){
+//        Matricula matricula= new Matricula(this.NIA);
+//    }
     
     
     //IMPRIMIR
-    @Override
     public int imprimir() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    @Override
     public int imprimirDetallado() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    @Override
-    public int imprimirMenu() {
+    public static int menu() {
         Scanner sc= new Scanner(System.in);
         System.out.println("");
         System.out.println("|-----Mantener M?dulos-----|");
@@ -58,5 +64,4 @@ public class Alumno implements InterfazAlumnoModulo{
         int opcion=sc.nextInt();
         return opcion;
     }
-    
 }

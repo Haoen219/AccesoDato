@@ -10,24 +10,33 @@ import java.util.Scanner;
  *
  * @author haoen
  */
-public class Modulo implements InterfazAlumnoModulo {
-    private String nombre;
-    final private int ID;
+public class Modulo extends AlumnoModulo {
     
     //Builder
     public Modulo(String nombre, int ID){
-        this.nombre=nombre;
-        this.ID=ID;
+        super(nombre, ID);
     }
-
-    @Override
-    public int darDeAlta(int identificador, Object objeto) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    
+    //MODULO
+    public static Modulo darDeAlta() {
+        Scanner sc= new Scanner(System.in);
+        System.out.println("\n-Dar de alta modulo-");
+        System.out.print("Introduzca el nombre del modulo: ");
+        String nombre=sc.nextLine();
+        System.out.print("Introduzca NIA del alumno: ");
+        int nia=sc.nextInt();
+        
+        return (new Modulo(nombre, nia));
     }
-    @Override
     public int darDeBaja(int identificador) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Scanner sc= new Scanner(System.in);
+        System.out.println("\n-Dar de baja m?dulo-");
+        System.out.print("Introduzca ID del m?dulo: ");
+        
+        return sc.nextInt();
     }
+    
+    //ALUMNO
 
     //IMPRIMIR
     @Override
@@ -38,8 +47,8 @@ public class Modulo implements InterfazAlumnoModulo {
     public int imprimirDetallado() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
-    @Override
-    public int imprimirMenu() {
+    
+    public static int menu() {
         Scanner sc= new Scanner(System.in);
         System.out.println("");
         System.out.println("|-----Mantener M?dulos-----|");
@@ -53,5 +62,4 @@ public class Modulo implements InterfazAlumnoModulo {
         int opcion=sc.nextInt();
         return opcion;
     }
-    
 }

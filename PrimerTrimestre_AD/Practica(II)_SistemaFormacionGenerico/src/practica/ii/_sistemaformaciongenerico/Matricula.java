@@ -12,6 +12,10 @@ import java.util.TreeMap;
  * @author haoen
  */
 public class Matricula {
-    private int idAlumno;
+    private int niaAlumno;
     private Map<Integer, Integer[]> modulos= new TreeMap();
+    
+    public Matricula(int nia){
+        this.niaAlumno=nia;
+    }
 }
