@@ -4,7 +4,6 @@
  */
 package practica.ii._sistemaformaciongenerico;
 
-import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
@@ -13,11 +12,17 @@ import java.util.TreeMap;
  * @author haoen
  */
 public class Alumnos implements BDDAlumnosModulos{
-    Map<Integer, Alumno> alumnos= new TreeMap();
+    TreeMap<Integer, Alumno> alumnos= new TreeMap();
     
     public Alumnos(){}
     
     //ALUMNO
+    public boolean comprobar(int nia){
+        if(this.alumnos.containsKey(nia))return true;
+        else System.out.println("--NIA no existe en la base de datos");
+        return false;
+    }
+    
     @Override
     public int darDeAlta() {
         Scanner sc= new Scanner(System.in);
@@ -28,7 +33,10 @@ public class Alumnos implements BDDAlumnosModulos{
         int nia=sc.nextInt();
         
         if(this.alumnos.put(nia, new Alumno(nombre, nia))==null){
+            System.out.println("++Se ha dado de alta al alumno (NIA:"+nia+")");
             return 0;
+        }else{
+            System.out.println("--No se ha podido dar de alta al alumno (NIA:"+nia+")");
         }
         return -1;
     }
@@ -41,7 +49,12 @@ public class Alumnos implements BDDAlumnosModulos{
         
         if(this.alumnos.containsKey(nia)){
             this.alumnos.remove(nia);
-            return 0;
+            if(BaseDeDatos.modulos.actualizar(nia)==0){
+                System.out.println("++Se ha dado de baja al alumno (NIA:"+nia+")");
+                return 0;
+            }else{
+                System.out.println("--No se ha podido dar de baja al alumno (NIA:"+nia+")");
+            }
         }
         return -1;
     }
@@ -78,20 +91,25 @@ public class Alumnos implements BDDAlumnosModulos{
         System.out.println("\n-Modificar notas-");
         System.out.print("Introduzca NIA del alumno: ");
         int nia=sc.nextInt();
-        this.alumnos.get(nia).imprimirModulos();
-        System.out.print("--Introduzca ID del m?dulo a modificar: ");
-        int id=sc.nextInt();
-        
-        switch(menuCalificar()){
-                case 0 -> System.out.println("Acci?n cancelada, volviendo...");
-                case 1 -> calificacion="Suspendido";
-                case 2 -> calificacion="Bien";
-                case 3 -> calificacion="Notable";
-                case 4 -> calificacion="Excelente";
-                default -> System.out.println("No se introdujo un valor valido");
-        }
-        if(this.alumnos.get(nia).evaluarModulo(id, calificacion)==0){
-            return 0;
+        if(comprobar(nia)){
+            this.alumnos.get(nia).imprimirModulos();
+            System.out.print("--Introduzca ID del m?dulo a modificar: ");
+            int id=sc.nextInt();
+
+            switch(menuCalificar()){
+                    case 0 -> System.out.println("Acci?n cancelada, volviendo...");
+                    case 1 -> calificacion="Suspendido";
+                    case 2 -> calificacion="Bien";
+                    case 3 -> calificacion="Notable";
+                    case 4 -> calificacion="Excelente";
+                    default -> System.out.println("No se introdujo un valor valido");
+            }
+            if(this.alumnos.get(nia).evaluarModulo(id, calificacion)==0){
+                System.out.println("++Se ha evaluado el modulo");
+                return 0;
+            } else{
+                System.out.println("--No se ha podido evaluar");
+            }
         }
         return -1;
     }
@@ -138,20 +156,29 @@ public class Alumnos implements BDDAlumnosModulos{
     private int menuCalificar(){
         Scanner sc= new Scanner(System.in);
         System.out.println("");
-        System.out.println("|-------Calificaci?n-------|");
-        System.out.println("|0|-Cancelar y volver      |");
-        System.out.println("|1|-Suspendido             |");
-        System.out.println("|2|-Bien                   |");
-        System.out.println("|3|-Notable                |");
-        System.out.println("|3|-Excelente              |");
-        System.out.println("|"+"-".repeat(26)+"|");
+        System.out.println("Calificaciones:");
+        System.out.println("0- Cancelar y volver");
+        System.out.println("1- Suspendido");
+        System.out.println("2- Bien");
+        System.out.println("3- Notable");
+        System.out.println("4-Excelente");
         System.out.print("OPCI?N: ");
         int opcion=sc.nextInt();
         return opcion;
     }
     
-//    //GETTER
-//    public Alumno getAlumno(int nia){
-//        return this.alumnos.get(nia);
-//    }
+    //IMPRIMIR
+    @Override
+    public void listar(){
+        for(int nia:this.alumnos.keySet()){
+            this.alumnos.get(nia).imprimir();
+        }
+    }
+    public void imprimirBoletin(){
+        Scanner sc= new Scanner(System.in);
+        System.out.println("\n-Imprimir Bolet?n-");
+        System.out.print("Introduzca NIA del alumno: ");
+        int nia=sc.nextInt();
+        this.alumnos.get(nia).imprimirBoletin();
+    }
 }

@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
 package practica.ii._sistemaformaciongenerico;
-
 import java.util.InputMismatchException;
 
 /**
@@ -11,6 +10,18 @@ import java.util.InputMismatchException;
  * @author 2DAM_Zhang_Haoen
  */
 public class PracticaII_SistemaFormacionGenerico {
+    public static boolean comprobarListaAlumno(){
+        if(!BaseDeDatos.alumnos.alumnos.isEmpty()){
+            return true;
+        }else System.out.println("--Su lista de alumnos esta vacio");
+        return false;
+    }
+    public static boolean comprobarListaModulo(){
+        if(!BaseDeDatos.modulos.modulos.isEmpty()){
+            return true;
+        }else System.out.println("--Su lista de modulos esta vacio");
+        return false;
+    }
 
     /**
      * @param args the command line arguments
@@ -30,7 +41,11 @@ public class PracticaII_SistemaFormacionGenerico {
                             try{
                                 opcion2=BaseDeDatos.alumnos.menu();
                                 switch(opcion2){
-                                    
+                                    case 0 -> System.out.println("Volviendo al menu previo...");
+                                    case 1 -> BaseDeDatos.alumnos.darDeAlta();
+                                    case 2 -> {if(comprobarListaAlumno()) BaseDeDatos.alumnos.darDeBaja();}
+                                    case 3 -> {if(comprobarListaAlumno()) BaseDeDatos.alumnos.listar();}
+                                    default -> System.out.println("Opci?n no valida");
                                 }
                             }catch(InputMismatchException ex){
                                 System.out.println("###ERROR: ha introducido un valor que no es entero.");
@@ -45,7 +60,12 @@ public class PracticaII_SistemaFormacionGenerico {
                             try{
                                 opcion2=BaseDeDatos.modulos.menu();
                                 switch(opcion2){
-                                    
+                                    case 0 -> System.out.println("Volviendo al menu previo...");
+                                    case 1 -> BaseDeDatos.modulos.darDeAlta();
+                                    case 2 -> {if(comprobarListaModulo()) BaseDeDatos.modulos.darDeBaja();}
+                                    case 3 -> {if(comprobarListaModulo()) BaseDeDatos.modulos.listar();}
+                                    case 4 -> {if(comprobarListaModulo()) BaseDeDatos.modulos.matricularAlumno();}
+                                    default -> System.out.println("Opci?n no valida");
                                 }
                             }catch(InputMismatchException ex){
                                 System.out.println("###ERROR: ha introducido un valor que no es entero.");
@@ -59,8 +79,14 @@ public class PracticaII_SistemaFormacionGenerico {
                         do{
                             try{
                                 opcion2=BaseDeDatos.alumnos.menuEvaluar();
-                                
-                                
+                                switch(opcion2){
+                                    case 0 -> System.out.println("Volviendo al menu previo...");
+                                    case 1 -> BaseDeDatos.modulos.darDeAlta();
+                                    case 2 -> {if(comprobarListaModulo()) BaseDeDatos.alumnos.modificarNota();}
+                                    case 3 -> {if(comprobarListaModulo()) BaseDeDatos.alumnos.evaluarModulo();}
+                                    case 4 -> {if(comprobarListaModulo()) BaseDeDatos.alumnos.imprimirBoletin();}
+                                    default -> System.out.println("Opci?n no valida");
+                                }
                             }catch(InputMismatchException ex){
                                 System.out.println("###ERROR: ha introducido un valor que no es entero.");
                             }catch(Exception ex){

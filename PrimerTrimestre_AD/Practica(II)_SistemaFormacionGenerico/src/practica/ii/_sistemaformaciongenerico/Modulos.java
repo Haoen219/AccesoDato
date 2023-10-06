@@ -4,7 +4,6 @@
  */
 package practica.ii._sistemaformaciongenerico;
 
-import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
@@ -13,22 +12,33 @@ import java.util.TreeMap;
  * @author haoen
  */
 public class Modulos implements BDDAlumnosModulos{
-    Map<Integer, Modulo> modulos= new TreeMap();
+    TreeMap<Integer, Modulo> modulos= new TreeMap();
     
     public Modulos(){}
     
     //MODULO
+    @Override
+    public boolean comprobar(int id){
+        if(this.modulos.containsKey(id))return true;
+        else System.out.println("--ID no existe en la base de datos");
+        return false;
+    }
     @Override
     public int darDeAlta() {
         Scanner sc= new Scanner(System.in);
         System.out.println("\n-Dar de alta m?dulo-");
         System.out.print("Introduzca el nombre del m?dulo: ");
         String nombre=sc.nextLine();
-        System.out.print("Introduzca ID del m?dulo: ");
-        int id=sc.nextInt();
+        int id=0;
+        
+        if(this.modulos.isEmpty())id=1;         //da el ID automaticamente y asigna ID=1
+        else id=this.modulos.lastKey()+1;       //si la lista esta vacio
         
         if(this.modulos.put(id, new Modulo(nombre, id))==null){
+            System.out.println("++Se ha dado de alta al m?dulo (ID:"+id+")");
             return 0;
+        }else{
+            System.out.println("--No se ha podido dar de alta al modulo (ID:"+id+")");
         }
         return -1;
     }
@@ -39,17 +49,33 @@ public class Modulos implements BDDAlumnosModulos{
         System.out.print("Introduzca ID del m?dulo: ");
         int id=sc.nextInt();
         
-        if(this.modulos.containsKey(id)){
+        if(comprobar(id)){
             this.modulos.remove(id);
-            return 0;
+            if(BaseDeDatos.alumnos.actualizar(id)==0){
+                System.out.println("++Se ha dado de baja al m?dulo (ID:"+id+")");
+                return 0;
+            }
         }
         return -1;
     }
     
     //MATRICULA
-    public int matricularAlumno(int id, int nia){
-        if(this.modulos.get(id).matricularAlumno(nia)==0){
-            return 0;
+    public int matricularAlumno(){
+        Scanner sc= new Scanner(System.in);
+        System.out.println("\n-Matricular alumno-");
+        System.out.print("Introduzca ID del m?dulo: ");
+        int id=sc.nextInt();
+        if(comprobar(id)){
+            System.out.print("Introduzca NIA del alumno: ");
+            int nia=sc.nextInt();
+            if(BaseDeDatos.alumnos.comprobar(nia)){
+                if(this.modulos.get(id).matricularAlumno(nia)==0 && BaseDeDatos.alumnos.matricularModulo(id, nia)==0){
+                    System.out.println("++Se ha matriculado el alumno (NIA:"+nia+")");
+                    return 0;
+                }else{
+                    System.out.println("--No se ha podido matricular al alumno (NIA:"+nia+")");
+                }
+            }
         }
         return -1;
     }
@@ -86,5 +112,12 @@ public class Modulos implements BDDAlumnosModulos{
     //GETTER
     public Modulo getModulo(int id){
         return this.modulos.get(id);
+    }
+    
+    //IMPRIMIR
+    public void listar(){
+        for(int nia:this.modulos.keySet()){
+            this.modulos.get(nia).imprimir();
+        }
     }
 }

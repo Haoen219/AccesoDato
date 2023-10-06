@@ -9,8 +9,10 @@ package practica.ii._sistemaformaciongenerico;
  * @author haoen
  */
 public interface BDDAlumnosModulos{
-    public int darDeAlta();
-    public int darDeBaja();
-    public int menu();
-    public int actualizar(int identificador);
+    int darDeAlta();
+    int darDeBaja();
+    boolean comprobar(int identificador);
+    int menu();
+    int actualizar(int identificador);
+    void listar();
 }

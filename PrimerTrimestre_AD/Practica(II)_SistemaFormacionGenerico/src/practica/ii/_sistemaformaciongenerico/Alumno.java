@@ -57,7 +57,7 @@ public class Alumno extends BaseAlumnoModulo{
         System.out.printf("NIA: %-8d Nombre: %-30s Modulos: %-2d\n",
                 this.getIDENTIFICADOR(), this.getNombre(),this.matricula.getNumeroModulos());
     }
-    public void imprimirDetallado() {
+    public void imprimirBoletin() {
         imprimir();
         imprimirModulos();
     }
