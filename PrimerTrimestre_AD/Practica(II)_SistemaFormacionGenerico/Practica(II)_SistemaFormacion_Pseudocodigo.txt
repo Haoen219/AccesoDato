@@ -1,0 +1,179 @@
+PROGRAMA practica(ii)_sistemaformacion
+	INTERFAZ BDDAlumnosModulos
+		int darDeAlta()
+    		int darDeBaja()
+    		boolean comprobar(int identificador)
+    		int menu()
+    		int actualizar(int identificador)
+    		void listar()
+	FIN INTERFAZ
+
+
+	CLASE ABSTRACTO BaseAlumnoModulo
+		STRING nombre
+		INT identificador
+
+		FUNCION IMPRIMIR
+		GETTERS nombre, identificador
+	FIN CLASE ABSTRACTO
+
+
+	CLASE BaseDeDato
+		ESTÁTICO Alumnos alumnos
+		ESTÁTICO Modulos modulos
+
+		FUNCION INT menu()
+			IMPRIMIR -menu-
+			PEDIR INT opcion <-- entrada
+			DEVOLVER opcion
+		FIN FUNCION
+	FIN CLASE
+
+
+	CLASE Alumnos
+		TreeMap<INT nia, Alumno> alumnos
+									//ALUMNO
+		FUNCION BOOLEANO comprobar(INT nia)
+			SI (Alumno con nia se encuentra en "alumnos")
+				DEVOLVER true
+			FIN SI
+			DEVOLVER false
+		FIN FUNCION
+
+		FUNCION INT darDeAlta()
+			Pedir nia <-- entrada
+			SI NO( LLAMAR comprobar(nia) )
+				LLAMAR alumnos.put(nia, nuevo Alumno)
+			FIN SI
+		FIN FUNCION
+									//MATRICULA
+		FUNCION INT matricularModulo(INT id, INT nia)
+			LLAMAR alumnos.get(nia).matricularModulo(id)
+		FIN FUNCION
+
+		FUNCION INT modificarNota()
+			Pedir nia <-- entrada
+			SI ( LLAMAR comprobar(nia) )
+				Pedir id <-- entrada
+				Pedir notaAModificar<-- entrada
+				Pedir nuevaNota <-- entrada
+
+				LLAMAR alumnos.get(nia).modificarNota(id, notaAModificar, nota)
+			FIN SI
+		FIN FUNCION
+		
+		FUNCION INT evaluarModulo()
+			Pedir nia <-- entrada
+			SI ( LLAMAR comprobar(nia) )
+				Pedir id <-- entrada
+				Pedir calificacion <-- entrada
+
+				LLAMAR alumnos.get(nia).evaluarModulo(id, calificacion)
+			FIN SI
+		FIN FUNCION
+									//ACTUALIZAR
+		FUNCION INT evaluarModulo()
+			Pedir nia <-- entrada
+			SI ( LLAMAR comprobar(nia) )
+				Pedir id <-- entrada
+				Pedir calificacion <-- entrada
+
+				LLAMAR alumnos.get(nia).evaluarModulo(id, calificacion)
+			FIN SI
+		FIN FUNCION
+	FIN CLASE
+
+
+	CLASE Modulos
+
+	FIN CLASE
+
+
+	CLASE Alumno
+
+	FIN CLASE
+
+
+	CLASE Modulo
+
+	FIN CLASE
+
+
+	CLASE Matricula
+
+	FIN CLASE
+
+
+
+	CLASE MAIN
+		FUNCION BOOLEAN comprobarListaAlumno()
+			SI NO( LLAMAR BaseDeDatos.alumnos.alumnos.isEmpty() )
+				DEVOLVER true
+			FIN SI
+			DEVOLVER false
+		FIN FUNCION
+		FUNCION BOOLEAN comprobarListaModulo()
+			SI NO( LLAMAR BaseDeDatos.modulos.modulos.isEmpty() )
+			DEVOLVER true
+			FIN SI
+			DEVOLVER false
+		FIN FUNCION
+
+		MAIN
+			LLAMAR BaseDeDatos baseDeDatos
+			INT opcion <-- 1
+			INT opcion2 <-- 1
+			HACER MIENTRAS( opcion > 0 )
+				BaseDeDatos.menu() --> opcion
+				SWITCH
+					CASO 0:
+						IMPRIMIR "saliendo del programa"
+					CASO 1:
+						HACER MIENTRAS( opcion2 > 0 )
+							LLAMAR BaseDeDatos.alumnos.menu() --> opcion2
+							SWITCH
+								CASO 0:		
+									IMPRIMIR "volviendo al menu previo"
+								CASO 1:
+									LLAMAR BaseDeDatos.alumnos.darDeAlta()
+								CASO 2:
+									SI ( LLAMAR comprobarListaAlumno ) LLAMAR BaseDeDatos.alumnos.darDeBaja()
+								CASO 3:
+									SI ( LLAMAR comprobarListaAlumno ) LLAMAR BaseDeDatos.alumnos.listar()
+							FIN SWITCH
+						FIN HACER MIENTRAS
+					CASO 2:
+						HACER MIENTRAS( opcion2 > 0 )
+							BaseDeDatos.modulos.menu() --> opcion2
+							SWITCH
+								CASO 0:		
+									IMPRIMIR "volviendo al menu previo"
+								CASO 1:
+									LLAMAR BaseDeDatos.modulos.darDeAlta()
+								CASO 2:
+									SI ( LLAMAR comprobarListaModulo ) LLAMAR BaseDeDatos.modulos.darDeBaja()
+								CASO 3:
+									SI ( LLAMAR comprobarListaModulo ) LLAMAR BaseDeDatos.modulos.listar()
+								CASO 3:
+									SI ( LLAMAR comprobarListaModulo ) LLAMAR BaseDeDatos.modulos.matricularAlumno()
+							FIN SWITCH
+						FIN HACER MIENTRAS
+					CASO 3:
+						HACER MIENTRAS( opcion2 > 0 )
+							BaseDeDatos.alumnos.menuEvaluar() --> opcion2
+							SWITCH
+								CASO 0:		
+									IMPRIMIR "volviendo al menu previo"
+								CASO 1:
+									SI ( LLAMAR comprobarListaModulo ) LLAMAR BaseDeDatos.alumnos.evaluarModulo()
+								CASO 2:
+									SI ( LLAMAR comprobarListaModulo ) LLAMAR BaseDeDatos.alumnos.modificarNota()
+								CASO 3:
+									SI ( LLAMAR comprobarListaModulo ) LLAMAR BaseDeDatos.alumnos.imprimirBoletin()
+							FIN SWITCH
+						FIN HACER MIENTRAS
+				FIN SWITCH
+			FIN HACER MIENTRAS
+		FIN MAIN
+	FIN CLASE MAIN
+FIN PROGRAMA

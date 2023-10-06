@@ -12,8 +12,8 @@ import java.util.TreeMap;
  * @author haoen
  */
 public class Matricula {
-    private Map<Integer, Double[]> modulosMatriculados= new TreeMap();
-    private Map<Integer, String> calificaciones= new TreeMap();
+    private TreeMap<Integer, Double[]> modulosMatriculados= new TreeMap();
+    private TreeMap<Integer, String> calificaciones= new TreeMap();
     final private String CALIFICACIONDEFECTO="Sin calificar";
     
     public Matricula(){}
