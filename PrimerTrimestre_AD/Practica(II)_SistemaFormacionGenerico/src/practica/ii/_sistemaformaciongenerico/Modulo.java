@@ -28,14 +28,6 @@ public class Modulo extends BaseAlumnoModulo {
     public int anularMatriculaAlumno(int nia){
         if(this.alumnosMatriculados.remove(nia)){
             return 0;
-        }                                           //anularMatriculaAlumno y comprobarAlumno funcionan
-        return -1;                                  //para poder eliminar alumnos
-    }
-    public int comprobarAlumnos(int nia){
-        if(this.alumnosMatriculados.contains(nia)){
-            if(anularMatriculaAlumno(nia)==0){
-                return 0;
-            }
         }
         return -1;
     }
@@ -43,6 +35,11 @@ public class Modulo extends BaseAlumnoModulo {
     //IMPRIMIR
     @Override
     public void imprimir() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        System.out.printf("\tID: %-8d %-20s Alumnos: ", this.getIDENTIFICADOR(), this.getNombre());
+        if(this.alumnosMatriculados.isEmpty()){
+            System.out.println("0");
+        }else{
+            System.out.println(BaseDeDatos.alumnos.alumnos.size());
+        }
     }
 }

@@ -9,7 +9,7 @@ import java.util.InputMismatchException;
  *
  * @author 2DAM_Zhang_Haoen
  */
-public class PracticaII_SistemaFormacionGenerico {
+public class PracticaII_SistemaFormacion {
     public static boolean comprobarListaAlumno(){
         if(!BaseDeDatos.alumnos.alumnos.isEmpty()){
             return true;
@@ -45,12 +45,12 @@ public class PracticaII_SistemaFormacionGenerico {
                                     case 1 -> BaseDeDatos.alumnos.darDeAlta();
                                     case 2 -> {if(comprobarListaAlumno()) BaseDeDatos.alumnos.darDeBaja();}
                                     case 3 -> {if(comprobarListaAlumno()) BaseDeDatos.alumnos.listar();}
-                                    default -> System.out.println("Opci?n no valida");
+                                    default -> System.out.println("--Opci?n no valida");
                                 }
                             }catch(InputMismatchException ex){
-                                System.out.println("###ERROR: ha introducido un valor que no es entero.");
+                                System.out.println("\n###ERROR: ha introducido un valor que no es entero.");
                             }catch(Exception ex){
-                                System.out.println("###ERROR: ha ocurrido un error inesperado.\n"+ex.getLocalizedMessage());
+                                System.out.println("\n###ERROR: ha ocurrido un error inesperado.\n"+ex.getLocalizedMessage());
                             }
                         }while(opcion2>0);
                     }
@@ -65,12 +65,12 @@ public class PracticaII_SistemaFormacionGenerico {
                                     case 2 -> {if(comprobarListaModulo()) BaseDeDatos.modulos.darDeBaja();}
                                     case 3 -> {if(comprobarListaModulo()) BaseDeDatos.modulos.listar();}
                                     case 4 -> {if(comprobarListaModulo()) BaseDeDatos.modulos.matricularAlumno();}
-                                    default -> System.out.println("Opci?n no valida");
+                                    default -> System.out.println("--Opci?n no valida");
                                 }
                             }catch(InputMismatchException ex){
-                                System.out.println("###ERROR: ha introducido un valor que no es entero.");
+                                System.out.println("\n###ERROR: ha introducido un valor que no es entero.");
                             }catch(Exception ex){
-                                System.out.println("###ERROR: ha ocurrido un error inesperado.\n"+ex.getLocalizedMessage());
+                                System.out.println("\n###ERROR: ha ocurrido un error inesperado.\n"+ex.getLocalizedMessage());
                             }
                         }while(opcion2>0);
                     }
@@ -81,25 +81,24 @@ public class PracticaII_SistemaFormacionGenerico {
                                 opcion2=BaseDeDatos.alumnos.menuEvaluar();
                                 switch(opcion2){
                                     case 0 -> System.out.println("Volviendo al menu previo...");
-                                    case 1 -> BaseDeDatos.modulos.darDeAlta();
+                                    case 1 -> {if(comprobarListaModulo()) BaseDeDatos.alumnos.evaluarModulo();}
                                     case 2 -> {if(comprobarListaModulo()) BaseDeDatos.alumnos.modificarNota();}
-                                    case 3 -> {if(comprobarListaModulo()) BaseDeDatos.alumnos.evaluarModulo();}
-                                    case 4 -> {if(comprobarListaModulo()) BaseDeDatos.alumnos.imprimirBoletin();}
-                                    default -> System.out.println("Opci?n no valida");
+                                    case 3 -> {if(comprobarListaModulo()) BaseDeDatos.alumnos.imprimirBoletin();}
+                                    default -> System.out.println("--Opci?n no valida");
                                 }
                             }catch(InputMismatchException ex){
-                                System.out.println("###ERROR: ha introducido un valor que no es entero.");
+                                System.out.println("\n###ERROR: ha introducido un valor que no es entero.");
                             }catch(Exception ex){
-                                System.out.println("###ERROR: ha ocurrido un error inesperado.\n"+ex.getLocalizedMessage());
+                                System.out.println("\n###ERROR: ha ocurrido un error inesperado.\n"+ex.getLocalizedMessage());
                             }
                         }while(opcion2>0);
                     }
                     default -> System.out.println("Opci?n no valida, reintente...");
                 }
             }catch(InputMismatchException ex){
-                System.out.println("###ERROR: ha introducido un valor que no es entero.\n");
+                System.out.println("\n###ERROR: ha introducido un valor que no es entero.\n");
             }catch(Exception ex){
-                System.out.println("###ERROR: ha ocurrido un error inesperado.\n"+ex.getLocalizedMessage());
+                System.out.println("\n###ERROR: ha ocurrido un error inesperado.\n"+ex.getLocalizedMessage());
             }
         }while(opcion>0);
     }

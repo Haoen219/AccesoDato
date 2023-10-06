@@ -21,13 +21,15 @@ public class Alumno extends BaseAlumnoModulo{
     //MATRICULA
     public boolean comprobarMatricula(){
         if(this.matricula==null){
-            System.out.println("--Este alumno (NIA:"+this.getIDENTIFICADOR()+") aun no tiene matr?cula");
             return false;
         }
         return true;
     }
-    public int comprobarModulos(int id){                    //sirve para eliminar un modulo de la matricula
-        if(this.matricula.comprobarModulos(id)==0){
+    public boolean comprobarModulo(int id){
+        return this.matricula.comprobarModulo(id);
+    }
+    public int eliminarModulos(int id){                    //sirve para eliminar un modulo de la matricula
+        if(this.matricula.eliminarModulo(id)==0){
             return 0;
         }
         return -1;
@@ -47,7 +49,7 @@ public class Alumno extends BaseAlumnoModulo{
     
     
     //MODULO
-    public int matricularModulo(int id){
+    public int matricularModulo(int id){        //no necesita comprobar porque es llamado de otra funcion comprobada
         if (this.matricula==null){
             this.matricula= new Matricula();        //instancia una matricula si no tiene, haciendo que
         }                                           //un alumno no tenga matricula hasta no tener un modulo
@@ -70,9 +72,7 @@ public class Alumno extends BaseAlumnoModulo{
     }
     public void imprimirBoletin() {
         imprimir();
-        if(comprobarMatricula()){
-            imprimirModulos();
-        }
+        imprimirModulos();
     }
     public void imprimirModulos() {
         System.out.println("Matricula: ");

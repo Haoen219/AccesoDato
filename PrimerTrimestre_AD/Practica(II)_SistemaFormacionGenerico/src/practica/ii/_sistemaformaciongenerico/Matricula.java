@@ -5,7 +5,6 @@
 package practica.ii._sistemaformaciongenerico;
 
 import java.util.Map;
-import java.util.Scanner;
 import java.util.TreeMap;
 
 /**
@@ -15,17 +14,18 @@ import java.util.TreeMap;
 public class Matricula {
     private Map<Integer, Double[]> modulosMatriculados= new TreeMap();
     private Map<Integer, String> calificaciones= new TreeMap();
+    final private String CALIFICACIONDEFECTO="Sin calificar";
     
     public Matricula(){}
     
-    public int matricularModulo(int id){
-        if(this.modulosMatriculados.put(id, new Double[3])==null){       //los modulos reci?n matriculados no tiene notas
+    public int matricularModulo(int id){           //los modulos reci?n matriculados no tiene notas
+        if(this.modulosMatriculados.put(id, new Double[3])==null && this.calificaciones.put(id, this.CALIFICACIONDEFECTO)==null){
             return 0;
         }
         return -1;
     }
     
-    public int anularMatriculaModulo(int id){
+    public int eliminarModulo(int id){
         if(this.modulosMatriculados.remove(id)==null && this.calificaciones.remove(id)==null){
             return 0;
         }
@@ -48,21 +48,30 @@ public class Matricula {
         return -1;
     }
     
-    //sirve para eliminar modulos dados de baja
-    public int comprobarModulos(int id){
+    public boolean comprobarModulo(int id){
         if (this.modulosMatriculados.containsKey(id)){
-            this.modulosMatriculados.remove(id);
+            return true;
+        }else{
+            System.out.println("--Modulo no existe en la matricula");
         }
-        return -1;
+        return false;
     }
     
     //IMPRIMIR NOTAS
     public void imprimirModulos(){
         for(int id: this.modulosMatriculados.keySet()){
             Modulo comodin=BaseDeDatos.modulos.getModulo(id);
-            System.out.printf("\tID: %-8d %-20s  Notas: [ ",comodin.getIDENTIFICADOR(),comodin.getNombre());
-            for (int i = 0; i < this.modulosMatriculados.size(); i++) {
-                System.out.printf("-%2.2f"+this.modulosMatriculados.get(i)+"- ");
+            System.out.printf("\tID: %-8d %-20s  ",comodin.getIDENTIFICADOR(),comodin.getNombre());
+            
+            System.out.print("Notas: [ ");
+            if(this.modulosMatriculados.containsKey(id)){
+                for (int i = 0; i < this.modulosMatriculados.get(id).length; i++) {
+                    if(this.modulosMatriculados.get(id)[i]==null){
+                        System.out.printf("-nulo- ");
+                    }else{
+                        System.out.printf("-%-2.2f- ",this.modulosMatriculados.get(id)[i]);
+                    }
+                }
             }
             System.out.println("]  Calificaci?n: "+this.calificaciones.get(id));
         }

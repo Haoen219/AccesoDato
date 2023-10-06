@@ -34,11 +34,13 @@ public class Modulos implements BDDAlumnosModulos{
         if(this.modulos.isEmpty())id=1;         //da el ID automaticamente y asigna ID=1
         else id=this.modulos.lastKey()+1;       //si la lista esta vacio
         
-        if(this.modulos.put(id, new Modulo(nombre, id))==null){
-            System.out.println("++Se ha dado de alta al m?dulo (ID:"+id+")");
-            return 0;
+        if(this.modulos.containsKey(id)){
+            System.out.println("--Ya existe un modulo con ese ID");
         }else{
-            System.out.println("--No se ha podido dar de alta al modulo (ID:"+id+")");
+            if(this.modulos.put(id, new Modulo(nombre, id))==null){
+                System.out.println("++Se ha dado de alta al m?dulo (ID:"+id+")");
+                return 0;
+            }
         }
         return -1;
     }
@@ -84,7 +86,7 @@ public class Modulos implements BDDAlumnosModulos{
     @Override
     public int actualizar(int nia){
         for (int comodin : this.modulos.keySet()) {
-            if(this.modulos.get(comodin).comprobarAlumnos(nia)==-1){
+            if(this.modulos.get(comodin).anularMatriculaAlumno(nia)==-1){
                 System.out.println("*Ha ocurrido un error, no se ha podido eliminar el alumno con nia "+nia
                         +" del m?dulo "+this.modulos.get(comodin).getIDENTIFICADOR());
             }
@@ -116,8 +118,10 @@ public class Modulos implements BDDAlumnosModulos{
     
     //IMPRIMIR
     public void listar(){
+        System.out.println("\n-Listar modulos-");
         for(int nia:this.modulos.keySet()){
             this.modulos.get(nia).imprimir();
         }
+        System.out.println("--Fin de la lista");
     }
 }
