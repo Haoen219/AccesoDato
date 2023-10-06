@@ -5,9 +5,6 @@
 package practica.ii._sistemaformaciongenerico;
 
 import java.util.InputMismatchException;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.TreeMap;
 
 /**
  *
@@ -31,7 +28,7 @@ public class PracticaII_SistemaFormacionGenerico {
                         //Mantener Alumno
                         do{
                             try{
-                                opcion2=Alumno.menu();
+                                opcion2=BaseDeDatos.alumnos.menu();
                                 switch(opcion2){
                                     
                                 }
@@ -46,7 +43,7 @@ public class PracticaII_SistemaFormacionGenerico {
                         //Mantener Modulo
                         do{
                             try{
-                                opcion2=Modulo.menu();
+                                opcion2=BaseDeDatos.modulos.menu();
                                 switch(opcion2){
                                     
                                 }
@@ -61,7 +58,7 @@ public class PracticaII_SistemaFormacionGenerico {
                         //Evaluar
                         do{
                             try{
-                                
+                                opcion2=BaseDeDatos.alumnos.menuEvaluar();
                                 
                                 
                             }catch(InputMismatchException ex){

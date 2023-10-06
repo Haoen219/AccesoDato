@@ -13,12 +13,12 @@ import java.util.TreeMap;
  * @author haoen
  */
 public class BaseDeDatos {
-    static Map<Integer, Alumno> alumnos= new TreeMap();
-    static Map<Integer, Modulo> modulos= new TreeMap();
+    static Alumnos alumnos= new Alumnos();
+    static Modulos modulos= new Modulos();
     
     public BaseDeDatos(){}
     
-    //FUNCIONES
+    //MENU
     public int menu(){
         Scanner sc= new Scanner(System.in);
         System.out.println("");
@@ -32,58 +32,37 @@ public class BaseDeDatos {
         int opcion=sc.nextInt();
         return opcion;
     }
-    //ALTA
-    public int altaAlumno(){
-        Alumno comodin=this.alumnos.get(0).darDeAlta();
-        if(this.alumnos.put(comodin.getIDENTIFICADOR(), comodin)==null){
-            return 0;
-        }
-        return -1;
-    }
-    public int altaModulo(){
-        Modulo comodin=Modulo.darDeAlta();
-        if(this.modulos.put(comodin.getIDENTIFICADOR(), comodin)==null){
-            return 0;
-        }
-        return -1;
-    }
+    
     //BAJA
     public int bajaAlumno(){
-        int nia=Alumno.darDeBaja();
-        if(this.alumnos.remove(nia)!=null){
-            actualizarModulo(nia);
+        int nia=alumnos.darDeBaja();
+        if(nia==0){
+            this.alumnos.actualizar(nia);
             return 0;
         }
         return -1;  
     }
     public int bajaModulo(){
-        int id=Modulo.darDeBaja();
-        if(this.modulos.remove(id)!=null){
-            actualizarAlumno(id);
+        int id=modulos.darDeBaja();
+        if(id==0){
+            this.modulos.actualizar(id);
             return 0;
         }
         return -1; 
     }
-    //ACTUALIZAR
-    private int actualizarAlumno(int id){
-        for (int comodin : this.alumnos.keySet()) {
-            if(this.alumnos.get(comodin).comprobarModulos(id)==-1){
-                System.out.println("*Ha ocurrido un error, no se ha podido eliminar modulo "+
-                        this.modulos.get(id).getNombre()+" de la matricula del alumno "+
-                        this.alumnos.get(id).getNombre());
-            }
+    
+    //MATRICULAR ALUMNO
+    public int matricularAlumno(){
+        Scanner sc= new Scanner(System.in);
+        System.out.println("\n-Matricular alumno-");
+        System.out.print("Introduzca NIA del alumno: ");
+        int nia=sc.nextInt();
+        System.out.print("Introduzca ID del m?dulo: ");
+        int id=sc.nextInt();
+        
+        if(this.modulos.matricularAlumno(id, nia)==0 && this.alumnos.matricularModulo(id, nia)==0){
+            return 0;
         }
-        return 0;
+        return -1;
     }
-    private int actualizarModulo(int nia){
-//        for (int comodin : this.alumnos.keySet()) {
-//            if(this.alumnos.get(comodin).comprobarModulos(id)==-1){
-//                System.out.println("*Ha ocurrido un error, no se ha podido eliminar modulo "+
-//                        this.modulos.get(id).getNombre()+" de la matricula del alumno "+
-//                        this.alumnos.get(id).getNombre());
-//            }
-//        }
-        return 0;
-    }
-    //GETTER
 }

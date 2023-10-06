@@ -8,31 +8,17 @@ package practica.ii._sistemaformaciongenerico;
  *
  * @author 2DAM_Zhang_Haoen
  */
-public abstract class AlumnoModulo{
+public abstract class BaseAlumnoModulo{
     private String nombre;
     final private int IDENTIFICADOR;
     
-    AlumnoModulo(String nombre, int identificador){
+    BaseAlumnoModulo(String nombre, int identificador){
         this.nombre=nombre;
         this.IDENTIFICADOR=identificador;
     }
     
-    Object darDeAlta(){
-        return null;
-    }
-    int darDeBaja(){
-        return 0;
-    }
-    int imprimir(){
-        return 0;
-    }
-    
-    int imprimirDetallado(){
-        return 0;
-    }
-    int menu(){
-        return 0;
-    }
+    //IMPRIMIR
+    void imprimir(){}
     
     //GETTER
     public String getNombre() {

@@ -10,79 +10,59 @@ import java.util.Scanner;
  *
  * @author haoen
  */
-public class Alumno extends AlumnoModulo{
+public class Alumno extends BaseAlumnoModulo{
     private Matricula matricula;
     
     //Builder
     public Alumno(String nombre, int NIA){
         super(nombre, NIA);
     }
-
-    //ALUMNO
-    public Alumno darDeAlta() {
-        Scanner sc= new Scanner(System.in);
-        System.out.println("\n-Dar de alta alumno-");
-        System.out.print("Introduzca el nombre del alumno: ");
-        String nombre=sc.nextLine();
-        System.out.print("Introduzca NIA del alumno: ");
-        int nia=sc.nextInt();
-        
-        return (new Alumno(nombre, nia));
-    }
-    public int darDeBaja() {
-        Scanner sc= new Scanner(System.in);
-        System.out.println("\n-Dar de baja alumno-");
-        System.out.print("Introduzca NIA del alumno: ");
-        
-        return sc.nextInt();
-    }
     
     //MATRICULA
-    public int comprobarModulos(int id){
+    public int comprobarModulos(int id){                    //sirve para eliminar un modulo de la matricula
         if(this.matricula.comprobarModulos(id)==0){
             return 0;
         }
         return -1;
     }
+    public int modificarNota(int id, int posicion, double nota){
+        if(this.matricula.modificarNota(id, posicion, nota)==0){
+            return 0;
+        }
+        return -1;
+    }
+    public int evaluarModulo(int id, String calificacion){
+        if(this.matricula.evaluarModulo(id, calificacion)==0){
+            return 0;
+        }
+        return -1;
+    }
+    
     
     //MODULO
-    
-//    public int crearMatricula(){
-//        Matricula matricula= new Matricula(this.NIA);
-//    }
+    public int matricularModulo(int id){
+        if (this.matricula==null){
+            this.matricula= new Matricula();        //instancia una matricula si no tiene, haciendo que
+        }                                           //un alumno no tenga matricula hasta no tener un modulo
+        if(this.matricula.matricularModulo(id)==0){
+            return 0;
+        }
+        return -1;
+    }
     
     
     //IMPRIMIR
-    public int imprimir() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    @Override
+    public void imprimir() {
+        System.out.printf("NIA: %-8d Nombre: %-30s Modulos: %-2d\n",
+                this.getIDENTIFICADOR(), this.getNombre(),this.matricula.getNumeroModulos());
     }
-    public int imprimirDetallado() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void imprimirDetallado() {
+        imprimir();
+        imprimirModulos();
     }
-    public int menu() {
-        Scanner sc= new Scanner(System.in);
-        System.out.println("");
-        System.out.println("|-----Mantener Alumnos-----|");
-        System.out.println("|0| Volver al menu previo  |");
-        System.out.println("|1| Dar de alta            |");
-        System.out.println("|2| Dar de baja            |");
-        System.out.println("|3| Listar                 |");
-        System.out.println("|"+"-".repeat(26)+"|");
-        System.out.print("OPCI?N: ");
-        int opcion=sc.nextInt();
-        return opcion;
-    }
-    public int menuEvaluar() {
-        Scanner sc= new Scanner(System.in);
-        System.out.println("");
-        System.out.println("|---------Evaluar----------|");
-        System.out.println("|0| Volver al menu previo  |");
-        System.out.println("|1| Qualificar             |");
-        System.out.println("|2| Modificar              |");
-        System.out.println("|3| Extraer bolet?n        |");
-        System.out.println("|"+"-".repeat(26)+"|");
-        System.out.print("OPCI?N: ");
-        int opcion=sc.nextInt();
-        return opcion;
+    public void imprimirModulos() {
+        System.out.println("Matricula: ");
+        this.matricula.imprimirModulos();
     }
 }
