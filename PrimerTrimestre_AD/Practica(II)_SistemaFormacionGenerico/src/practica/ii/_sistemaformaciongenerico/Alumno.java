@@ -19,6 +19,13 @@ public class Alumno extends BaseAlumnoModulo{
     }
     
     //MATRICULA
+    public boolean comprobarMatricula(){
+        if(this.matricula==null){
+            System.out.println("--Este alumno (NIA:"+this.getIDENTIFICADOR()+") aun no tiene matr?cula");
+            return false;
+        }
+        return true;
+    }
     public int comprobarModulos(int id){                    //sirve para eliminar un modulo de la matricula
         if(this.matricula.comprobarModulos(id)==0){
             return 0;
@@ -54,12 +61,18 @@ public class Alumno extends BaseAlumnoModulo{
     //IMPRIMIR
     @Override
     public void imprimir() {
-        System.out.printf("NIA: %-8d Nombre: %-30s Modulos: %-2d\n",
-                this.getIDENTIFICADOR(), this.getNombre(),this.matricula.getNumeroModulos());
+        System.out.printf("NIA: %-8d Nombre: %-30s",this.getIDENTIFICADOR(), this.getNombre());
+        if(comprobarMatricula()){
+            System.out.printf(" Modulos: %-2d\n",this.matricula.getNumeroModulos());
+        }else{
+            System.out.println(" -Sin matricula-");
+        }
     }
     public void imprimirBoletin() {
         imprimir();
-        imprimirModulos();
+        if(comprobarMatricula()){
+            imprimirModulos();
+        }
     }
     public void imprimirModulos() {
         System.out.println("Matricula: ");
