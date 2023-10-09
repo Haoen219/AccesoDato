@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
-package practica.ii._sistemaformaciongenerico;
+package practica.iii._sisform_escritura;
 import java.util.InputMismatchException;
 
 /**
@@ -101,5 +101,11 @@ public class PracticaII_SistemaFormacion {
                 System.out.println("\n###ERROR: ha ocurrido un error inesperado.\n"+ex.getLocalizedMessage());
             }
         }while(opcion>0);
+        //GUARDAR BASE
+        if(baseDeDatos.guardarBase()==0){
+            System.out.println("\n++Se ha guardado la base de datos.");
+        }else{
+            System.out.println("\n--No se ha guardado la base de datos.");
+        }
     }
 }

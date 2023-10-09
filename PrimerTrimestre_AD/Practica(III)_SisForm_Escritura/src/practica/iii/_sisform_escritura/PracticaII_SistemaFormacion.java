@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
-package practica.ii._sistemaformaciongenerico;
+package practica.iii._sisform_escritura;
 import java.util.InputMismatchException;
 
 /**
@@ -102,4 +102,5 @@ public class PracticaII_SistemaFormacion {
             }
         }while(opcion>0);
     }
+    
 }
