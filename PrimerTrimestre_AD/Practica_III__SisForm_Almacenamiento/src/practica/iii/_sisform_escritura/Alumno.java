@@ -9,11 +9,15 @@ package practica.iii._sisform_escritura;
  * @author haoen
  */
 public class Alumno extends BaseAlumnoModulo{
+    private String apellido1;
+    private String apellido2;
     private Matricula matricula;
     
     //Builder
-    public Alumno(String nombre, int NIA){
+    public Alumno(String nombre, int NIA, String apellido1, String apellido2){
         super(nombre, NIA);
+        this.apellido1=apellido1;
+        this.apellido2=apellido2;
     }
     
     //MATRICULA
@@ -59,12 +63,12 @@ public class Alumno extends BaseAlumnoModulo{
     
     //GUARDAR EN FICHERO
     public String formatoFichero(){
-        //NIA_NOMBRE_NumMODULOS
-        String alumno= String.format("%-4 %-20s %d", this.getIDENTIFICADOR(), this.getNombre(), this.matricula.getNumeroModulos());
+        //NIA NOMBRE-APELLIDO1-APELLIDO2 NumMODULOS
+        String alumno= String.format("%-4 %-25s %d", this.getIDENTIFICADOR(), (this.getNombre()+"-"+this.apellido1+"-"+this.apellido2), this.matricula.getNumeroModulos());
         return alumno;
     }
     public String formatoFicheroMatricula(){
-        //NIA_ID[NOTA-NOTA-NOTA]CALIFICACION_ID[NOTA-NOTA-NOTA]CALIFICACION_...
+        //NIA ID_NOTA-NOTA-NOTA_CALIFICACION ID_NOTA-NOTA-NOTA_CALIFICACION ...
         String matricula=this.matricula.formatoFichero();
         return matricula;
     }
@@ -72,7 +76,7 @@ public class Alumno extends BaseAlumnoModulo{
     
     //IMPRIMIR
     public void imprimir() {
-        System.out.printf("NIA: %-8d Nombre: %-30s",this.getIDENTIFICADOR(), this.getNombre());
+        System.out.printf("NIA: %-8d Nombre: %-30s",this.getIDENTIFICADOR(), (this.getNombre()+" "+this.apellido1+" "+this.apellido2));
         if(comprobarMatricula()){
             System.out.printf(" Modulos: %-2d\n",this.matricula.getNumeroModulos());
         }else{

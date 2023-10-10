@@ -34,7 +34,7 @@ public class Modulo extends BaseAlumnoModulo {
     
     //GUARDAR EN FICHERO
     public String formatoFichero(){
-        //ID_NOMBRE_NIA-NIA-NIA-NIA...
+        //ID NOMBRE NIA-NIA-NIA-NIA...
         String modulo= String.format("%-4 %-20s ", this.getIDENTIFICADOR(), this.getNombre());
         for(int nia:this.alumnosMatriculados){
             modulo+=nia+"-";

@@ -39,13 +39,21 @@ public class Alumnos implements BDDAlumnosModulos{
         System.out.println("\n-Dar de alta alumno-");
         System.out.print("Introduzca el nombre del alumno: ");
         String nombre=sc.nextLine();
+        System.out.print("Introduzca el apellido del alumno: ");
+        String apellido1=sc.nextLine();
+        System.out.print("Introduzca segundo apellido (enter si no): ");
+        String apellido2=sc.nextLine();
         System.out.print("Introduzca NIA del alumno: ");
-        int nia=sc.nextInt();
+        int nia;
+        do{
+            nia=sc.nextInt();
+            if(nia<0 || nia>99999999) System.out.println("--Formato de NIA incorrecto, reintente");
+        }while(nia>0 && nia<=99999999);
         
         if(this.alumnos.containsKey(nia)){
             System.out.println("--Ya existe un alumno con ese NIA");
         }else{
-            if(this.alumnos.put(nia, new Alumno(nombre, nia))==null){
+            if(this.alumnos.put(nia, new Alumno(nombre, nia, apellido1, apellido2))==null){
                 System.out.println("++Se ha dado de alta al alumno (NIA:"+nia+")");
                 return 0;
             }
@@ -59,6 +67,8 @@ public class Alumnos implements BDDAlumnosModulos{
         System.out.println("\n-Dar de baja alumno-");
         System.out.print("Introduzca NIA del alumno: ");
         int nia=sc.nextInt();
+        
+        //HAY QUE IMPLEMENTAR DAR DE BAJA AUN
         
         if(this.alumnos.containsKey(nia)){
             this.alumnos.remove(nia);
@@ -76,9 +86,9 @@ public class Alumnos implements BDDAlumnosModulos{
     
     //MATRICULA
     public int matricularModulo(int id, int nia){
-//        if(this.alumnos.get(nia).matricularModulo(id)==0){
-//            return 0;
-//        }
+        if(this.alumnos.get(nia).matricularModulo(id)==0){
+            return 0;
+        }
         return -1;
     }
     public int modificarNota(){
@@ -120,33 +130,33 @@ public class Alumnos implements BDDAlumnosModulos{
         
         
         
-//        if(comprobar(nia)){
-//            if(this.alumnos.get(nia).comprobarMatricula()){
-//                this.alumnos.get(nia).imprimirModulos();
-//                System.out.print("Introduzca ID del m?dulo a modificar: ");
-//                int id=sc.nextInt();
-//                if(this.alumnos.get(nia).comprobarModulo(id)){
-//                    switch(menuCalificar()){
-//                        case 1 -> calificacion="Suspendido";
-//                        case 2 -> calificacion="Bien";
-//                        case 3 -> calificacion="Notable";
-//                        case 4 -> calificacion="Excelente";
-//                        default -> {
-//                            System.out.println("No se introdujo un valor valido");
-//                            return 0;
-//                        }
-//                    }
-//                    if(this.alumnos.get(nia).evaluarModulo(id, calificacion)==0){
-//                        System.out.println("++Se ha evaluado el modulo");
-//                        return 0;
-//                    } else{
-//                        System.out.println("--No se ha podido evaluar");
-//                    } 
-//                }
-//            }else{
-//                System.out.println("--Este alumno no tiene Matricula a?n");
-//            }
-//        }
+        if(comprobar(nia)){
+            if(this.alumnos.get(nia).comprobarMatricula()){
+                this.alumnos.get(nia).imprimirModulos();
+                System.out.print("Introduzca ID del m?dulo a modificar: ");
+                int id=sc.nextInt();
+                if(this.alumnos.get(nia).comprobarModulo(id)){
+                    switch(menuCalificar()){
+                        case 1 -> calificacion="Suspendido";
+                        case 2 -> calificacion="Bien";
+                        case 3 -> calificacion="Notable";
+                        case 4 -> calificacion="Excelente";
+                        default -> {
+                            System.out.println("No se introdujo un valor valido");
+                            return 0;
+                        }
+                    }
+                    if(this.alumnos.get(nia).evaluarModulo(id, calificacion)==0){
+                        System.out.println("++Se ha evaluado el modulo");
+                        return 0;
+                    } else{
+                        System.out.println("--No se ha podido evaluar");
+                    } 
+                }
+            }else{
+                System.out.println("--Este alumno no tiene Matricula a?n");
+            }
+        }
         return -1;
     }
     
@@ -207,7 +217,11 @@ public class Alumnos implements BDDAlumnosModulos{
     //GUARDAR EN FICHERO
     @Override
     public int guardarBase(){
-        
+        for (int nia : this.alumnos.keySet()) {
+            this.escritor= new 
+            String alumno=this.alumnos.get(nia).formatoFichero();
+            String matricula=this.alumnos.get(nia).formatoFicheroMatricula();
+        }
         return -1;
     }
     

@@ -79,7 +79,7 @@ public class Matricula {
     
     //GUARDAR EN FICHERO
     public String formatoFichero(){
-        //ID_NOTA-NOTA-NOTA_CALIFICACION ID[NOTA-NOTA-NOTA]CALIFICACION ...
+        //ID_NOTA-NOTA-NOTA-_CALIFICACION ID_NOTA-NOTA-NOTA-_CALIFICACION ...
         String matricula="";
         for(int id:this.modulosMatriculados.keySet()){
             matricula+=id+"_";

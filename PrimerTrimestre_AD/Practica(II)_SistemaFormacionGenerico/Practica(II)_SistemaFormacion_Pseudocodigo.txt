@@ -31,7 +31,7 @@ PROGRAMA practica(ii)_sistemaformacion
 
 
 	CLASE Alumnos
-		TreeMap<INT nia, Alumno> alumnos
+		TreeMap<INT, Alumno> alumnos
 									//ALUMNO
 		FUNCION BOOLEANO comprobar(INT nia)
 			SI (Alumno con nia se encuentra en "alumnos")
@@ -43,12 +43,26 @@ PROGRAMA practica(ii)_sistemaformacion
 		FUNCION INT darDeAlta()
 			Pedir nia <-- entrada
 			SI NO( LLAMAR comprobar(nia) )
-				LLAMAR alumnos.put(nia, nuevo Alumno)
+				LLAMAR Método añadir Alumno en el TreeMap
+				DEVOLVER 0
 			FIN SI
+			DEVOLVER -1
+		FIN FUNCION
+
+		FUNCION INT darDeBaja()
+			Pedir nia <-- entrada
+			SI ( LLAMAR comprobar(nia) )
+				LLAMAR Método eliminar Alumno en el TreeMap
+				DEVOLVER 0
+			FIN SI
+			DEVOLVER -1
 		FIN FUNCION
 									//MATRICULA
 		FUNCION INT matricularModulo(INT id, INT nia)
-			LLAMAR alumnos.get(nia).matricularModulo(id)
+			SI (LLAMAR Método Alumno(nia) para matricular Módulo(id) FUNCIONA CORRECTO)
+				DEVUELVE 0
+			FIN SI
+			DEVUELVE -1;
 		FIN FUNCION
 
 		FUNCION INT modificarNota()
@@ -58,7 +72,7 @@ PROGRAMA practica(ii)_sistemaformacion
 				Pedir notaAModificar<-- entrada
 				Pedir nuevaNota <-- entrada
 
-				LLAMAR alumnos.get(nia).modificarNota(id, notaAModificar, nota)
+				LLAMAR Método de Alumno(nia) para modificar nota de Modulo(id, notaAModificar, nota)
 			FIN SI
 		FIN FUNCION
 		
@@ -68,10 +82,10 @@ PROGRAMA practica(ii)_sistemaformacion
 				Pedir id <-- entrada
 				Pedir calificacion <-- entrada
 
-				LLAMAR alumnos.get(nia).evaluarModulo(id, calificacion)
+				LLAMAR Método de Alumno(nia) para evaluar Modulo(id, calificacion)
 			FIN SI
 		FIN FUNCION
-									//ACTUALIZAR
+									//ACTUALIZAR la funcion no esta acabado
 		FUNCION INT evaluarModulo()
 			Pedir nia <-- entrada
 			SI ( LLAMAR comprobar(nia) )
@@ -107,14 +121,14 @@ PROGRAMA practica(ii)_sistemaformacion
 
 	CLASE MAIN
 		FUNCION BOOLEAN comprobarListaAlumno()
-			SI NO( LLAMAR BaseDeDatos.alumnos.alumnos.isEmpty() )
+			SI NO( BaseDeDatos Alumno está vacía )
 				DEVOLVER true
 			FIN SI
 			DEVOLVER false
 		FIN FUNCION
 		FUNCION BOOLEAN comprobarListaModulo()
-			SI NO( LLAMAR BaseDeDatos.modulos.modulos.isEmpty() )
-			DEVOLVER true
+			SI NO( BaseDeDatos Módulo está vacía )
+				DEVOLVER true
 			FIN SI
 			DEVOLVER false
 		FIN FUNCION
@@ -124,52 +138,52 @@ PROGRAMA practica(ii)_sistemaformacion
 			INT opcion <-- 1
 			INT opcion2 <-- 1
 			HACER MIENTRAS( opcion > 0 )
-				BaseDeDatos.menu() --> opcion
+				LLAMAR Método imprimir Menú --> opcion
 				SWITCH
 					CASO 0:
 						IMPRIMIR "saliendo del programa"
 					CASO 1:
 						HACER MIENTRAS( opcion2 > 0 )
-							LLAMAR BaseDeDatos.alumnos.menu() --> opcion2
+							LLAMAR Método imprimir Menú Alumnos --> opcion2
 							SWITCH
 								CASO 0:		
 									IMPRIMIR "volviendo al menu previo"
 								CASO 1:
-									LLAMAR BaseDeDatos.alumnos.darDeAlta()
+									LLAMAR Método dar de Alta Alumno
 								CASO 2:
-									SI ( LLAMAR comprobarListaAlumno ) LLAMAR BaseDeDatos.alumnos.darDeBaja()
+									SI ( LLAMAR comprobarListaAlumno ) LLAMAR Método dar de Baja Alumno
 								CASO 3:
-									SI ( LLAMAR comprobarListaAlumno ) LLAMAR BaseDeDatos.alumnos.listar()
+									SI ( LLAMAR comprobarListaAlumno ) LLAMAR Método listar Alumno
 							FIN SWITCH
 						FIN HACER MIENTRAS
 					CASO 2:
 						HACER MIENTRAS( opcion2 > 0 )
-							BaseDeDatos.modulos.menu() --> opcion2
+							LLAMAR Método imprimir Menú Métodos --> opcion2
 							SWITCH
 								CASO 0:		
 									IMPRIMIR "volviendo al menu previo"
 								CASO 1:
-									LLAMAR BaseDeDatos.modulos.darDeAlta()
+									LLAMAR Método dar de Alta Módulos
 								CASO 2:
-									SI ( LLAMAR comprobarListaModulo ) LLAMAR BaseDeDatos.modulos.darDeBaja()
+									SI ( LLAMAR comprobarListaModulo ) LLAMAR Método dar de Baja Módulos
 								CASO 3:
-									SI ( LLAMAR comprobarListaModulo ) LLAMAR BaseDeDatos.modulos.listar()
+									SI ( LLAMAR comprobarListaModulo ) LLAMAR Método listar Módulos
 								CASO 3:
-									SI ( LLAMAR comprobarListaModulo ) LLAMAR BaseDeDatos.modulos.matricularAlumno()
+									SI ( LLAMAR comprobarListaModulo ) LLAMAR Método matricular Alumno
 							FIN SWITCH
 						FIN HACER MIENTRAS
 					CASO 3:
 						HACER MIENTRAS( opcion2 > 0 )
-							BaseDeDatos.alumnos.menuEvaluar() --> opcion2
+							LLAMAR Método imprimir Menú Matricula--> opcion2
 							SWITCH
 								CASO 0:		
 									IMPRIMIR "volviendo al menu previo"
 								CASO 1:
-									SI ( LLAMAR comprobarListaModulo ) LLAMAR BaseDeDatos.alumnos.evaluarModulo()
+									SI ( LLAMAR comprobarListaModulo ) LLAMAR Método Evaluar
 								CASO 2:
-									SI ( LLAMAR comprobarListaModulo ) LLAMAR BaseDeDatos.alumnos.modificarNota()
+									SI ( LLAMAR comprobarListaModulo ) LLAMAR Método Calificar
 								CASO 3:
-									SI ( LLAMAR comprobarListaModulo ) LLAMAR BaseDeDatos.alumnos.imprimirBoletin()
+									SI ( LLAMAR comprobarListaModulo ) LLAMAR Método Imprimir boletín
 							FIN SWITCH
 						FIN HACER MIENTRAS
 				FIN SWITCH
