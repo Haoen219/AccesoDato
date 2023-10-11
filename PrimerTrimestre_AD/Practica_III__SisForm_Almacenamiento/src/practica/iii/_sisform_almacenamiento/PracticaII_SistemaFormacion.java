@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
-package practica.iii._sisform_escritura;
+package practica.iii._sisform_almacenamiento;
 import java.util.InputMismatchException;
 
 /**
@@ -64,7 +64,7 @@ public class PracticaII_SistemaFormacion {
                                     case 1 -> BaseDeDatos.modulos.darDeAlta();
                                     case 2 -> {if(comprobarListaModulo()) BaseDeDatos.modulos.darDeBaja();}
                                     case 3 -> {if(comprobarListaModulo()) BaseDeDatos.modulos.listar();}
-                                    case 4 -> {if(comprobarListaModulo()) BaseDeDatos.modulos.matricularAlumno();}
+                                    case 4 -> {if(comprobarListaAlumno()) BaseDeDatos.modulos.matricularAlumno();}
                                     default -> System.out.println("--Opci?n no valida");
                                 }
                             }catch(InputMismatchException ex){

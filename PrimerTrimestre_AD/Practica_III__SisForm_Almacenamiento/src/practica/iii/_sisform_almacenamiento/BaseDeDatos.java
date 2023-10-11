@@ -2,10 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package practica.iii._sisform_escritura;
+package practica.iii._sisform_almacenamiento;
 
-import java.io.File;
-import java.io.PrintWriter;
+//import java.io.File;
+//import java.io.PrintWriter;
 import java.util.Scanner;
 
 /**
@@ -16,35 +16,24 @@ public class BaseDeDatos {
     static Alumnos alumnos= new Alumnos();
     static Modulos modulos= new Modulos();
     
-    File baseDeAlumnos= new File("Alumnos.txt");
-    File baseDeMatriculas= new File("Matriculas.txt");
-    File baseDeModulos= new File("Modulos.txt");
+//    File baseDeAlumnos= new File("Alumnos.txt");
+//    File baseDeMatriculas= new File("Matriculas.txt");
+//    File baseDeModulos= new File("Modulos.txt");
+//    
+//    PrintWriter escritor= null;
+//    Scanner lector=null;
     
-    PrintWriter escritor= null;
-    Scanner lector=null;
-    
-    public BaseDeDatos(){
-        if(this.baseDeAlumnos.exists() && !this.baseDeAlumnos.isDirectory()){
-            
-        }
-    }
+//    public BaseDeDatos(){
+//        if(this.baseDeAlumnos.exists() && !this.baseDeAlumnos.isDirectory()){
+//            
+//        }
+//    }
     
     //FICHERO
     public int guardarBase(){
-        
-        return -1;
-    }
-    
-    private int guardarAlumnos(){
-        
-        return -1;
-    }
-    private int guardarMatriculas(){
-        
-        return -1;
-    }
-    private int guardarModulos(){
-        
+        if(this.alumnos.guardarBase()==0 && this.modulos.guardarBase()==0){
+            return 0;
+        }
         return -1;
     }
     

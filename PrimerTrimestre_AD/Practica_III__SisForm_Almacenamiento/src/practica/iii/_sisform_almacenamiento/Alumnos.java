@@ -2,9 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package practica.iii._sisform_escritura;
+package practica.iii._sisform_almacenamiento;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.TreeMap;
@@ -23,6 +26,7 @@ public class Alumnos implements BDDAlumnosModulos{
     File baseDeMatriculas= new File("Matriculas.txt");
     
     PrintWriter escritor= null;
+    PrintWriter escritorMatricula= null;
     Scanner lector=null;
     
     
@@ -47,8 +51,8 @@ public class Alumnos implements BDDAlumnosModulos{
         int nia;
         do{
             nia=sc.nextInt();
-            if(nia<0 || nia>99999999) System.out.println("--Formato de NIA incorrecto, reintente");
-        }while(nia>0 && nia<=99999999);
+            if(nia<=0 || nia>99999999) System.out.println("--Formato de NIA incorrecto, reintente");
+        }while(nia<=0 || nia>99999999);
         
         if(this.alumnos.containsKey(nia)){
             System.out.println("--Ya existe un alumno con ese NIA");
@@ -217,10 +221,30 @@ public class Alumnos implements BDDAlumnosModulos{
     //GUARDAR EN FICHERO
     @Override
     public int guardarBase(){
-        for (int nia : this.alumnos.keySet()) {
-            this.escritor= new 
-            String alumno=this.alumnos.get(nia).formatoFichero();
-            String matricula=this.alumnos.get(nia).formatoFicheroMatricula();
+        String alumno;
+        String matricula;
+        try{
+            this.escritor= new PrintWriter(new FileWriter(this.baseDeAlumnos.getName()));
+            this.escritorMatricula= new PrintWriter(new FileWriter(this.baseDeMatriculas.getName()));
+            for (int nia : this.alumnos.keySet()) {
+                alumno=this.alumnos.get(nia).formatoFichero();
+                this.escritor.printf(alumno);
+                
+                if(this.alumnos.get(nia).comprobarMatricula()){
+                    matricula=this.alumnos.get(nia).formatoFicheroMatricula();
+                    this.escritorMatricula.printf(matricula);
+                }
+            }
+            return 0;
+        }catch(FileNotFoundException ex){
+            System.out.println("--No se ha podido abrir el archivo de Alumno, comprueba que exista");
+        }catch(IOException ex){
+            System.out.println("--No se ha podido abrir el archivo de Alumno, comprueba que exista");
+        }catch(Exception ex){
+            System.out.println("--Error inesperado\n"+ex.getLocalizedMessage());
+        }finally{
+            this.escritor.close();
+            this.escritorMatricula.close();
         }
         return -1;
     }

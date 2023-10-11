@@ -2,9 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package practica.iii._sisform_escritura;
+package practica.iii._sisform_almacenamiento;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.TreeMap;
 
@@ -14,7 +18,11 @@ import java.util.TreeMap;
  */
 public class Modulos implements BDDAlumnosModulos{
     TreeMap<Integer, Modulo> modulos= new TreeMap();
+    
     File baseDeModulos= new File("Modulos.txt");
+    
+    PrintWriter escritor= null;
+    Scanner lector=null;
     
     public Modulos(){}
     
@@ -116,7 +124,24 @@ public class Modulos implements BDDAlumnosModulos{
     //GUARDAR EN FICHERO
     @Override
     public int guardarBase(){
-        
+        String modulo;
+        try{
+            this.escritor= new PrintWriter(new FileWriter(this.baseDeModulos.getName()));
+            for (int id : this.modulos.keySet()) {
+                modulo=this.modulos.get(id).formatoFichero();
+
+                this.escritor.printf(modulo);
+            }
+            return 0;
+        }catch(FileNotFoundException ex){
+            System.out.println("--No se ha podido abrir el archivo de Modulo, comprueba que exista");
+        }catch(IOException ex){
+            System.out.println("--No se ha podido abrir el archivo de Modulo, comprueba que exista");
+        }catch(Exception ex){
+            System.out.println("--Error inesperado\n"+ex.getLocalizedMessage());
+        }finally{
+            this.escritor.close();
+        }
         return -1;
     }
     
