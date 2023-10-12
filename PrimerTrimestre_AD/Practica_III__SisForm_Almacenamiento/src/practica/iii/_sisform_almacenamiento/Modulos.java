@@ -127,6 +127,7 @@ public class Modulos implements BDDAlumnosModulos{
         String modulo;
         try{
             this.escritor= new PrintWriter(new FileWriter(this.baseDeModulos.getName()));
+            this.escritor.printf("%-4s %-20s NIA_Alumnos", "ID", "NOMBRE");
             for (int id : this.modulos.keySet()) {
                 modulo=this.modulos.get(id).formatoFichero();
 
@@ -141,6 +142,42 @@ public class Modulos implements BDDAlumnosModulos{
             System.out.println("--Error inesperado\n"+ex.getLocalizedMessage());
         }finally{
             this.escritor.close();
+        }
+        return -1;
+    }
+    @Override
+    public int importarBase(){
+        if(this.baseDeModulos.exists() && !this.baseDeModulos.isDirectory()){       //ALUMNO
+            try{
+                this.lector= new Scanner(this.baseDeModulos);
+                this.lector.nextLine();
+                while(this.lector.hasNextLine()){
+                    //ID NOMBRE NIA-NIA-NIA-NIA...
+                    String modulo= this.lector.nextLine();
+                    String[] datos= modulo.split(" +");
+                    
+                    int id=Integer.valueOf(datos[0]);
+                    this.modulos.put(id, new Modulo(datos[1], id));
+                    
+                    if(datos.length>2){
+                        String[] alumnos= datos[2].split("-");
+                        for(String alumno: alumnos){
+                            int nia=Integer.valueOf(alumno);
+                            this.modulos.get(id).matricularAlumno(nia);
+                        }
+                    }
+                }
+                System.out.println("++Se ha importado los modulos");
+                return 0;
+            }catch(NumberFormatException ex){
+                System.out.println("--Fallo importanto módulos, error al convertir el texto");
+            }catch(Exception ex){
+                System.out.println("--Fallo importanto módulos, error inesperado\n"+ex.getLocalizedMessage());
+            }finally{
+                this.lector.close();
+            }
+        }else{
+            System.out.println("--El fichero Modulo no existe");
         }
         return -1;
     }

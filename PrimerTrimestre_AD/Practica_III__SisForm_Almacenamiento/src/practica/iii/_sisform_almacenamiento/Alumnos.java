@@ -57,7 +57,7 @@ public class Alumnos implements BDDAlumnosModulos{
         if(this.alumnos.containsKey(nia)){
             System.out.println("--Ya existe un alumno con ese NIA");
         }else{
-            if(this.alumnos.put(nia, new Alumno(nombre, nia, apellido1, apellido2))==null){
+            if(this.alumnos.put(nia, new Alumno(nombre, nia))==null){
                 System.out.println("++Se ha dado de alta al alumno (NIA:"+nia+")");
                 return 0;
             }
@@ -226,6 +226,10 @@ public class Alumnos implements BDDAlumnosModulos{
         try{
             this.escritor= new PrintWriter(new FileWriter(this.baseDeAlumnos.getName()));
             this.escritorMatricula= new PrintWriter(new FileWriter(this.baseDeMatriculas.getName()));
+            
+            this.escritor.printf("%-8s %-25s MATRICULA", "NIA", "NOMBRE");
+            this.escritorMatricula.printf("%-8s MODULOS( ID_NOTA-NOTA-NOTA_CALIFICACION )", "NIA");
+            
             for (int nia : this.alumnos.keySet()) {
                 alumno=this.alumnos.get(nia).formatoFichero();
                 this.escritor.printf(alumno);
@@ -245,6 +249,80 @@ public class Alumnos implements BDDAlumnosModulos{
         }finally{
             this.escritor.close();
             this.escritorMatricula.close();
+        }
+        return -1;
+    }
+    @Override
+    public int importarBase(){
+        if(leerAlumno()==0 && leerMatricula()==0){
+            return 0;
+        }
+        return -1;
+    }
+    public int leerAlumno(){
+        if(this.baseDeAlumnos.exists() && !this.baseDeAlumnos.isDirectory()){       //ALUMNO
+            try{
+                this.lector= new Scanner(this.baseDeAlumnos);
+                this.lector.nextLine();
+
+                while(this.lector.hasNextLine()){
+                    //NIA NOMBRE-APELLIDO-APELLIDO NumMODULOS
+                    String alumno= this.lector.nextLine();
+                    String[] datos= alumno.split(" +");
+                    int nia=Integer.valueOf(datos[0]);
+                    this.alumnos.put(nia, new Alumno(datos[1].replace('-',' '), nia));
+                }
+                System.out.println("++Se ha importado los alumnos");
+                return 0;
+            }catch(NumberFormatException ex){
+                System.out.println("--Fallo importanto alumnos, error en convertir el texto en entero");
+            }catch(Exception ex){
+                System.out.println("--Fallo importanto alumnos, error inesperado\n"+ex.getLocalizedMessage());
+            }finally{
+                this.lector.close();
+            }
+        }else{
+            System.out.println("--El fichero Alumno no existe");
+        }
+        return -1;
+    }
+    public int leerMatricula(){
+        if(this.baseDeMatriculas.exists() && !this.baseDeMatriculas.isDirectory()){     //MATRICULA
+            try{
+                this.lector= new Scanner(this.baseDeMatriculas);
+                this.lector.nextLine();
+
+                while(this.lector.hasNextLine()){
+                    //NIA ID_NOTA-NOTA-NOTA_CALIFICACION ID_NOTA-NOTA-NOTA_CALIFICACION ...
+                    String matricula= this.lector.nextLine();
+                    String[] datos= matricula.split(" +");
+                    int nia=Integer.valueOf(datos[0]);
+                    
+                    for(int i=1; i<datos.length; i++){
+                        //ID_NOTA-NOTA-NOTA_CALIFICACION
+                        String [] datosModulo= datos[i].split("_");
+                        int id= Integer.valueOf(datosModulo[0]);
+                        String[] notas= datosModulo[1].split("-");
+                        if(BaseDeDatos.modulos.comprobar(id)){
+                            this.alumnos.get(nia).matricularModulo(id);
+                            for(int j=0; j<notas.length; j++){
+                                this.alumnos.get(nia).modificarNota(id, (j+1), Double.valueOf(notas[j]));
+                            }
+                            this.alumnos.get(nia).evaluarModulo(id, datosModulo[2]);
+                        }
+                    }
+                }
+                System.out.println("++Se ha importado las matriculas");
+                return 0;
+            }catch(NumberFormatException ex){
+                System.out.println("--Fallo importanto matriculas, error en convertir el texto en valores");
+            }catch(Exception ex){
+                System.out.println("--Fallo importanto matriculas, error inesperado\n"+ex.getLocalizedMessage());
+            }finally{
+                this.lector.close();
+            }
+        }else{
+            System.out.println("--El fichero Matricula no existe");
         }
         return -1;
     }

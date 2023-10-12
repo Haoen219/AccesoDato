@@ -15,5 +15,6 @@ public interface BDDAlumnosModulos{
     int menu();
     int actualizar(int identificador);
     int guardarBase();
+    int importarBase();
     void listar();
 }

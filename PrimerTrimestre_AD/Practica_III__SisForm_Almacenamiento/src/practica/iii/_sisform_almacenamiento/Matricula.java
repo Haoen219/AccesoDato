@@ -87,13 +87,8 @@ public class Matricula {
             for(int i=0; i<this.modulosMatriculados.get(id).length; i++){
                 matricula+=this.modulosMatriculados.get(id)[i]+"-";
             }
-            
-//            for(double nota:this.modulosMatriculados.get(id)){
-//                matricula+=nota+"-";
-//            }
             matricula+="_"+this.calificaciones.get(id)+" ";
         }
-        System.out.println("matricula: "+matricula);
         return matricula;
     }
     

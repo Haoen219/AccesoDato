@@ -1,1 +1,3 @@
-1234 Hao-hao-hao               1
+NIA      NOMBRE                    MATRICULA
+1234 Haoen                     1
+12345678 Jose-Manuel               -Sin Matricula-

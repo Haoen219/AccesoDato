@@ -102,10 +102,6 @@ public class PracticaII_SistemaFormacion {
             }
         }while(opcion>0);
         //GUARDAR BASE
-        if(baseDeDatos.guardarBase()==0){
-            System.out.println("\n++Se ha guardado la base de datos.");
-        }else{
-            System.out.println("\n--No se ha guardado la base de datos.");
-        }
+       baseDeDatos.guardarBase();
     }
 }

@@ -23,17 +23,25 @@ public class BaseDeDatos {
 //    PrintWriter escritor= null;
 //    Scanner lector=null;
     
-//    public BaseDeDatos(){
-//        if(this.baseDeAlumnos.exists() && !this.baseDeAlumnos.isDirectory()){
-//            
-//        }
-//    }
+    public BaseDeDatos(){
+        importarBase();
+    }
     
     //FICHERO
     public int guardarBase(){
         if(this.alumnos.guardarBase()==0 && this.modulos.guardarBase()==0){
+            System.out.println("++Se ha guardado la base de Datos");
             return 0;
         }
+        System.out.println("--No se ha guardado la base de Datos");
+        return -1;
+    }
+    public int importarBase(){
+        if( this.modulos.importarBase()==0 && this.alumnos.importarBase()==0){
+            System.out.println("++Se ha importado la base de Datos");
+            return 0;
+        }
+        System.out.println("--No se ha importado la base de Datos");
         return -1;
     }
     
