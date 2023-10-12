@@ -4,7 +4,6 @@
  */
 package practica.ii._sistemaformaciongenerico;
 
-import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -17,6 +16,15 @@ public class Matricula {
     final private String CALIFICACIONDEFECTO="Sin calificar";
     
     public Matricula(){}
+    
+    public boolean comprobarModulo(int id){
+        if (this.modulosMatriculados.containsKey(id)){
+            return true;
+        }else{
+            System.out.println("--Modulo no existe en la matricula");
+        }
+        return false;
+    }
     
     public int matricularModulo(int id){           //los modulos reci?n matriculados no tiene notas
         if(this.modulosMatriculados.put(id, new Double[3])==null && this.calificaciones.put(id, this.CALIFICACIONDEFECTO)==null){
@@ -48,14 +56,7 @@ public class Matricula {
         return -1;
     }
     
-    public boolean comprobarModulo(int id){
-        if (this.modulosMatriculados.containsKey(id)){
-            return true;
-        }else{
-            System.out.println("--Modulo no existe en la matricula");
-        }
-        return false;
-    }
+
     
     //IMPRIMIR NOTAS
     public void imprimirModulos(){

@@ -1,4 +1,7 @@
 PROGRAMA practica(ii)_sistemaformacion
+
+
+
 	INTERFAZ BDDAlumnosModulos
 		int darDeAlta()
     		int darDeBaja()
@@ -7,6 +10,11 @@ PROGRAMA practica(ii)_sistemaformacion
     		int actualizar(int identificador)
     		void listar()
 	FIN INTERFAZ
+
+
+
+
+
 
 
 	CLASE ABSTRACTO BaseAlumnoModulo
@@ -18,9 +26,14 @@ PROGRAMA practica(ii)_sistemaformacion
 	FIN CLASE ABSTRACTO
 
 
+
+
+
+
+
 	CLASE BaseDeDato
-		ESTÁTICO Alumnos alumnos
-		ESTÁTICO Modulos modulos
+		INSTANCIA ESTÁTICO Alumnos alumnos
+		INSTANCIA ESTÁTICO Modulos modulos
 
 		FUNCION INT menu()
 			IMPRIMIR -menu-
@@ -30,9 +43,14 @@ PROGRAMA practica(ii)_sistemaformacion
 	FIN CLASE
 
 
+
+
+
+
+
 	CLASE Alumnos
-		TreeMap<INT, Alumno> alumnos
-									//ALUMNO
+		INSTANCIA TreeMap<INT, Alumno> alumnos
+														//ALUMNO
 		FUNCION BOOLEANO comprobar(INT nia)
 			SI (Alumno con nia se encuentra en "alumnos")
 				DEVOLVER true
@@ -43,7 +61,7 @@ PROGRAMA practica(ii)_sistemaformacion
 		FUNCION INT darDeAlta()
 			Pedir nia <-- entrada
 			SI NO( LLAMAR comprobar(nia) )
-				LLAMAR Método añadir Alumno en el TreeMap
+				LLAMAR método añadir Alumno en el TreeMap
 				DEVOLVER 0
 			FIN SI
 			DEVOLVER -1
@@ -52,12 +70,14 @@ PROGRAMA practica(ii)_sistemaformacion
 		FUNCION INT darDeBaja()
 			Pedir nia <-- entrada
 			SI ( LLAMAR comprobar(nia) )
-				LLAMAR Método eliminar Alumno en el TreeMap
-				DEVOLVER 0
+				LLAMAR método eliminar Alumno en el TreeMap
+				SI ( LLAMAR método actualizar de Modulos(nia) == 0 )
+					DEVOLVER 0
+				FIN SI
 			FIN SI
 			DEVOLVER -1
 		FIN FUNCION
-									//MATRICULA
+														//MATRICULA
 		FUNCION INT matricularModulo(INT id, INT nia)
 			SI (LLAMAR Método Alumno(nia) para matricular Módulo(id) FUNCIONA CORRECTO)
 				DEVUELVE 0
@@ -73,7 +93,9 @@ PROGRAMA practica(ii)_sistemaformacion
 				Pedir nuevaNota <-- entrada
 
 				LLAMAR Método de Alumno(nia) para modificar nota de Modulo(id, notaAModificar, nota)
+				DEVUELVE 0
 			FIN SI
+			DEVUELVE -1
 		FIN FUNCION
 		
 		FUNCION INT evaluarModulo()
@@ -83,39 +105,292 @@ PROGRAMA practica(ii)_sistemaformacion
 				Pedir calificacion <-- entrada
 
 				LLAMAR Método de Alumno(nia) para evaluar Modulo(id, calificacion)
+				DEVUELVE 0
 			FIN SI
+			DEVUELVE -1
 		FIN FUNCION
-									//ACTUALIZAR la funcion no esta acabado
-		FUNCION INT evaluarModulo()
-			Pedir nia <-- entrada
-			SI ( LLAMAR comprobar(nia) )
-				Pedir id <-- entrada
-				Pedir calificacion <-- entrada
+														//ACTUALIZAR
+		FUNCION INT actualizar(INT id)
+			PARA cada elemento de "alumnos"
+				SI ( alummno tiene Matricula )
+					Llamar método eliminar Modulo de alumno
+				FIN SI
+			FIN PARA
+			RETURN 0
+		FIN FUNCION
+														//MENU
+		FUNCION INT menu()
+			IMPRIMIR menu de Mantener Alumnos
+			PEDIR opcion <-- entrada
+			RETURN opcion
+		FIN FUNCION
 
-				LLAMAR alumnos.get(nia).evaluarModulo(id, calificacion)
+		FUNCION INT menuEvaluar()
+			IMPRIMIR menu de Evaluar
+			PEDIR opcion <-- entrada
+			RETURN opcion
+		FIN FUNCION
+
+		FUNCION INT menuCalificar()
+			IMPRIMIR menu Calificaciones
+			PEDIR opcion <-- entrada
+			RETURN opcion
+		FIN FUNCION
+														//IMPRIMIR
+		FUNCION void listar()
+			PARA cada elemento de "alumnos"
+				Llamar método de imprimir del alumno
+			FIN PARA
+		FIN FUNCION
+
+		FUNCION void listar()
+			PEDIR nia <-- entrada
+			SI ( LLAMAR comprobar(nia) )
+				SI ( alummno tiene Matricula )
+					Llamar método imprimir boletín del alumno
+				FIN SI
 			FIN SI
 		FIN FUNCION
 	FIN CLASE
+
+
+
+
+
 
 
 	CLASE Modulos
+		INSTANCIA TreeMap<INT, Modulo> modulos
+														//MODULO
+		FUNCION BOOLEANO comprobar(INT id)
+			SI (Modulo con id se encuentra en "modulos")
+				DEVOLVER true
+			FIN SI
+			DEVOLVER false
+		FIN FUNCION
 
+		FUNCION INT darDeAlta()
+			Pedir nombre <-- entrada
+			SI ( "modulos" está vacía )
+				INT id <-- 1
+			SINO
+				INT id <-- id de la última entrada +1
+			FIN SI
+
+			SI NO( Llamar comprobar(id) )
+				LLAMAR método añadir Modulo en el TreeMap
+				DEVOLVER 0
+			FIN SI
+			DEVOLVER -1
+		FIN FUNCION
+
+		FUNCION INT darDeBaja()
+			Pedir id <-- entrada
+			SI ( LLAMAR comprobar(id) )
+				LLAMAR método eliminar Alumno en el TreeMap
+				SI ( LLAMAR método actualizar de Alumnos(id) == 0 )
+					DEVOLVER 0
+				FIN SI
+			FIN SI
+			DEVOLVER -1
+		FIN FUNCION
+														//MATRICULA
+		FUNCION INT matricularAlumno()
+			Pedir id <-- entrada
+			SI ( LLAMAR comprobar(id) )
+				Pedir nia <-- entrada
+				SI ( LLAMAR método comprobar(nia) de Alumnos )
+					LLAMAR método matricular Alumno de modulo(id)
+					LLAMAR método matricular Modulo de alumno(nia)			
+					DEVOLVER 0
+				FIN SI
+			DEVOLVER -1
+		FIN FUNCION
+														//ACTUALIZAR
+		FUNCION INT actualizar(INT nia)
+			PARA cada elemento de "modulos"
+				LLAMAR método anular matriculaAlumno del Modulo
+			FIN PARA
+			RETURN 0
+		FIN FUNCION
+														//MENU
+		FUNCION INT menu()
+			IMPRIMIR menu de Mantener Modulos
+			PEDIR opcion <-- entrada
+			RETURN opcion
+		FIN FUNCION
+														//IMPRIMIR
+		FUNCION void listar()
+			PARA cada elemento de "modulos"
+				Llamar método de imprimir del modulo
+			FIN PARA
+		FIN FUNCION
+														//GETTER
+		FUNCION Modulo getModulo(INT id)
+			DEVOLVER el Modulo(id) de "modulos"
+		FIN FUNCION
 	FIN CLASE
+
+
+
+
+
 
 
 	CLASE Alumno
+		Matricula matricula
+														//MATRICULA
+		FUNCION boolean comprobarMatricula()
+			SI( "matricula" no esta iniciada )
+				DEVUELVE false
+			FIN SI
+			DEVUELVE true
+		FIN FUNCION
 
+		FUNCION boolean comprobarModulo(INT id)
+			DEVUELVE el resultado del método comprobarModulo de la matricula;
+		FIN FUNCION
+
+		FUNCION int modificarNota(INT id, INT posicion, DOUBLE nota)
+			SI( LLAMAR método de la matricula modificarNota(id, posicion, nota) == 0 )
+				DEVUELVE 0
+			FIN SI
+			DEVUELVE -1
+		FIN FUNCION
+
+		FUNCION int evaluarModulo(INT id, STRING calificacion)
+			SI( LLAMAR método de la matricula evaluarModulo(id, calificacion) == 0 )
+				DEVUELVE 0
+			FIN SI
+			DEVUELVE -1
+		FIN FUNCION
+														//MODULO
+		FUNCION int matricularModulo(INT id)
+			Si ( LLAMAR comprobarMatricula )
+				INSTANCIAR "matricula" <-- new Matricula
+			SINO
+				SI ( LLAMAR método de la matricula matricularModulo(id) == 0 )
+					DEVUELVE 0
+				FIN SI
+			FIN SI
+			DEVUELVE -1
+		FIN FUNCION
+
+		FUNCION int eliminarModulos(INT id)
+			SI( LLAMAR método de la matricula eliminarModulo(id) == 0 )
+				DEVUELVE 0
+			FIN SI
+			DEVUELVE -1
+		FIN FUNCION
+														//IMPRIMIR
+		FUNCION void imprimir()
+			IMPRIMIR datos del Alumno
+		FIN FUNCION
+
+		FUNCION void imprimirModulos()
+			IMPRIMIR datos del "matricula" del Alumno
+		FIN FUNCION
+
+		FUNCION void imprimirBoletin()
+			LLAMAR método imprimir
+			LLAMAR método imprimirModulos
+		FIN FUNCION
 	FIN CLASE
+
+
+
+
+
 
 
 	CLASE Modulo
+		INSTANCIA TreeSet<INT, Modulo> modulos
+														//ALUMNO
+		FUNCION int matricularAlumno(INT nia)
+			SI ( LLAMAR método añadir Alumno(nia) en el TreeSet )
+				DEVOLVER 0
+			FIN SI
+			DEVOLVER -1
+		FIN FUNCION
 
+		FUNCION int anularMatriculaAlumno(INT nia)
+			SI ( LLAMAR método eliminar Alumno(nia) en el TreeSet )
+				DEVOLVER 0
+			FIN SI
+			DEVOLVER -1
+		FIN FUNCION
+														//IMPRIMIR
+		FUNCION void imprimir()
+			IMPRIMIR datos del Modulo
+		FIN FUNCION
 	FIN CLASE
+
+
+
+
+
 
 
 	CLASE Matricula
+		INSTANCIA TreeMap<INT, Double[]> modulosMatriculados
+		INSTANCIA TreeMap<INT, String> calificaciones
+		STRING calificacionesPorDefecto <-- "Sin calificar"
+														//MODULO
+		FUNCION boolean comprobarModulo(INT id)
+			SI ( en "modulosMatriculas" se encuentra el id )
+				DEVOLVER true
+			FIN SI
+			DEVOLVER false
+		FIN FUNCION
 
+		FUNCION int matricularModulo(INT id)
+			SI (LLAMAR método agregar Modulo(id, new Double[3]) en el TreeSet "modulosMatriculados" == 0  Y
+				LLAMAR método agregar Modulo(id, calificacionesPorDefecto) en el TreeSet "calificaciones, " == 0)
+				DEVOLVER 0
+			FIN SI
+			DEVOLVER -1
+		FIN FUNCION
+
+		FUNCION int eliminararModulo(INT id)
+			SI (LLAMAR método eliminar Modulo(id) en el TreeSet "modulosMatriculados" == NULL  Y
+				LLAMAR método eliminar Modulo(id) en el TreeSet "calificaciones, " == NULL)
+				DEVOLVER 0
+			FIN SI
+			DEVOLVER -1
+		FIN FUNCION
+
+		FUNCION int modificarNota(INT id, INT posicion, DOUBLE nota)
+			DOUBLE[] comodin <-- Double[] de la posicion(id) en "modulosMatriculados"
+			comodin[posicion] <-- nota
+
+			SI (LLAMAR método agregar Modulo(id, comodin) en el TreeSet "modulosMatriculados" != NULL)
+				DEVOLVER 0
+			FIN SI
+			DEVOLVER -1
+		FIN FUNCION
+														//IMPRIMIR
+		FUNCION void imprimirModulos()
+			PARA cada entrada en "modulosMatriculados" --> id
+				MODULO modulo <-- LLAMAR método de BaseDeDatos.modulos getModulo()
+				IMPRIMIR modulo
+
+				SI ( "modulosMatriculados" tiene entrada como el id )
+					PARA cada entrada de modulosMatriculados
+						IMPRIMIR entrada
+					FIN PARA
+					IMPRIMIR entrada(id) de "calificaciones"
+				FIN SI
+			FIN PARA
+		FIN FUNCION
+														//GETTER
+		FUNCION int getNumeroModulos()
+			DEVOLVER tamaño de "modulosMatriculados"
+		FIN FUNCION
 	FIN CLASE
+
+
+
+
 
 
 
@@ -168,7 +443,7 @@ PROGRAMA practica(ii)_sistemaformacion
 									SI ( LLAMAR comprobarListaModulo ) LLAMAR Método dar de Baja Módulos
 								CASO 3:
 									SI ( LLAMAR comprobarListaModulo ) LLAMAR Método listar Módulos
-								CASO 3:
+								CASO 4:
 									SI ( LLAMAR comprobarListaModulo ) LLAMAR Método matricular Alumno
 							FIN SWITCH
 						FIN HACER MIENTRAS

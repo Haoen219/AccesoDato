@@ -111,11 +111,6 @@ public class Modulos implements BDDAlumnosModulos{
         return opcion;
     }
     
-    //GETTER
-    public Modulo getModulo(int id){
-        return this.modulos.get(id);
-    }
-    
     //IMPRIMIR
     public void listar(){
         System.out.println("\n-Listar modulos-");
@@ -123,5 +118,10 @@ public class Modulos implements BDDAlumnosModulos{
             this.modulos.get(nia).imprimir();
         }
         System.out.println("--Fin de la lista");
+    }
+    
+    //GETTER
+    public Modulo getModulo(int id){
+        return this.modulos.get(id);
     }
 }
