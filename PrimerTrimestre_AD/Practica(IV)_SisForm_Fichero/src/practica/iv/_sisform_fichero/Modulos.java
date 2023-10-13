@@ -28,13 +28,34 @@ public class Modulos implements BDDAlumnosModulos {
     PrintWriter escritor = null;
     Scanner lector = null;
 
+    public Modulos() {
+        instanciarFile();
+    }
+
     //FILE
+    private void instanciarFile() {
+        try {
+            if (!this.baseDeModulos.exists()) {
+                this.escritor = new PrintWriter(new FileWriter(this.baseDeModulos, true));
+                String moduloFormato = String.format("%-4s %-25s NIA_Alumnos", "ID", "NOMBRE");
+                this.escritor.write(this.lector.nextLine());
+                this.escritor.close();
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("--No se ha podido abrir un archivo, error dando de Baja");
+        } catch (IOException ex) {
+            System.out.println("--No se ha podido abrir un archivo, error dando de Baja");
+        } catch (Exception ex) {
+            System.out.println("--Error inesperado dando de Baja\n" + ex);
+        }
+    }
+
     public boolean comprobarLista() {
         if (this.baseDeModulos.exists() && !this.baseDeModulos.isDirectory()) {
             try {
                 this.lector = new Scanner(this.baseDeModulos);
                 this.lector.nextLine();
-                if (this.lector.hasNextLine()) {
+                while (this.lector.hasNextLine()) {
                     return true;
                 }
             } catch (InputMismatchException ex) {
@@ -42,7 +63,7 @@ public class Modulos implements BDDAlumnosModulos {
             } catch (NoSuchElementException ex) {
                 System.out.println("--Error leyendo Modulo, no hay más líneas en el archivo");
             } catch (Exception ex) {
-                System.out.println("--Error leyendo Modulo, error inesperado%n" + ex.getMessage());
+                System.out.println("--Error leyendo Modulo, error inesperado\n" + ex);
             } finally {
                 this.lector.close();
             }
@@ -57,18 +78,20 @@ public class Modulos implements BDDAlumnosModulos {
             try {
                 this.lector = new Scanner(this.baseDeModulos);
                 this.lector.nextLine();
-                if (this.lector.hasNextLine()) {
+                while (this.lector.hasNextLine()) {
                     String modulo = this.lector.nextLine();
                     String[] informacion = modulo.split(" +");
                     ids.add(Integer.valueOf(informacion[0]));
                 }
-                id = ids.last();
+                if (!ids.isEmpty()) {
+                    id = ids.last();
+                }
             } catch (InputMismatchException ex) {
-                System.out.println("--Error leyendo Modulo, el elemento no era del tipo esperado");
+                System.out.println("--Error buscando ultimo ID, el elemento no era del tipo esperado");
             } catch (NoSuchElementException ex) {
-                System.out.println("--Error leyendo Modulo, no hay más líneas en el archivo");
+                System.out.println("--Error buscando ultimo ID, no hay más líneas en el archivo");
             } catch (Exception ex) {
-                System.out.println("--Error leyendo Modulo, error inesperado%n" + ex.getMessage());
+                System.out.println("--Error buscando ultimo ID, error inesperado\n" + ex);
             } finally {
                 this.lector.close();
             }
@@ -77,13 +100,17 @@ public class Modulos implements BDDAlumnosModulos {
     }
 
     private void transformarModulo(String modulo) {
-        String[] informacion = modulo.split(" +");
-        this.moduloComodin = new Modulo(informacion[1], Integer.parseInt(informacion[0]));
-        String[] nias = informacion[2].split("-");
-        for (int i = 0; i < nias.length; i++) {
-            //ID_NOMBRE_NIA-NIA-NIA-...
-            int nia = Integer.parseInt(nias[i]);
-            this.moduloComodin.matricularAlumno(nia);
+        if (modulo != null) {
+            String[] informacion = modulo.split(" +");
+            this.moduloComodin = new Modulo(informacion[1].replace('-', ' '), Integer.parseInt(informacion[0]));
+            if (informacion.length > 2) {
+                String[] nias = informacion[2].split("-");
+                for (int i = 0; i < nias.length; i++) {
+                    //ID_NOMBRE_NIA-NIA-NIA-...
+                    int nia = Integer.parseInt(nias[i]);
+                    this.moduloComodin.matricularAlumno(nia);
+                }
+            }
         }
     }
 
@@ -91,72 +118,63 @@ public class Modulos implements BDDAlumnosModulos {
         String modulo;
         try {
             if (this.baseDeModulos.exists() && !this.baseDeModulos.isDirectory()) {
-                this.lector = new Scanner(this.baseDeModulos);
-                if (this.lector.hasNextLine()) {
-                    modulo = this.lector.nextLine();
+                Scanner lectorTemporal = new Scanner(this.baseDeModulos);
+                lectorTemporal.nextLine();
+                while (lectorTemporal.hasNextLine()) {
+                    modulo = lectorTemporal.nextLine();
                     String[] informacion = modulo.split(" +");
                     if (id == Integer.parseInt(informacion[0])) {
+                        lectorTemporal.close();
                         return modulo;
                     }
                 }
-                System.out.println("--No se ha encontrado ese modulo");
+                lectorTemporal.close();
             }
         } catch (InputMismatchException ex) {
-            System.out.println("--El elemento no era del tipo esperado");
+            System.out.println("--Error buscando módulo, el elemento no era del tipo esperado");
         } catch (NoSuchElementException ex) {
-            System.out.println("--No hay más líneas en el archivo");
+            System.out.println("--Error buscando módulo, no hay más líneas en el archivo");
         } catch (NumberFormatException ex) {
-            System.out.println("--No se pudo convertir el String en entero");
+            System.out.println("--Error buscando módulo, no se pudo convertir el String en entero");
         } catch (Exception ex) {
-            System.out.println("--Error inesperado%n" + ex.getMessage());
-        } finally {
-            this.lector.close();
+            System.out.println("--Error buscando módulo, error inesperado\n" + ex);
         }
         return null;
     }
 
     public int escribirModulo(int id) {
-        File copiaModulo = new File("modulosCopia.txt");
-        String nombreOriginal = this.baseDeModulos.getName();
-        try {
-            this.escritor = new PrintWriter(new FileWriter(copiaModulo, true));
-            this.lector = new Scanner(this.baseDeModulos);
-            this.escritor.write(this.lector.nextLine());
+        String comodin = "";
+        if (this.moduloComodin != null) {
+            try {
+                Scanner lectorTemporal = new Scanner(this.baseDeModulos);
+                comodin = lectorTemporal.nextLine();
 
-            transformarModulo(buscarModulo(id));
-            if (this.moduloComodin != null) {
-                while (this.lector.hasNextLine()) {
-                    String modulo = this.lector.nextLine();
+                String aCopiar = "";
+                while (lectorTemporal.hasNextLine()) {
+                    String modulo = lectorTemporal.nextLine();
                     String[] data = modulo.split(" +");
-                    if (Integer.parseInt(data[0]) != id) {
-                        this.escritor.write(this.moduloComodin.formatoFichero());
+                    if (Integer.parseInt(data[0]) == id) {
+                        aCopiar += this.moduloComodin.formatoFichero();
+                    } else {
+                        aCopiar += "\n" + modulo;
                     }
                 }
+                lectorTemporal.close();
+
+                this.escritor = new PrintWriter(new FileWriter(this.baseDeModulos, false));
+                this.escritor.write(comodin);
+                this.escritor.write(aCopiar);
                 this.escritor.close();
-                this.lector.close();
-
-                this.baseDeModulos = copiaModulo;
-                if (copiaModulo.renameTo(new File("comodin.txt"))) {
-                    System.out.println("Se ha cambiado modulosCopia.txt");
-                } else {
-                    System.out.println("No se ha cambiado");
-                }
-
-                if (this.baseDeModulos.renameTo(new File(nombreOriginal))) {
-                    System.out.println("Se ha cambiado modulos.txt");
-                } else {
-                    System.out.println("No se ha cambiado");
-                }
+                return 0;
+            } catch (FileNotFoundException ex) {
+                System.out.println("--Error escribiendo módulo, no se ha podido abrir un archivo");
+            } catch (IOException ex) {
+                System.out.println("--Error escribiendo módulo, no se ha podido abrir un archivo");
+            } catch (Exception ex) {
+                System.out.println("--Error escribiendo módulo, error inesperado\n" + ex);
+            } finally {
+                this.moduloComodin = null;
             }
-            return 0;
-        } catch (FileNotFoundException ex) {
-            System.out.println("--No se ha podido abrir un archivo, error dando de Baja");
-        } catch (IOException ex) {
-            System.out.println("--No se ha podido abrir un archivo, error dando de Baja");
-        } catch (Exception ex) {
-            System.out.println("--Error inesperado dando de Baja%n" + ex.getMessage());
-        } finally {
-            this.moduloComodin = null;
         }
         return -1;
     }
@@ -183,7 +201,7 @@ public class Modulos implements BDDAlumnosModulos {
             try {
                 this.escritor = new PrintWriter(new FileOutputStream(this.baseDeModulos, true));
                 escritor.write(this.moduloComodin.formatoFichero());
-                if (buscarModulo(id) != null) {
+                if (buscarModulo(id) == null) {
                     System.out.println("++Se ha dado de alta al m?dulo (ID:" + id + ")");
                     return 0;
                 } else {
@@ -191,11 +209,11 @@ public class Modulos implements BDDAlumnosModulos {
                 }
 
             } catch (FileNotFoundException ex) {
-                System.out.println("--No se ha podido abrir un archivo, error dando de Alta");
+                System.out.println("--Error dando de alta módulo, no se ha podido abrir un archivo");
             } catch (IOException ex) {
-                System.out.println("--No se ha podido abrir un archivo, error dando de Alta");
+                System.out.println("--Error dando de alta módulo, no se ha podido abrir un archivo");
             } catch (Exception ex) {
-                System.out.println("--Error inesperado dando de Alta%n" + ex.getMessage());
+                System.out.println("--Error dando de alta módulo, error inesperado\n" + ex);
             } finally {
                 this.escritor.close();
                 this.moduloComodin = null;
@@ -207,49 +225,48 @@ public class Modulos implements BDDAlumnosModulos {
     @Override
     public int darDeBaja() {
         Scanner sc = new Scanner(System.in);
-        File copiaModulos = new File("modulosCopia.txt");
-        String nombreOriginal = this.baseDeModulos.getName();
         System.out.println("\n-Dar de baja m?dulo-");
         System.out.print("Introduzca ID del m?dulo: ");
         int id = sc.nextInt();
+        String comodin = "";
         if (buscarModulo(id) != null) {
             try {
-                this.escritor = new PrintWriter(new FileWriter(copiaModulos, true));
                 this.lector = new Scanner(this.baseDeModulos);
-                this.escritor.write(this.lector.nextLine());
+                comodin = this.lector.nextLine();
 
-                //COPIAR Y ESCRIBIR DE NUEVO
-                while (this.lector.hasNextLine()) {
-                    String modulo = this.lector.nextLine();
-                    String[] data = modulo.split(" +");
-                    if (Integer.parseInt(data[0]) != id) {
-                        this.escritor.write(modulo);
+                transformarModulo(buscarModulo(id));
+                String aCopiar = "";
+                if (this.moduloComodin != null) {
+                    while (this.lector.hasNextLine()) {
+                        String modulo = this.lector.nextLine();
+                        String[] data = modulo.split(" +");
+                        if (Integer.parseInt(data[0]) != id) {
+                            aCopiar += "\n" + modulo;
+                        }
                     }
                 }
-
-                this.baseDeModulos = copiaModulos;
-                if (copiaModulos.renameTo(new File("comodin.txt"))) {
-                    System.out.println("Se ha cambiado modulosCopia.txt");
-                } else {
-                    System.out.println("No se ha cambiado");
-                }
-
-                if (this.baseDeModulos.renameTo(new File(nombreOriginal))) {
-                    System.out.println("Se ha cambiado modulo.txt");
-                } else {
-                    System.out.println("No se ha cambiado");
-                }
-                return 0;
-            } catch (FileNotFoundException ex) {
-                System.out.println("--No se ha podido abrir un archivo, error dando de Baja");
-            } catch (IOException ex) {
-                System.out.println("--No se ha podido abrir un archivo, error dando de Baja");
-            } catch (Exception ex) {
-                System.out.println("--Error inesperado dando de Baja%n" + ex.getMessage());
-            } finally {
-                this.escritor.close();
                 this.lector.close();
+
+                this.escritor = new PrintWriter(new FileWriter(this.baseDeModulos, false));
+                this.escritor.write(comodin);
+                this.escritor.write(aCopiar);
+                this.escritor.close();
+                if (BaseDeDatos.alumnos.actualizar(id) == 0) {
+                    System.out.println("++Se ha dado de baja");
+                    return 0;
+                }
+                System.out.println("--No se ha dado de baja");
+            } catch (FileNotFoundException ex) {
+                System.out.println("--Error escribiendo módulo, no se ha podido abrir un archivo");
+            } catch (IOException ex) {
+                System.out.println("--Error escribiendo módulo, no se ha podido abrir un archivo");
+            } catch (Exception ex) {
+                System.out.println("--Error escribiendo módulo, error inesperado\n" + ex);
+            } finally {
+                this.moduloComodin = null;
             }
+        } else {
+            System.out.println("--No existe ese Módulo");
         }
         return -1;
     }
@@ -260,19 +277,24 @@ public class Modulos implements BDDAlumnosModulos {
         System.out.println("\n-Matricular alumno-");
         System.out.print("Introduzca ID del m?dulo: ");
         int id = sc.nextInt();
-
-        transformarModulo(buscarModulo(id));
-        if (this.moduloComodin != null) {
+        if (buscarModulo(id) != null) {
+            transformarModulo(buscarModulo(id));
             System.out.print("Introduzca NIA del alumno: ");
             int nia = sc.nextInt();
             if (BaseDeDatos.alumnos.buscarAlumno(nia) != null) {
                 if (this.moduloComodin.matricularAlumno(nia) == 0 && BaseDeDatos.alumnos.matricularModulo(id, nia) == 0) {
+                    escribirModulo(id);
+                    
                     System.out.println("++Se ha matriculado el alumno (NIA:" + nia + ")");
                     return 0;
                 } else {
                     System.out.println("--No se ha podido matricular al alumno (NIA:" + nia + ")");
                 }
+            } else {
+                System.out.println("--No existe ese alumno");
             }
+        } else {
+            System.out.println("--No existe ese modulo");
         }
         this.moduloComodin = null;
         return -1;
@@ -281,44 +303,28 @@ public class Modulos implements BDDAlumnosModulos {
     //ACTUALIZAR
     @Override
     public int actualizar(int nia) {
-        File copiaModulo = new File("modulosCopia.txt");
-        String nombreOriginal = this.baseDeModulos.getName();
         try {
             Scanner lectorTemporal = new Scanner(this.baseDeModulos);
-            this.lector.nextLine();
+            lectorTemporal.nextLine();
 
-            if (this.lector.hasNextLine()) {
-                transformarModulo(this.lector.nextLine());
-
-                if (this.moduloComodin.anularMatriculaAlumno(nia) == -1) {
-                    System.out.println("*Ha ocurrido un error, no se ha podido eliminar el alumno con nia " + nia
-                            + " del m?dulo " + this.moduloComodin.getIDENTIFICADOR());
+            while (lectorTemporal.hasNextLine()) {
+                String comodin = lectorTemporal.nextLine();
+                transformarModulo(comodin);
+                if (this.moduloComodin.buscarAlumno(nia)) {
+                    if (this.moduloComodin.anularMatriculaAlumno(nia) == -1) {
+                        System.out.println("*Ha ocurrido un error, no se ha podido eliminar el alumno con nia " + nia
+                                + " del m?dulo " + this.moduloComodin.getIDENTIFICADOR());
+                    }
                 }
-
-                this.escritor = new PrintWriter(new FileWriter(this.baseDeModulos, true));
-                this.escritor.write(this.moduloComodin.formatoFichero());
-                this.escritor.close();
+                escribirModulo(nia);
             }
+            lectorTemporal.close();
             return 0;
         } catch (NoSuchElementException ex) {
-            System.out.println("--No hay más líneas en el archivo");
+            System.out.println("--Error actualizando alumnos, no hay más líneas en el archivo");
         } catch (Exception ex) {
-            System.out.println("--Error inesperado%n" + ex.getMessage());
+            System.out.println("--Error actualizando alumnos, error inesperado\n" + ex);
         } finally {
-            //COPIAR
-            this.baseDeModulos = copiaModulo;
-            if (copiaModulo.renameTo(new File("comodin.txt"))) {
-                System.out.println("Se ha cambiado modulosCopia.txt");
-            } else {
-                System.out.println("No se ha cambiado");
-            }
-            if (this.baseDeModulos.renameTo(new File(nombreOriginal))) {
-                System.out.println("Se ha cambiado modulos.txt");
-            } else {
-                System.out.println("No se ha cambiado");
-            }
-            
-            this.lector.close();
             this.moduloComodin = null;
         }
         return 0;
@@ -348,16 +354,18 @@ public class Modulos implements BDDAlumnosModulos {
             this.lector = new Scanner(this.baseDeModulos);
             this.lector.nextLine();
 
-            if (this.lector.hasNextLine()) {
+            while (this.lector.hasNextLine()) {
                 transformarModulo(this.lector.nextLine());
-                this.moduloComodin.imprimir();
+                if (this.moduloComodin != null) {
+                    this.moduloComodin.imprimir();
+                }
             }
         } catch (InputMismatchException ex) {
-            System.out.println("--El elemento no era del tipo esperado");
+            System.out.println("--Error listando, el elemento no era del tipo esperado");
         } catch (NoSuchElementException ex) {
-            System.out.println("--No hay más líneas en el archivo");
+            System.out.println("--Error listando, no hay más líneas en el archivo");
         } catch (Exception ex) {
-            System.out.println("--Error inesperado%n" + ex.getMessage());
+            System.out.println("--Error listando, error inesperado\n" + ex);
         } finally {
             this.lector.close();
             this.moduloComodin = null;

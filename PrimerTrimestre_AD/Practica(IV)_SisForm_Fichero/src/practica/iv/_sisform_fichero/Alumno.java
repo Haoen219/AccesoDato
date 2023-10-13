@@ -60,7 +60,7 @@ public class Alumno extends BaseAlumnoModulo{
     //GUARDAR EN FICHERO
     public String formatoFichero(){
         //NIA NOMBRE-APELLIDO1-APELLIDO2 NumMODULOS
-        String alumno= String.format("%n%-4d %-25s ", this.getIDENTIFICADOR(), this.getNombre().replace(' ', '-'));
+        String alumno= String.format("%n%-8d %-25s ", this.getIDENTIFICADOR(), this.getNombre().replace(' ', '-'));
         if(comprobarMatricula()){
             alumno+=this.matricula.getNumeroModulos();
         }else{
@@ -81,7 +81,7 @@ public class Alumno extends BaseAlumnoModulo{
         if(comprobarMatricula()){
             System.out.printf(" Modulos: %-2d\n",this.matricula.getNumeroModulos());
         }else{
-            System.out.println(" -Sin_matricula-");
+            System.out.println(" -Sin matricula-");
         }
     }
     public void imprimirBoletin() {

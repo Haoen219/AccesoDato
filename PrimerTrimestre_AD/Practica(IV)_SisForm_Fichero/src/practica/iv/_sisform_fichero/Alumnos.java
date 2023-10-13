@@ -30,23 +30,49 @@ public class Alumnos implements BDDAlumnosModulos {
     Scanner lectorSecundario = null;
     Scanner lector = null;
 
+    public Alumnos() {
+        instanciarFile();
+    }
+
     //FILE
+    private void instanciarFile() {
+        try {
+            if (!this.baseDeAlumnos.exists()) {
+                this.escritor = new PrintWriter(new FileWriter(this.baseDeAlumnos, true));
+                String alumnoFormato = String.format("%-8s %-25s NumModulos", "NIA", "NOMBRE");
+                this.escritor.write(this.lector.nextLine());
+                this.escritor.close();
+            }
+            if (!this.baseDeAlumnos.exists()) {
+                this.escritor = new PrintWriter(new FileWriter(this.baseDeAlumnos, true));
+                String alumnoFormato = String.format("%-8s Modulos(ID_NOTA-NOTA-NOTA-_CALIFICACION)", "NIA");
+                this.escritor.write(this.lector.nextLine());
+                this.escritor.close();
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("--No se ha podido abrir un archivo, error dando de Baja");
+        } catch (IOException ex) {
+            System.out.println("--No se ha podido abrir un archivo, error dando de Baja");
+        } catch (Exception ex) {
+            System.out.println("--Error inesperado dando de Baja\n" + ex);
+        }
+    }
+
     public boolean comprobarLista() {
         if (this.baseDeAlumnos.exists() && !this.baseDeAlumnos.isDirectory()) {
             try {
-                this.lector = new Scanner(this.baseDeAlumnos);
-                this.lector.nextLine();
-                if (this.lector.hasNextLine()) {
+                Scanner lectorTemporal = new Scanner(this.baseDeAlumnos);
+                String comodin = lectorTemporal.nextLine();
+                if (lectorTemporal.hasNextLine()) {
                     return true;
                 }
+                lectorTemporal.close();
             } catch (InputMismatchException ex) {
                 System.out.println("--Error leyendo Alumno,el elemento no era del tipo esperado");
             } catch (NoSuchElementException ex) {
                 System.out.println("--Error leyendo Alumno, no hay más líneas en el archivo");
             } catch (Exception ex) {
-                System.out.println("--Error leyendo Alumno, error inesperado%n" + ex.getMessage());
-            } finally {
-                this.lector.close();
+                System.out.println("--Error leyendo Alumno, error inesperado\n" + ex);
             }
         }
         return false;
@@ -61,28 +87,25 @@ public class Alumnos implements BDDAlumnosModulos {
         String alumno;
         if (this.baseDeAlumnos.exists() && !this.baseDeAlumnos.isDirectory()) {
             try {
-                this.lector = new Scanner(this.baseDeAlumnos);
-                this.lector.nextLine();
+                Scanner lectorTemporal = new Scanner(this.baseDeAlumnos);
+                lectorTemporal.nextLine();
 
-                if (this.lector.hasNextLine()) {
-                    alumno = this.lector.nextLine();
+                while (lectorTemporal.hasNextLine()) {
+                    alumno = lectorTemporal.nextLine();
                     String[] informacion = alumno.split(" +");
                     if (nia == Integer.parseInt(informacion[0])) {
                         return alumno;
                     }
                 }
-                System.out.println("--No se ha encontrado ese alumno");
-                return null;
+                lectorTemporal.close();
             } catch (InputMismatchException ex) {
-                System.out.println("--El elemento no era del tipo esperado");
+                System.out.println("--Error buscando alumno, el elemento no era del tipo esperado");
             } catch (NoSuchElementException ex) {
-                System.out.println("--No hay más líneas en el archivo");
+                System.out.println("--Error buscando alumno, no hay más líneas en el archivo");
             } catch (NumberFormatException ex) {
-                System.out.println("--No se pudo convertir el String en entero");
+                System.out.println("--Error buscando alumno, no se pudo convertir el String en entero");
             } catch (Exception ex) {
-                System.out.println("--Error inesperado%n" + ex.getMessage());
-            } finally {
-                this.lector.close();
+                System.out.println("--Error buscando alumno, error inesperado\n" + ex);
             }
         }
         return null;
@@ -113,66 +136,53 @@ public class Alumnos implements BDDAlumnosModulos {
         String matricula;
         if (this.baseDeMatriculas.exists() && !this.baseDeMatriculas.isDirectory()) {
             try {
-                this.lector = new Scanner(this.baseDeMatriculas);
-                this.lector.nextLine();
+                Scanner lectorTemporal = new Scanner(this.baseDeMatriculas);
+                lectorTemporal.nextLine();
 
-                if (this.lector.hasNextLine()) {
-                    matricula = this.lector.nextLine();
+                while (lectorTemporal.hasNextLine()) {
+                    matricula = lectorTemporal.nextLine();
                     String[] informacion = matricula.split(" +");
                     if (nia == Integer.parseInt(informacion[0])) {
                         return matricula;
                     }
                 }
+                lectorTemporal.close();
             } catch (InputMismatchException ex) {
-                System.out.println("--El elemento no era del tipo esperado");
+                System.out.println("--Error buscando matricula, el elemento no era del tipo esperado");
             } catch (NoSuchElementException ex) {
-                System.out.println("--No hay más líneas en el archivo");
+                System.out.println("--Error buscando matricula, no hay más líneas en el archivo");
             } catch (NumberFormatException ex) {
-                System.out.println("--No se pudo convertir el String en entero");
+                System.out.println("--Error buscando matricula, no se pudo convertir el String en entero");
             } catch (Exception ex) {
-                System.out.println("--Error inesperado%n" + ex.getMessage());
-            } finally {
-                this.lector.close();
+                System.out.println("--Error buscando matricula, Error inesperado\n" + ex);
             }
         }
         return null;
     }
 
     public int escribirAlumno(int nia) {
-        File copiaAlumnos = new File("alumnosCopia.txt");
-        String nombreOriginal = this.baseDeAlumnos.getName();
+        String comodin = "";
         try {
-            this.escritor = new PrintWriter(new FileWriter(copiaAlumnos, true));
             this.lector = new Scanner(this.baseDeAlumnos);
-            this.escritor.write(this.lector.nextLine());
+            comodin = (this.lector.nextLine());
 
-            this.alumnoComodin = transformarAlumno(buscarAlumno(nia));
             if (this.alumnoComodin != null) {
-                transformarMatricula(buscarMatricula(nia));
-
+                String aCopiar = "";
                 while (this.lector.hasNextLine()) {
                     String alumno = this.lector.nextLine();
                     String[] data = alumno.split(" +");
-                    if (Integer.parseInt(data[0]) != nia) {
-                        this.escritor.write(this.alumnoComodin.formatoFichero());
+                    if (Integer.parseInt(data[0]) == nia) {
+                        aCopiar += this.alumnoComodin.formatoFichero();
+                    } else {
+                        aCopiar += ("\n" + alumno);
                     }
                 }
-
-                this.escritor.close();
                 this.lector.close();
 
-                this.baseDeAlumnos = copiaAlumnos;
-                if (copiaAlumnos.renameTo(new File("comodin.txt"))) {
-                    System.out.println("Se ha cambiado alumnosCopia.txt");
-                } else {
-                    System.out.println("No se ha cambiado");
-                }
-
-                if (this.baseDeAlumnos.renameTo(new File(nombreOriginal))) {
-                    System.out.println("Se ha cambiado alumno.txt");
-                } else {
-                    System.out.println("No se ha cambiado");
-                }
+                this.escritor = new PrintWriter(new FileWriter(this.baseDeAlumnos, false));
+                this.escritor.write(comodin);
+                this.escritor.write(aCopiar);
+                this.escritor.close();
             }
             return 0;
         } catch (FileNotFoundException ex) {
@@ -180,7 +190,7 @@ public class Alumnos implements BDDAlumnosModulos {
         } catch (IOException ex) {
             System.out.println("--No se ha podido abrir un archivo, error dando de Baja");
         } catch (Exception ex) {
-            System.out.println("--Error inesperado dando de Baja%n" + ex.getMessage());
+            System.out.println("--Error inesperado dando de Baja\n" + ex);
         } finally {
             this.alumnoComodin = null;
             this.matriculaComodin = null;
@@ -189,48 +199,37 @@ public class Alumnos implements BDDAlumnosModulos {
     }
 
     public int escribrirMatricula(int nia) {
-        File copiaMatricula = new File("matriculasCopia.txt");
-        String nombreOriginal = this.baseDeMatriculas.getName();
+        String comodin = "";
         try {
-            this.escritor = new PrintWriter(new FileWriter(copiaMatricula, true));
             this.lector = new Scanner(this.baseDeMatriculas);
-            this.escritor.write(this.lector.nextLine());
+            comodin = (this.lector.nextLine());
 
-            while (this.lector.hasNextLine()) {
-                String matricula = this.lector.nextLine();
-                String[] data = matricula.split(" +");
-                if (Integer.parseInt(data[0]) != nia) {
-                    this.alumnoComodin.formatoFicheroMatricula();
-                } else {
-                    this.escritor.write(matricula);
+            if (this.alumnoComodin != null) {
+
+                String aCopiar = "";
+                while (this.lector.hasNextLine()) {
+                    String matricula = this.lector.nextLine();
+                    String[] data = matricula.split(" +");
+                    if (Integer.parseInt(data[0]) != nia) {
+                        aCopiar += this.alumnoComodin.formatoFicheroMatricula();
+                    } else {
+                        aCopiar += (matricula);
+                    }
                 }
+                this.lector.close();
+
+                this.escritor = new PrintWriter(new FileWriter(this.baseDeMatriculas, false));
+                this.escritor.write(comodin);
+                this.escritor.write(aCopiar);
+                this.escritor.close();
+                return 0;
             }
-            this.escritor.close();
-            this.lector.close();
-
-            this.baseDeMatriculas.delete();
-            copiaMatricula.renameTo(new File(nombreOriginal));
-
-            this.baseDeMatriculas = copiaMatricula;
-            if (copiaMatricula.renameTo(new File("comodin.txt"))) {
-                System.out.println("Se ha cambiado copiaMatricula.txt");
-            } else {
-                System.out.println("No se ha cambiado");
-            }
-
-            if (this.baseDeMatriculas.renameTo(new File(nombreOriginal))) {
-                System.out.println("Se ha cambiado matricula.txt");
-            } else {
-                System.out.println("No se ha cambiado");
-            }
-
-            return 0;
         } catch (FileNotFoundException ex) {
             System.out.println("--No se ha podido abrir un archivo, error escribiendo Matricula");
         } catch (IOException ex) {
             System.out.println("--No se ha podido abrir un archivo, error escribiendo Matricula");
         } catch (Exception ex) {
-            System.out.println("--Error inesperado escribiendo Matricula%n" + ex.getMessage());
+            System.out.println("--Error inesperado escribiendo Matricula\n" + ex);
         } finally {
             this.alumnoComodin = null;
             this.matriculaComodin = null;
@@ -254,7 +253,7 @@ public class Alumnos implements BDDAlumnosModulos {
             }
         } while (nia <= 0 || nia > 99999999);
 
-        String alumno = String.format("%n%-4d %-25s -Sin-Matricula-", nia, nombre.replace(' ', '-'));
+        String alumno = String.format("%n%-8d %-25s -Sin-Matricula-", nia, nombre.replace(' ', '-'));
 
         if (buscarAlumno(nia) != null) {
             System.out.println("--Ya existe un alumno con ese NIA");
@@ -262,12 +261,13 @@ public class Alumnos implements BDDAlumnosModulos {
             try {
                 this.escritor = new PrintWriter(new FileOutputStream(this.baseDeAlumnos, true));
                 escritor.write(alumno);
+                System.out.println("++Se ha dado de alta");
             } catch (FileNotFoundException ex) {
                 System.out.println("--No se ha podido abrir un archivo, error dando de Alta");
             } catch (IOException ex) {
                 System.out.println("--No se ha podido abrir un archivo, error dando de Alta");
             } catch (Exception ex) {
-                System.out.println("--Error inesperado dando de Alta%n" + ex.getMessage());
+                System.out.println("--Error inesperado dando de Alta\n" + ex);
             } finally {
                 this.escritor.close();
             }
@@ -278,61 +278,104 @@ public class Alumnos implements BDDAlumnosModulos {
     @Override
     public int darDeBaja() {
         Scanner sc = new Scanner(System.in);
-        File copiaAlumnos = new File("alumnosCopia.txt");
-        String nombreOriginal = this.baseDeAlumnos.getName();
         System.out.println("\n-Dar de baja alumno-");
         System.out.print("Introduzca NIA del alumno: ");
         int nia = sc.nextInt();
 
         if (buscarAlumno(nia) != null) {
+            String comodin = "";
+            String comodinMatricula = "";
             try {
-                this.escritor = new PrintWriter(new FileWriter(copiaAlumnos, true));
                 this.lector = new Scanner(this.baseDeAlumnos);
-                this.escritor.write(this.lector.nextLine());
-
+                if (this.lector.hasNextLine()) {
+                    comodin = this.lector.nextLine();
+                }
                 //COPIAR Y ESCRIBIR DE NUEVO
+                String aCopiar = "";
                 while (this.lector.hasNextLine()) {
                     String alumno = this.lector.nextLine();
                     String[] data = alumno.split(" +");
                     if (Integer.parseInt(data[0]) != nia) {
-                        this.escritor.write(alumno);
+                        aCopiar += ("\n" + alumno);
                     }
                 }
+                this.lector.close();
 
-                this.baseDeAlumnos = copiaAlumnos;
-                if (copiaAlumnos.renameTo(new File("comodin.txt"))) {
-                    System.out.println("Se ha cambiado alumnosCopia.txt");
-                } else {
-                    System.out.println("No se ha cambiado");
+                this.escritor = new PrintWriter(new FileWriter(this.baseDeAlumnos, false));
+                this.escritor.write(comodin);
+                this.escritor.write(aCopiar);
+                this.escritor.close();
+                if (BaseDeDatos.modulos.actualizar(nia) == 0) {
+                    System.out.println("++Se ha dado de baja");
+                    return 0;
                 }
-
-                if (this.baseDeAlumnos.renameTo(new File(nombreOriginal))) {
-                    System.out.println("Se ha cambiado alumno.txt");
-                } else {
-                    System.out.println("No se ha cambiado");
-                }
-                return 0;
+                System.out.println("--No se ha dado de baja");
             } catch (FileNotFoundException ex) {
                 System.out.println("--No se ha podido abrir un archivo, error dando de Baja");
             } catch (IOException ex) {
                 System.out.println("--No se ha podido abrir un archivo, error dando de Baja");
             } catch (Exception ex) {
-                System.out.println("--Error inesperado dando de Baja%n" + ex.getMessage());
-            } finally {
-                this.escritor.close();
-                this.lector.close();
+                System.out.println("--Error inesperado dando de Baja\n" + ex);
             }
+        } else {
+            System.out.println("--Ese alumno no existe");
+        }
+        return -1;
+    }
+    //MATRICULA
+
+    public int eliminarMatricula(int nia) {
+        if (buscarMatricula(nia) != null) {
+            String comodin = "";
+            try {
+                Scanner lectorTemporal = new Scanner(this.baseDeMatriculas);
+                if (lectorTemporal.hasNextLine()) {
+                    comodin = lectorTemporal.nextLine();
+                }
+                //COPIAR Y ESCRIBIR DE NUEVO
+                String aCopiar = "";
+                while (lectorTemporal.hasNextLine()) {
+                    String matricula = lectorTemporal.nextLine();
+                    String[] data = matricula.split(" +");
+                    if (Integer.parseInt(data[0]) != nia) {
+                        aCopiar += ("\n" + matricula);
+                    }
+                }
+                this.lector.close();
+
+                this.escritor = new PrintWriter(new FileWriter(this.baseDeMatriculas, false));
+                this.escritor.write(comodin);
+                this.escritor.write(aCopiar);
+                this.escritor.close();
+                return 0;
+            } catch (FileNotFoundException ex) {
+                System.out.println("--No se ha eliminar una matricula, error dando de Baja");
+            } catch (IOException ex) {
+                System.out.println("--No se ha eliminar una matricula, error dando de Baja");
+            } catch (Exception ex) {
+                System.out.println("--No se ha podido eliminar una matricula, error inesperado dando de Baja\n" + ex);
+            }
+        } else {
+            System.out.println("--Ese alumno no existe");
         }
         return -1;
     }
 
-    //MATRICULA
     public int matricularModulo(int id, int nia) {
+        String comodin = "";
         this.alumnoComodin = transformarAlumno(buscarAlumno(nia));
-        transformarMatricula(buscarMatricula(nia));
-        if (this.alumnoComodin.matricularModulo(id) == 0) {
-            this.alumnoComodin = null;
-            return 0;
+
+        if (this.alumnoComodin != null) {
+            System.out.println("aqui");
+                System.out.println("aqui");
+                transformarMatricula(buscarMatricula(nia));
+
+                if (this.alumnoComodin.matricularModulo(id) == 0) {
+                    if(escribrirMatricula(nia)==0 && escribirAlumno(nia)==0){
+                        return 0;
+                    }
+                }
+                return 0;
         }
         return -1;
     }
@@ -431,29 +474,30 @@ public class Alumnos implements BDDAlumnosModulos {
     public int actualizar(int id) {
         try {
             Scanner lectorTemporal = new Scanner(this.baseDeAlumnos);
-            this.lector.nextLine();
+            lectorTemporal.nextLine();
 
-            if (this.lector.hasNextLine()) {
-                this.alumnoComodin = transformarAlumno(this.lector.nextLine());
+            if (lectorTemporal.hasNextLine()) {
+                this.alumnoComodin = transformarAlumno(lectorTemporal.nextLine());
                 transformarMatricula(buscarAlumno(this.alumnoComodin.getIDENTIFICADOR()));
                 if (this.matriculaComodin != null) {
-
                     if (this.matriculaComodin.eliminarModulo(id) == -1) {
                         System.out.println("*Ha ocurrido un error, no se ha podido eliminar el modulo con ID de una matricula");
+                    } else {
+                        escribirAlumno(this.alumnoComodin.getIDENTIFICADOR());
                     }
                     if (escribrirMatricula(this.alumnoComodin.getIDENTIFICADOR()) == 0) {
                         System.out.println("--Error actualizando la matricula del alumno con NIA:" + this.alumnoComodin.getIDENTIFICADOR());
                     }
                 }
             }
+            lectorTemporal.close();
         } catch (InputMismatchException ex) {
-            System.out.println("--El elemento no era del tipo esperado");
+            System.out.println("--Error en actualizar modulos, el elemento no era del tipo esperado");
         } catch (NoSuchElementException ex) {
-            System.out.println("--No hay más líneas en el archivo");
+            System.out.println("--Error en actualizar modulos, no hay más líneas en el archivo");
         } catch (Exception ex) {
-            System.out.println("--Error inesperado%n" + ex.getMessage());
+            System.out.println("--Error en actualizar modulos, error inesperado\n" + ex);
         } finally {
-            this.lector.close();
             this.alumnoComodin = null;
             this.matriculaComodin = null;
         }
@@ -509,21 +553,22 @@ public class Alumnos implements BDDAlumnosModulos {
         System.out.println("\n-Listar alumnos-");
         try {
             this.lector = new Scanner(this.baseDeAlumnos);
-            this.lectorSecundario = new Scanner(this.baseDeMatriculas);
             this.lector.nextLine();
+            this.lectorSecundario = new Scanner(this.baseDeMatriculas);
             this.lectorSecundario.nextLine();
 
-            if (this.lector.hasNextLine()) {
-                this.alumnoComodin = transformarAlumno(this.lector.nextLine());
-                transformarMatricula(buscarAlumno(this.alumnoComodin.getIDENTIFICADOR()));
+            while (this.lector.hasNextLine()) {
+                String comodin = this.lector.nextLine();
+                this.alumnoComodin = transformarAlumno(comodin);
+                transformarMatricula(buscarMatricula(this.alumnoComodin.getIDENTIFICADOR()));
                 this.alumnoComodin.imprimir();
             }
         } catch (InputMismatchException ex) {
-            System.out.println("--El elemento no era del tipo esperado");
+            System.out.println("--Error listando alumnos, el elemento no era del tipo esperado");
         } catch (NoSuchElementException ex) {
-            System.out.println("--No hay más líneas en el archivo");
+            System.out.println("--Error listando alumnos, no hay más líneas en el archivo");
         } catch (Exception ex) {
-            System.out.println("--Error inesperado%n" + ex.getMessage());
+            System.out.println("--Error listando alumnos, error inesperado\n" + ex);
         } finally {
             this.lector.close();
             this.lectorSecundario.close();
@@ -548,6 +593,8 @@ public class Alumnos implements BDDAlumnosModulos {
             }
             this.alumnoComodin = null;
             this.matriculaComodin = null;
+        } else {
+            System.out.println("-NIA no existe");
         }
     }
 }
