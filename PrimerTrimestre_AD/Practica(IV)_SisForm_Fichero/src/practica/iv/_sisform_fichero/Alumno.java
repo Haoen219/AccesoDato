@@ -64,7 +64,7 @@ public class Alumno extends BaseAlumnoModulo{
         if(comprobarMatricula()){
             alumno+=this.matricula.getNumeroModulos();
         }else{
-            alumno+="-Sin-Matricula-";
+            alumno+="-Sin_Matricula-";
         }
         return alumno;
     }
@@ -81,7 +81,7 @@ public class Alumno extends BaseAlumnoModulo{
         if(comprobarMatricula()){
             System.out.printf(" Modulos: %-2d\n",this.matricula.getNumeroModulos());
         }else{
-            System.out.println(" -Sin matricula-");
+            System.out.println(" -Sin_matricula-");
         }
     }
     public void imprimirBoletin() {

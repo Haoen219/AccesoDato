@@ -11,10 +11,11 @@ package practica.iv._sisform_fichero;
 public interface BDDAlumnosModulos{
     int darDeAlta();
     int darDeBaja();
+    boolean comprobarLista();
     //boolean comprobar(int identificador);
     int menu();
     int actualizar(int identificador);
-    int guardarBase();
-    int importarBase();
+    //int guardarBase();
+    //int importarBase();
     void listar();
 }

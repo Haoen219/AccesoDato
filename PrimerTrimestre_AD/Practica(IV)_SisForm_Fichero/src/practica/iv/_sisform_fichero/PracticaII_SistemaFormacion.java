@@ -11,13 +11,13 @@ import java.util.InputMismatchException;
  */
 public class PracticaII_SistemaFormacion {
     public static boolean comprobarListaAlumno(){
-        if(!BaseDeDatos.alumnos.alumnos.isEmpty()){
+        if(BaseDeDatos.alumnos.comprobarLista()){
             return true;
         }else System.out.println("--Su lista de alumnos esta vacio");
         return false;
     }
     public static boolean comprobarListaModulo(){
-        if(!BaseDeDatos.modulos.modulos.isEmpty()){
+        if(BaseDeDatos.modulos.comprobarLista()){
             return true;
         }else System.out.println("--Su lista de modulos esta vacio");
         return false;
@@ -101,7 +101,5 @@ public class PracticaII_SistemaFormacion {
                 System.out.println("\n###ERROR: ha ocurrido un error inesperado.\n"+ex.getLocalizedMessage());
             }
         }while(opcion>0);
-        //GUARDAR BASE
-       baseDeDatos.guardarBase();
     }
 }
