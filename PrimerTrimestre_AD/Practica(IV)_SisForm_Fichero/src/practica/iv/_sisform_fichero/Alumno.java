@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package practica.iii._sisform_escritura;
+package practica.iv._sisform_fichero;
 
 /**
  *
@@ -57,9 +57,25 @@ public class Alumno extends BaseAlumnoModulo{
         return -1;
     }
     
+    //GUARDAR EN FICHERO
+    public String formatoFichero(){
+        //NIA NOMBRE-APELLIDO1-APELLIDO2 NumMODULOS
+        String alumno= String.format("%n%-4d %-25s ", this.getIDENTIFICADOR(), this.getNombre().replace(' ', '-'));
+        if(comprobarMatricula()){
+            alumno+=this.matricula.getNumeroModulos();
+        }else{
+            alumno+="-Sin-Matricula-";
+        }
+        return alumno;
+    }
+    public String formatoFicheroMatricula(){
+        //NIA ID_NOTA-NOTA-NOTA_CALIFICACION ID_NOTA-NOTA-NOTA_CALIFICACION ...
+        String matricula=String.format("%n%-8d %s", this.getIDENTIFICADOR(), this.matricula.formatoFichero());
+        return matricula;
+    }
+    
     
     //IMPRIMIR
-    @Override
     public void imprimir() {
         System.out.printf("NIA: %-8d Nombre: %-30s",this.getIDENTIFICADOR(), this.getNombre());
         if(comprobarMatricula()){

@@ -2,9 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package practica.iii._sisform_escritura;
+package practica.iii._sisform_almacenamiento;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.TreeMap;
 
@@ -14,7 +18,11 @@ import java.util.TreeMap;
  */
 public class Modulos implements BDDAlumnosModulos{
     TreeMap<Integer, Modulo> modulos= new TreeMap();
+    
     File baseDeModulos= new File("Modulos.txt");
+    
+    PrintWriter escritor= null;
+    Scanner lector=null;
     
     public Modulos(){}
     
@@ -25,6 +33,7 @@ public class Modulos implements BDDAlumnosModulos{
         else System.out.println("--ID no existe en la base de datos");
         return false;
     }
+    
     @Override
     public int darDeAlta() {
         Scanner sc= new Scanner(System.in);
@@ -111,6 +120,67 @@ public class Modulos implements BDDAlumnosModulos{
         System.out.print("OPCI?N: ");
         int opcion=sc.nextInt();
         return opcion;
+    }
+    
+    //GUARDAR EN FICHERO
+    @Override
+    public int guardarBase(){
+        String modulo;
+        try{
+            this.escritor= new PrintWriter(new FileWriter(this.baseDeModulos.getName()));
+            this.escritor.printf("%-4s %-20s NIA_Alumnos", "ID", "NOMBRE");
+            for (int id : this.modulos.keySet()) {
+                modulo=this.modulos.get(id).formatoFichero();
+
+                this.escritor.printf(modulo);
+            }
+            return 0;
+        }catch(FileNotFoundException ex){
+            System.out.println("--No se ha podido abrir el archivo de Modulo, comprueba que exista");
+        }catch(IOException ex){
+            System.out.println("--No se ha podido abrir el archivo de Modulo, comprueba que exista");
+        }catch(Exception ex){
+            System.out.println("--Error inesperado\n"+ex.getLocalizedMessage());
+        }finally{
+            this.escritor.close();
+        }
+        return -1;
+    }
+    @Override
+    public int importarBase(){
+        if(this.baseDeModulos.exists() && !this.baseDeModulos.isDirectory()){       //ALUMNO
+            try{
+                this.lector= new Scanner(this.baseDeModulos);
+                this.lector.nextLine();
+                while(this.lector.hasNextLine()){
+                    //ID NOMBRE NIA-NIA-NIA-NIA...
+                    String modulo= this.lector.nextLine();
+                    String[] datos= modulo.split(" +");
+                    
+                    int id=Integer.valueOf(datos[0]);
+                    this.modulos.put(id, new Modulo(datos[1], id));
+                    
+                    if(datos.length>2){
+                        String[] alumnos= datos[2].split("-");
+                        for(String alumno: alumnos){
+                            int nia=Integer.valueOf(alumno);
+                            this.modulos.get(id).matricularAlumno(nia);
+                        }
+                    }
+                }
+                System.out.println("++Se ha importado los modulos");
+                return 0;
+            }catch(NumberFormatException ex){
+                System.out.println("--Fallo importanto módulos, error al convertir el texto");
+            }catch(Exception ex){
+                System.out.println("--Fallo importanto módulos, error inesperado\n"+ex.getLocalizedMessage());
+            }finally{
+                this.lector.close();
+            }
+        }else{
+            System.out.println("--El fichero Modulo no existe");
+        }
+        return -1;
     }
     
     //GETTER

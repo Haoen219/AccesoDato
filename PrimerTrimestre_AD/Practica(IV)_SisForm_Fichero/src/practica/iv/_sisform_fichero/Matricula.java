@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package practica.iii._sisform_escritura;
+package practica.iv._sisform_fichero;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -61,7 +61,7 @@ public class Matricula {
     public void imprimirModulos(){
         for(int id: this.modulosMatriculados.keySet()){
             Modulo comodin=BaseDeDatos.modulos.getModulo(id);
-            System.out.printf("\tID: %-8d %-20s  ",comodin.getIDENTIFICADOR(),comodin.getNombre());
+            System.out.printf("\tID: %-8d %-20s ",comodin.getIDENTIFICADOR(),comodin.getNombre());
             
             System.out.print("Notas: [ ");
             if(this.modulosMatriculados.containsKey(id)){
@@ -69,12 +69,27 @@ public class Matricula {
                     if(this.modulosMatriculados.get(id)[i]==null){
                         System.out.printf("-nulo- ");
                     }else{
-                        System.out.printf("-%-2.2f- ",this.modulosMatriculados.get(id)[i]);
+                        System.out.printf("-%02.2f- ",this.modulosMatriculados.get(id)[i]);
                     }
                 }
             }
             System.out.println("]  Calificaci?n: "+this.calificaciones.get(id));
         }
+    }
+    
+    //GUARDAR EN FICHERO
+    public String formatoFichero(){
+        //ID_NOTA-NOTA-NOTA-_CALIFICACION ID_NOTA-NOTA-NOTA-_CALIFICACION ...
+        String matricula="";
+        for(int id:this.modulosMatriculados.keySet()){
+            matricula+=id+"_";
+            
+            for(int i=0; i<this.modulosMatriculados.get(id).length; i++){
+                matricula+=this.modulosMatriculados.get(id)[i]+"-";
+            }
+            matricula+="_"+this.calificaciones.get(id)+" ";
+        }
+        return matricula;
     }
     
     //GETTER

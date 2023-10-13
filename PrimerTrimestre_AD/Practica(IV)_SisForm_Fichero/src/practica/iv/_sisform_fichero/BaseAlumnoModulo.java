@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
-package practica.iii._sisform_escritura;
+package practica.iv._sisform_fichero;
 
 /**
  *
@@ -16,9 +16,6 @@ public abstract class BaseAlumnoModulo{
         this.nombre=nombre;
         this.IDENTIFICADOR=identificador;
     }
-    
-    //IMPRIMIR
-    void imprimir(){}
     
     //GETTER
     public String getNombre() {

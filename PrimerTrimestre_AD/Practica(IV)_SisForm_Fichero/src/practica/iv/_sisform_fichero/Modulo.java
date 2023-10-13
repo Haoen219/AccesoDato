@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package practica.iii._sisform_escritura;
+package practica.iv._sisform_fichero;
 
 import java.util.TreeSet;
 
@@ -31,15 +31,19 @@ public class Modulo extends BaseAlumnoModulo {
         }
         return -1;
     }
+    
+    //GUARDAR EN FICHERO
+    public String formatoFichero(){
+        //ID NOMBRE NIA-NIA-NIA-NIA...
+        String modulo= String.format("%n%-4d %-20s ", this.getIDENTIFICADOR(), this.getNombre());
+        for(int nia:this.alumnosMatriculados){
+            modulo+=nia+"-";
+        }
+        return modulo;
+    }
 
     //IMPRIMIR
-    @Override
-    public void imprimir() {
-        System.out.printf("\tID: %-8d %-20s Alumnos: ", this.getIDENTIFICADOR(), this.getNombre());
-        if(this.alumnosMatriculados.isEmpty()){
-            System.out.println("0");
-        }else{
-            System.out.println(BaseDeDatos.alumnos.alumnos.size());
-        }
+    public void imprimir() {                                                    //NO IMPRIMIA LOS ALUMNOS MATRICULADOS SINO LOS QUE HABIAN EN LA BASE DE DATOS
+        System.out.printf("\tID: %-8d %-20s Alumnos: %d\n", this.getIDENTIFICADOR(), this.getNombre(),this.alumnosMatriculados.size());
     }
 }

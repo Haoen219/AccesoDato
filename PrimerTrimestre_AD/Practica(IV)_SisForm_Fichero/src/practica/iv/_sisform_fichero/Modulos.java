@@ -2,13 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package practica.iii._sisform_almacenamiento;
+package practica.iv._sisform_fichero;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.InputMismatchException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.TreeMap;
 
@@ -27,12 +29,43 @@ public class Modulos implements BDDAlumnosModulos{
     public Modulos(){}
     
     //MODULO
-    @Override
-    public boolean comprobar(int id){
-        if(this.modulos.containsKey(id))return true;
-        else System.out.println("--ID no existe en la base de datos");
-        return false;
+//    @Override
+//    public boolean comprobar(int id){
+//        if(this.modulos.containsKey(id))return true;
+//        else System.out.println("--ID no existe en la base de datos");
+//        return false;
+//    }
+    
+    public String buscarModulo(int id){
+        String modulo=null;
+        try{
+            if(this.baseDeModulos.exists() && !this.baseDeModulos.isDirectory()){
+                this.lector= new Scanner(this.baseDeModulos);
+                if(this.lector.hasNextLine()){
+                    modulo=this.lector.nextLine();
+                    String[] informacion= modulo.split(" +");
+                    if(id == Integer.parseInt(informacion[0])){
+                        return modulo;
+                    }
+                }
+                System.out.println("--No se ha encontrado ese modulo");
+                return null;
+            }
+        }catch(InputMismatchException ex){
+            System.out.println("--El elemento no era del tipo esperado");
+        }catch(NoSuchElementException ex){
+            System.out.println("--No hay más líneas en el archivo");
+        }catch(NumberFormatException ex){
+            System.out.println("--No se pudo convertir el String en entero");
+        }catch(Exception ex){
+            System.out.println("--Error inesperado%n"+ex.getMessage());
+        }finally{
+            this.lector.close();
+        }
+        return modulo;
     }
+    
+    
     @Override
     public int darDeAlta() {
         Scanner sc= new Scanner(System.in);
