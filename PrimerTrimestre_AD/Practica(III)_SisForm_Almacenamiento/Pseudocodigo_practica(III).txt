@@ -1,0 +1,88 @@
+CLASE Alumno
+	METODO String formatoFichero()
+		DEVOLVER dato de Alumno en formato fichero
+	FIN METODO
+FIN CLASE
+
+
+
+
+
+CLASE Matricula
+	METODO String formatoFichero()
+		String matricula
+		MIENTRAS haya entradas en "modulosMatriculados"
+			matricula <-- datos de un modulo
+		FIN MIENTRAS
+		DEVOLVER matricula
+	FIN METODO
+FIN CLASE
+
+
+
+
+
+CLASE Modulo
+	METODO String formatoFichero()
+		DEVOLVER dato de Alumno en formato fichero
+	FIN METODO
+FIN CLASE
+
+
+
+
+
+CLASE Alumnos
+	Fichero baseDeAlumnos
+	Fichero baseDeMatriculas
+
+	METODO int guardarBase()
+		POR cada entrada de alumnos
+			ESCRITOR escribe <-- alumno en formato fichero
+			ESCRITOR escribe matricula <-- matricula en formato fichero SI TIENE
+		FIN POR
+		DEVOLVER 0
+	FIN METODO
+
+	METODO int importarBase()
+		LLAMA llerAlumno() y leerMatricula()
+		DEVOLVER 0
+	FIN METODO
+
+	METODO int leerAlumno()
+		LEE fichero baseDeAlumnos
+		POR cada linea que tiene
+			LLAMAR método para agregar alumno con la informacion
+		FIN POR
+		DEVOLVER 0
+	FIN METODO
+
+	METODO int leerMatricula()
+		LEE fichero baseDeMatricula
+		POR cada linea que tiene
+			LLAMAR método para agregar matricula al alumno correspondiente
+		FIN POR
+		DEVOLVER 0
+	FIN METODO
+FIN CLASE
+
+
+
+CLASE Modulos
+	FICHERO baseDeModulos
+
+	METODO int guardarBase()
+		POR entrada de modulos
+			ESCRITOR escribe <-- modulo en formato fichero
+		FIN POR
+		DEVOLVER 0
+	FIN METODO
+
+	METODO int importarBase()
+		LEE fichero baseDeModulos
+		POR cada linea que tiene
+			LLAMAR método para agregar modulo
+		FIN POR
+		DEVOLVER 0
+	FIN METODO
+FIN CLASE
