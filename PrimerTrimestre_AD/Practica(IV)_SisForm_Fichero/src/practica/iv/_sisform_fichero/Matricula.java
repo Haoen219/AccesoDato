@@ -12,14 +12,16 @@ import java.util.TreeMap;
  * @author haoen
  */
 public class Matricula {
-    private TreeMap<Integer, Double[]> modulosMatriculados= new TreeMap();
+    private TreeMap<Integer, double[]> modulosMatriculados= new TreeMap();
     private TreeMap<Integer, String> calificaciones= new TreeMap();
-    final private String CALIFICACIONDEFECTO="Sin calificar";
+    final private String CALIFICACIONDEFECTO="Sin-calificar";
     
     public Matricula(){}
     
     public int matricularModulo(int id){           //los modulos reci?n matriculados no tiene notas
-        if(this.modulosMatriculados.put(id, new Double[3])==null && this.calificaciones.put(id, this.CALIFICACIONDEFECTO)==null){
+        double[] comodin={0,0,0};
+        if(this.modulosMatriculados.put(id, comodin)==null && this.calificaciones.put(id, this.CALIFICACIONDEFECTO)==null){
+            
             return 0;
         }
         return -1;
