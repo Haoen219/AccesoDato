@@ -1,1 +1,2 @@
 NIA      MODULOS( ID_NOTA-NOTA-NOTA_CALIFICACION )
+1234     1_null-null-null-_Sin-calificar 
