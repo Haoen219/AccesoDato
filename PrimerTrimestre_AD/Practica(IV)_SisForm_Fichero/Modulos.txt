@@ -1,2 +1,3 @@
 ID   NOMBRE                    NIA_Alumnos
-1    DAM                  1234-
+1    DAM                  12345-
+2    DAM                  12345-

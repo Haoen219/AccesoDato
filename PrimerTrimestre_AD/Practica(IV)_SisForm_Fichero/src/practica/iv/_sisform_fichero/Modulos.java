@@ -153,6 +153,9 @@ public class Modulos implements BDDAlumnosModulos {
                 while (lectorTemporal.hasNextLine()) {
                     String modulo = lectorTemporal.nextLine();
                     String[] data = modulo.split(" +");
+//                    String[] alumno= data[2].split("-");
+//                    System.out.println(data[0]);
+//                    System.out.println(id);
                     if (Integer.parseInt(data[0]) == id) {
                         aCopiar += this.moduloComodin.formatoFichero();
                     } else {
@@ -308,18 +311,18 @@ public class Modulos implements BDDAlumnosModulos {
             lectorTemporal.nextLine();
 
             while (lectorTemporal.hasNextLine()) {
-                String comodin = lectorTemporal.nextLine();
-                transformarModulo(comodin);
+                transformarModulo(lectorTemporal.nextLine());
                 if (this.moduloComodin.buscarAlumno(nia)) {
                     if (this.moduloComodin.anularMatriculaAlumno(nia) == -1) {
                         System.out.println("*Ha ocurrido un error, no se ha podido eliminar el alumno con nia " + nia
                                 + " del m?dulo " + this.moduloComodin.getIDENTIFICADOR());
+                    }else{
+                        escribirModulo(this.moduloComodin.getIDENTIFICADOR());
+                        return 0;
                     }
                 }
-                escribirModulo(nia);
             }
             lectorTemporal.close();
-            return 0;
         } catch (NoSuchElementException ex) {
             System.out.println("--Error actualizando alumnos, no hay más líneas en el archivo");
         } catch (Exception ex) {

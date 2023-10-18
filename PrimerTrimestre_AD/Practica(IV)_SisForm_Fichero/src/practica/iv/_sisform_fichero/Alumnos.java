@@ -79,10 +79,12 @@ public class Alumnos implements BDDAlumnosModulos {
     }
 
     private void transformarAlumno(String alumno) {
-        String[] informacion = alumno.split(" +");
-        int nia = Integer.parseInt(informacion[0]);
-        this.alumnoComodin= new Alumno(informacion[1], nia);
-        transformarMatricula(buscarMatricula(nia));
+        if (alumno != null) {
+            String[] informacion = alumno.split(" +");
+            int nia = Integer.parseInt(informacion[0]);
+            this.alumnoComodin = new Alumno(informacion[1], nia);
+            transformarMatricula(buscarMatricula(nia));
+        }
     }
 
     public String buscarAlumno(int nia) {
@@ -116,10 +118,6 @@ public class Alumnos implements BDDAlumnosModulos {
     private void transformarMatricula(String matricula) {
         if (matricula != null) {
             String[] datos = matricula.split(" +");
-            
-            System.out.println(datos[0]);
-            System.out.println(datos[1]);
-            
             int nia = Integer.parseInt(datos[0]);
 
             for (int i = 1; i < datos.length; i++) {
@@ -130,9 +128,6 @@ public class Alumnos implements BDDAlumnosModulos {
                 if (BaseDeDatos.modulos.buscarModulo(id) != null) {
                     this.alumnoComodin.matricularModulo(id);
                     for (int j = 0; j < notas.length; j++) {
-                        if(notas[j]=="null"){
-                            this.alumnoComodin.modificarNota(id, (j + 1), 0);
-                        }
                         this.alumnoComodin.modificarNota(id, (j + 1), Double.parseDouble(notas[j]));
                     }
                     this.alumnoComodin.evaluarModulo(id, datosModulo[2]);
@@ -195,11 +190,11 @@ public class Alumnos implements BDDAlumnosModulos {
             }
             return 0;
         } catch (FileNotFoundException ex) {
-            System.out.println("--No se ha podido abrir un archivo, error dando de Baja");
+            System.out.println("--No se ha podido abrir un archivo, error escribiendo alumno");
         } catch (IOException ex) {
-            System.out.println("--No se ha podido abrir un archivo, error dando de Baja");
+            System.out.println("--No se ha podido abrir un archivo, error escribiendo alumno");
         } catch (Exception ex) {
-            System.out.println("--Error inesperado dando de Baja\n" + ex);
+            System.out.println("--Error inesperado intentando escribir alumno\n" + ex);
         } finally {
             //this.alumnoComodin = null;
         }
@@ -212,9 +207,9 @@ public class Alumnos implements BDDAlumnosModulos {
             try {
                 this.lector = new Scanner(this.baseDeMatriculas);
                 comodin = (this.lector.nextLine());
-                
+
                 String aCopiar = "";
-                if(!this.lector.hasNextLine()){
+                if (!this.lector.hasNextLine()) {
                     aCopiar += this.alumnoComodin.formatoFicheroMatricula();
                 }
                 while (this.lector.hasNextLine()) {
@@ -322,13 +317,13 @@ public class Alumnos implements BDDAlumnosModulos {
                         aCopiar += ("\n" + matricula);
                     }
                 }
-                this.lectorSecundario.close();
+                this.lector.close();
                 this.escritor = new PrintWriter(new FileWriter(this.baseDeMatriculas, false));
                 this.escritor.write(comodinMatricula);
                 this.escritor.write(aCopiarMatricula);
                 this.escritor.close();
 
-                if (BaseDeDatos.modulos.actualizar(nia) == 0) {
+                if (BaseDeDatos.modulos.actualizar(nia) == 0 && eliminarMatricula(nia) == 0) {
                     System.out.println("++Se ha dado de baja");
                     return 0;
                 } else {
@@ -416,15 +411,27 @@ public class Alumnos implements BDDAlumnosModulos {
                 int id = sc.nextInt();
                 if (this.alumnoComodin.comprobarModulo(id)) {
                     int posicion = -1;
-                    while (posicion < 0 || posicion > 3) {
+                    while (posicion < 1 || posicion > 3) {
                         System.out.print("La posición a modificar [1, 2, 3]: ");
                         posicion = sc.nextInt();
-                        if (posicion < 0 || posicion > 3) {
+                        if (posicion < 1 || posicion > 3) {
                             System.out.println("--Se ha introducido una posici?n no v?lida");
                         }
                     }
-                    System.out.print("Introduzca la nueva nota: ");
-                    double nota = sc.nextDouble();
+
+                    double nota = -1;
+
+                    while (nota < 0 || nota > 10) {
+                        System.out.print("Introduzca la nueva nota: ");
+                        try {
+                            nota = sc.nextDouble();
+                            if (nota < 0 || nota > 10) {
+                                System.out.println("--Se ha introducido una nota no v?lida");
+                            }
+                        } catch (NumberFormatException ex) {
+                            System.out.println("-Se ha introducido letras");
+                        }
+                    }
                     if (this.alumnoComodin.modificarNota(id, posicion, nota) == 0) {
 
                         if (escribirAlumno(nia) == 0 && escribirMatricula(nia) == 0) {
@@ -436,14 +443,13 @@ public class Alumnos implements BDDAlumnosModulos {
                     } else {
                         System.out.println("--No se ha modificado la nota");
                     }
-                } else {
-                    System.out.println("--Se ha introducido una posici?n no v?lida");
                 }
             } else {
                 System.out.println("--Este alumno no tiene Matricula a?n");
             }
+        } else {
+            System.out.println("--No existe ese alumno en la base");
         }
-
         return -1;
     }
 
@@ -485,12 +491,12 @@ public class Alumnos implements BDDAlumnosModulos {
                     } else {
                         System.out.println("--No se ha podido evaluar");
                     }
-                } else {
-                    System.out.println("--El alumno no esta matriculado en ese módulo");
                 }
             } else {
-                System.out.println("--Este alumno no tiene Matricula a?n");
+                System.out.println("--El alumno no tiene Matricula a?n");
             }
+        } else {
+            System.out.println("--Ese alumno no existe");
         }
         return -1;
     }
@@ -585,9 +591,6 @@ public class Alumnos implements BDDAlumnosModulos {
 
             while (this.lector.hasNextLine()) {
                 transformarAlumno(this.lector.nextLine());
-                if (this.alumnoComodin.comprobarMatricula()) {
-                    System.out.println("tiene matricula");
-                }
                 this.alumnoComodin.imprimir();
                 this.alumnoComodin = null;
             }
@@ -618,7 +621,7 @@ public class Alumnos implements BDDAlumnosModulos {
             }
             this.alumnoComodin = null;
         } else {
-            System.out.println("-NIA no existe");
+            System.out.println("--No existe ese alumno en la base");
         }
     }
 }
