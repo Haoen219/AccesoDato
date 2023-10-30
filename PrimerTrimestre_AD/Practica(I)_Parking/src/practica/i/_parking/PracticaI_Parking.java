@@ -22,8 +22,6 @@ public class PracticaI_Parking {
         int numeroCoches= sc.nextInt();
         System.out.println("");
         
-        MaquinaEntrada cochesCirculando= new MaquinaEntrada();
-        
         //instanciar parking
         parking= new Parking(plazas, numeroCoches);
         ArrayList<Coche> coches= new ArrayList<>();
