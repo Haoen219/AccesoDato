@@ -32,12 +32,5 @@ public class PracticaI_Parking {
             coches.add(new Coche((i+1)));
             coches.get(i).start();
         }
-//        for(int i=0; i<numeroCoches; i++){
-//            coches.get(i).start();
-//        }
-        
-        
-        
     }
-    
 }

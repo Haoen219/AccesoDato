@@ -4,21 +4,16 @@
  */
 package practica.i._parking;
 
-
 /**
  *
  * @author haoen
  */
-public class MaquinaEntrada{
-    private int random;
-    final static int MINIMO = 1000;
-    final static int MAXIMO = 4000;
-    
-    public void aparcarCoche(int id) {
-        PracticaI_Parking.parking.aparcarCoche(id);
+public class MaquinaEntrada {
+    public boolean entrarCoche(int id) {
+        return PracticaI_Parking.parking.aparcarCoche(id);
     }
 
-    public void salirCoche(int id) {
-        PracticaI_Parking.parking.salirCoche(id);
+    public boolean salirCoche(int id) {
+        return PracticaI_Parking.parking.desaparcarCoche(id);
     }
 }

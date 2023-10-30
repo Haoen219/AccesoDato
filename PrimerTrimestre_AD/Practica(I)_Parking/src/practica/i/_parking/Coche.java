@@ -10,12 +10,12 @@ package practica.i._parking;
  */
 public class Coche extends Thread {
     private int random;
+    private boolean aparcado = false;
     final static int MINIMO = 1000;
     final static int MAXIMO = 4000;
 
     final private int ID;
     private static MaquinaEntrada maquina = new MaquinaEntrada();
-    //private int plaza;
 
     public Coche(int id) {
         this.ID = id;
@@ -26,11 +26,14 @@ public class Coche extends Thread {
         esperarRandom();
         while (true) {
             synchronized (maquina) {
-                this.maquina.aparcarCoche(this.ID);
+                aparcado = this.maquina.entrarCoche(this.ID);
             }
-            esperarRandom();
-            synchronized (maquina) {
-                this.maquina.salirCoche(this.ID);
+            if (aparcado) {
+                esperarRandom();
+                synchronized (maquina) {
+                    this.maquina.salirCoche(this.ID);
+                    aparcado = false;
+                }
             }
             esperarRandom();
         }
@@ -44,13 +47,6 @@ public class Coche extends Thread {
             System.out.println("Se ha interrimpido la espera en coche " + this.ID);
         }
     }
-//    private synchronized void esperarHasta() {
-//        try {
-//            wait();
-//        } catch (InterruptedException ex) {
-//            System.out.println("Se ha interrimpido la espera en coche " + this.ID);
-//        }
-//    }
 
     //GETTER SETTER
     public int getID() {
