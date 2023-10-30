@@ -1,0 +1,14 @@
+Para ejecutar el programa, hecho en NetBeans.
+Abra la carpeta que acompaña este archivo en su programa.
+
+Para visual: Agregar carpeta al área de trabajo.
+Para NetBeans: Abrir proyecto Java.
+
+Una vez abierto la carpeta y el proyecto, acceda a la carpeta "src".
+Ahí tiene los ficheros .java, ejecuta cualquiera.
+
+Con eso debería de ejecutarse correctamente.
+
+Recomiendo seguir estos pasos ya que es posible que
+al haber creado los ficheros en un paquete de un proyecto
+NetBeans estos no se reconozcan fuera de su lugar designado.
