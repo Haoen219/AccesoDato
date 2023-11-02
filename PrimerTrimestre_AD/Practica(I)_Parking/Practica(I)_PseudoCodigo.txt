@@ -1,0 +1,74 @@
+CLASE Parking{
+	INT plazas
+	INT plazasLibres
+	INT numeroCoches
+	INT parking[]
+
+	BUILDER Parking(INT plazas, INT coches){
+		plazasLibres = plazas
+		numeroCoches = coches
+		parking = INT[plazas]
+		LLAMAR instanciarParking()
+	}
+	
+	METODO VOID instanciarParking(){
+		PARA cada entrada en "parking"{
+			valor = 0
+		}
+	}
+
+	METODO BOOLEAN aparcarCoche(INT coche){
+		INT libre = -1
+		PARA cada entrada en "parking"{
+			SI (valor = 0){
+				libre = valor
+				ROMPER bucle PARA
+			}
+		}
+		SI (libre > -1){
+			valor en posicion [libre] de "parking" = coche
+			plazasLibres - 1
+			IMPRIMIR "Entrada, coche x aparce en plaza y"
+			LLAMAR mostrarParking()
+			DEVOLVER TRUE
+		}
+		DEVOLVER FALSE
+	}
+
+	METODO BOOLEAN desaparcarCoche(INT coche){
+		BOOLEAN salir = FALSE
+		PARA cada entrada en "parking"{
+			SI (valor = coche){
+				valor = 0
+				plazasLibres + 1
+				ROMPER bucle PARA
+			}
+		}
+		SI (salir = TRUE){
+			IMPRIMIR "Salida, coche x sale del parking"
+			LLAMAR mostrarParking()
+		}SINO {
+			IMPRIMIR "No se ha podido salir"
+		}
+		DEVOLVER salir
+	}
+
+	METODO VOID mostrarParking(){
+		IMPRIMIR "plazasLibres"
+		PARA cada entrada en "parking"{
+			IMPRIMIR "[valor]"
+		}
+	}
+}
+
+CLASE Coche{
+
+}
+
+
+
+
+
+
+
+

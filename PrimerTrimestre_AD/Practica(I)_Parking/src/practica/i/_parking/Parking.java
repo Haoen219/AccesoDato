@@ -9,22 +9,19 @@ package practica.i._parking;
  * @author 2DAM_Zhang_Haoen
  */
 public class Parking {
-
-    private int plazas;
     private int plazasLibres;
     private int numeroCoches;
     private int[] parking;
 
     public Parking(int plazas, int coches) {
-        this.plazas = plazas;
-        this.plazasLibres = plazas;
+        this.plazasLibres=plazas;
         this.numeroCoches = coches;
         this.parking = new int[plazas];
         instanciarParking();
     }
 
     private void instanciarParking() {
-        for (int i = 0; i < this.plazas; i++) {
+        for (int i = 0; i < this.parking.length; i++) {
             this.parking[i] = 0;
         }
     }
@@ -32,7 +29,7 @@ public class Parking {
     public boolean aparcarCoche(int coche) {
         //busca el primer sitio libre
         int libre = -1;
-        for (int i = 0; i < this.plazas; i++) {
+        for (int i = 0; i < this.parking.length; i++) {
             if (this.parking[i] == 0) {
                 libre = i;
                 break;
@@ -50,14 +47,14 @@ public class Parking {
 
     public boolean desaparcarCoche(int coche) {
         boolean salir = false;
-        for (int i = 0; i < this.plazas; i++) {
+        for (int i = 0; i < this.parking.length; i++) {
             if (this.parking[i] == coche) {
                 this.parking[i] = 0;
+                this.plazasLibres++;
                 salir = true;
                 break;
             }
         }
-        this.plazasLibres++;
         if (salir) {
             System.out.println("SALIDA: El coche " + coche + " sale del parking");
             mostrarParking();
@@ -71,7 +68,7 @@ public class Parking {
     public void mostrarParking() {
         System.out.println("Plazas libres: " + this.plazasLibres);
         System.out.print("Parking: ");
-        for (int i = 0; i < this.plazas; i++) {
+        for (int i = 0; i < this.parking.length; i++) {
             System.out.print("[" + this.parking[i] + "]");
         }
         System.out.println("\n");
