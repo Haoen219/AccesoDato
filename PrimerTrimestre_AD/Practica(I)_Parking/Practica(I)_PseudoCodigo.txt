@@ -1,71 +1,141 @@
-CLASE Parking{
+CLASE Parking
 	INT plazas
 	INT plazasLibres
 	INT numeroCoches
 	INT parking[]
 
-	BUILDER Parking(INT plazas, INT coches){
-		plazasLibres = plazas
-		numeroCoches = coches
-		parking = INT[plazas]
+	BUILDER Parking(INT plazas, INT coches)
+		plazasLibres <-- plazas
+		numeroCoches <-- coches
+		parking <-- NUEVO INT[plazas]
 		LLAMAR instanciarParking()
-	}
+	FinBUILDER
 	
-	METODO VOID instanciarParking(){
-		PARA cada entrada en "parking"{
-			valor = 0
-		}
-	}
+	METODO VOID instanciarParking()
+		PARA cada entrada en "parking"
+			valor <-- 0
+		Fin_PARA
+	Fin_METODO
 
-	METODO BOOLEAN aparcarCoche(INT coche){
-		INT libre = -1
-		PARA cada entrada en "parking"{
-			SI (valor = 0){
-				libre = valor
+	METODO BOOLEAN aparcarCoche(INT coche)
+		INT libre <-- -1
+		PARA cada entrada en "parking"
+			SI (valor = 0)
+				libre <-- valor
 				ROMPER bucle PARA
-			}
-		}
-		SI (libre > -1){
-			valor en posicion [libre] de "parking" = coche
+			Fin_SI
+		Fin_PARA
+
+		SI (libre > -1)
+			valor en posicion [libre] de "parking" <-- coche
 			plazasLibres - 1
 			IMPRIMIR "Entrada, coche x aparce en plaza y"
 			LLAMAR mostrarParking()
 			DEVOLVER TRUE
-		}
+		Fin_SI
 		DEVOLVER FALSE
-	}
+	Fin_METODO
 
-	METODO BOOLEAN desaparcarCoche(INT coche){
-		BOOLEAN salir = FALSE
-		PARA cada entrada en "parking"{
+	METODO BOOLEAN desaparcarCoche(INT coche)
+		BOOLEAN salir <-- FALSE
+
+		PARA cada entrada en "parking"
 			SI (valor = coche){
-				valor = 0
+				valor <-- 0
 				plazasLibres + 1
 				ROMPER bucle PARA
-			}
-		}
-		SI (salir = TRUE){
+			Fin_SI
+		Fin_PARA
+
+		SI (salir = TRUE)
 			IMPRIMIR "Salida, coche x sale del parking"
 			LLAMAR mostrarParking()
-		}SINO {
+		SINO
 			IMPRIMIR "No se ha podido salir"
-		}
+		Fin_SI
+
 		DEVOLVER salir
-	}
+	Fin_METODO 
 
-	METODO VOID mostrarParking(){
+	METODO VOID mostrarParking()
 		IMPRIMIR "plazasLibres"
-		PARA cada entrada en "parking"{
+		PARA cada entrada en "parking"
 			IMPRIMIR "[valor]"
-		}
-	}
-}
-
-CLASE Coche{
-
-}
+		Fin_PARA
+	Fin_METODO
+Fin
 
 
+
+CLASE Coche
+	INT random
+	BOOLEAN aparcado <-- FALSE
+	INT MINIMO <-- 1000
+	INT MAXIMO <-- 4000
+
+	INT ID
+	STATIC MaquinaEntrada maquina <-- NUEVO MaquinaEntrada()
+	
+	BUILDER Coche()
+		ID <-- id
+	Fin
+
+	METODO VOID run()
+		LLAMAR esperarRandom()
+		MIENTRAS (INFINITO)
+			SINCRONIZADO con (maquina)
+				LLAMAR maquina.entrarCoche(ID) --> aparcado
+			FinSINCRONIZADO 
+
+			SI (aparcado = TRUE){
+				LLAMAR esperarRandom()
+
+				SINCRONIZADO con (maquina){
+					LLAMAR maquina.salirCoche(ID)
+					aparcado <-- FALSE
+				Fin_SINCRONIZADO 
+			Fin_SI
+			LLAMAR esperarRandom()
+		Fin_MIENTRAS 
+	Fin_METODO
+
+	METODO esperarRandom()
+		random <-- valor random generado entre MINIMO y MAXIMO
+		LLAMAR sleep(random)
+	Fin_METODO
+Fin_CLASE
+
+
+
+CLASE MaquinaEntrada
+	METODO BOOLEANO entrarCoche(INT id)
+		DEVOLVER <-- LLAMAR método aparcarCoche(id) de parking en MAIN
+	Fin_METODO
+
+	METODO BOOLEANO salirCoche(INT id)
+		DEVOLVER <-- LLAMAR método desaparcarCoche(id) de parking en MAIN
+	Fin_METODO
+Fin_CLASE
+
+
+
+CLASE PracticaI_Parking
+	STATIC Parking parking
+
+	MAIN
+		PEDIR cantidad de plazas y coches
+		INT plazas <-- entrada
+		INT numeroCoches <-- entrada
+
+		parking <-- NUEVO Parking(plazas, numeroCoches)
+		INSTANCIAR lista de Coche coches
+
+		PARA el valor de numeroCoches
+			AGREGAR nuevo Coche a la lista
+			INSTANCIAR nuevo THREAD desde el objeto Coche
+		Fin_PARA
+	Fin_MAIN
+Fin_Clase
 
 
 

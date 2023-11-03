@@ -47,9 +47,4 @@ public class Coche extends Thread {
             System.out.println("Se ha interrimpido la espera en coche " + this.ID);
         }
     }
-
-    //GETTER SETTER
-    public int getID() {
-        return this.ID;
-    }
 }
