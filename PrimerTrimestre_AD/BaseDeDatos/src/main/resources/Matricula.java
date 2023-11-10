@@ -14,9 +14,9 @@ import jakarta.persistence.Id;
 @Table(name="Matricula")
 public class Matricula {
     @Id
-    @Column(name = "ID Alumno")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer ID;
+    @Column(name = "ID")
+    @GeneratedValue
+    private SmallInt ID;
 
     @Column(name="ID Módulo")
     private int idModulo;
