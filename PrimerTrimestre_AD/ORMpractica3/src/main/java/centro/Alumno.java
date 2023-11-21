@@ -4,21 +4,34 @@
  */
 package practica.iii._sisform_almacenamiento;
 
+import java.util.Set;
+
 /**
  *
  * @author haoen
  */
+
+@Entity
+@Table(name="Alumno")
 public class Alumno extends BaseAlumnoModulo{
-    private Matricula matricula;
-    
-    //Builder
-    public Alumno(String nombre, int NIA){
-        super(nombre, NIA);
+    @Id
+    @Column(name="ID")
+    private short ID;
+    @Column(name="Nombre")
+    private String nombre;
+    @ManyToOne
+    @JoinColumn(name="Matriculas")
+    private Set<Matricula> matriculas;
+
+    public Alumno(){}
+    public Alumno(String nombre){
+        this.nombre=nombre;
     }
-    
+
+
     //MATRICULA
     public boolean comprobarMatricula(){
-        if(this.matricula==null){
+        if(this.matriculas.size()==0){
             return false;
         }
         return true;

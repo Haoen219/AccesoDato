@@ -11,11 +11,24 @@ import java.util.TreeMap;
  *
  * @author haoen
  */
+@Entity
+@Table(name="Matricula")
 public class Matricula {
-    private TreeMap<Integer, Double[]> modulosMatriculados= new TreeMap();
-    private TreeMap<Integer, String> calificaciones= new TreeMap();
-    final private String CALIFICACIONDEFECTO="Sin calificar";
-    
+    @Id
+    @Column(name = "ID")
+    private short ID;
+    /*
+    @OneToMany
+    @JoinColumn(name ="Matricula_FK_alumno")
+    short idAlumno;
+    */
+    @Column(name="ID Modulo")
+    short idModulo;
+    @Column(name="ID Notas")
+    short idDetalle;
+    @Column(name="Calificación")
+    private String calificacion;
+
     public Matricula(){}
     
     public int matricularModulo(int id){           //los modulos reci?n matriculados no tiene notas
