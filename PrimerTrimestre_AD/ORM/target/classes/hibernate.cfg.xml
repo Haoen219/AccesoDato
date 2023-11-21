@@ -1,0 +1,25 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+   "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+   "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+   <session-factory>
+      <!-- JDBC Database connection settings -->
+   <property name="connection.url">jdbc:mysql://10.0.219.14:3306/10624133</property>
+
+   <property name="connection.username">10624133</property>
+
+   <property name="connection.password">10624133</property>
+
+   <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+
+   <property name="dialect">org.hibernate.dialect.MySQL8Dialect</property>
+
+
+   <mapping class="centro.Modulo" /> 
+   <mapping class="centro.Alumno" /> 
+   <mapping class="centro.Matricula" /> 
+   <mapping class="centro.Nota" /> 
+
+
+   </session-factory>
+</hibernate-configuration>
