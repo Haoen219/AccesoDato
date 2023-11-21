@@ -513,7 +513,7 @@ public class Alumnos implements BDDAlumnosModulos {
 
                 if (this.alumnoComodin.comprobarMatricula()) {
                     if (this.alumnoComodin.comprobarModulo(id)) {
-                        if (this.alumnoComodin.eliminarModulos(id) == -1) {
+                        if (this.alumnoComodin.eliminarModulo(id) == -1) {
                             System.out.println("*Ha ocurrido un error, no se ha podido eliminar el modulo con ID de una matricula");
                         } else {
                             if (escribirAlumno(this.alumnoComodin.getIDENTIFICADOR()) == 0

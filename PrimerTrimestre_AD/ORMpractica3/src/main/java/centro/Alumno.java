@@ -4,49 +4,74 @@
  */
 package practica.iv._sisform_fichero;
 
+import java.util.Set;
+
 /**
  *
  * @author haoen
  */
-public class Alumno extends BaseAlumnoModulo{
-    private Matricula matricula;
-    
-    //Builder
-    public Alumno(String nombre, int NIA){
-        super(nombre, NIA);
+@Entity
+@Table(name="Alumno")
+public class Alumno{
+    @Id
+    @Column(name="ID")
+    private short ID;
+    @Column(name="Nombre")
+    private String nombre;
+    @ManyToOne
+    @JoinColumn(name="Matriculas")
+    private Set<Matricula> matriculas;
+
+    public Alumno(){}
+    public Alumno(String nombre){
+        this.nombre=nombre;
     }
     
+    public String getNombre() {
+        return this.nombre;
+    }
+    public int getIDENTIFICADOR() {
+        return this.ID;
+    }
+
+
+
+    
     //MATRICULA
-    public boolean comprobarMatricula(){
-        if(this.matricula==null){
+    public boolean comprobarMatricula(){ //
+        if(this.matriculas.size()==0){
             return false;
         }
         return true;
     }
+
+
+    //hay que modificar para que seleccione la matricula correspondiente
     public boolean comprobarModulo(int id){
-        return this.matricula.comprobarModulo(id);
+        /*return this.matricula.comprobarModulo(id);*/
     }
-    public int eliminarModulos(int id){                    //sirve para eliminar un modulo de la matricula
-        if(this.matricula.eliminarModulo(id)==0){
+    public int eliminarModulo(int id){
+        /*if(this.matricula.eliminarModulo(id)==0){
             return 0;
-        }
+        }*/
         return -1;
     }
     public int modificarNota(int id, int posicion, double nota){
-        if(this.matricula.modificarNota(id, posicion, nota)==0){
+        /*if(this.matricula.modificarNota(id, posicion, nota)==0){
             return 0;
-        }
+        }*/
         return -1;
     }
     public int evaluarModulo(int id, String calificacion){
-        if(this.matricula.evaluarModulo(id, calificacion)==0){
+        /*if(this.matricula.evaluarModulo(id, calificacion)==0){
             return 0;
-        }
+        }*/
         return -1;
     }
     
     
     //MODULO
+    //instanciar nuevo matricula en "matriculas" con el ID_MODULO de id
     public int matricularModulo(int id){        //no necesita comprobar porque es llamado de otra funcion comprobada
         if (this.matricula==null){
             this.matricula= new Matricula();        //instancia una matricula si no tiene, haciendo que
