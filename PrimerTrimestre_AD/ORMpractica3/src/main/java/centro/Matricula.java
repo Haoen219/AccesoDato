@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package practica.iii._sisform_almacenamiento;
+package practica.iv._sisform_fichero;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -11,28 +11,17 @@ import java.util.TreeMap;
  *
  * @author haoen
  */
-@Entity
-@Table(name="Matricula")
 public class Matricula {
-    @Id
-    @Column(name = "ID")
-    private short ID;
-    /*
-    @OneToMany
-    @JoinColumn(name ="Matricula_FK_alumno")
-    short idAlumno;
-    */
-    @Column(name="ID Modulo")
-    short idModulo;
-    @Column(name="ID Notas")
-    short idDetalle;
-    @Column(name="Calificación")
-    private String calificacion;
-
+    private TreeMap<Integer, double[]> modulosMatriculados= new TreeMap();
+    private TreeMap<Integer, String> calificaciones= new TreeMap();
+    final private String CALIFICACIONDEFECTO="Sin-calificar";
+    
     public Matricula(){}
     
-    public int matricularModulo(int id){           //los modulos reci?n matriculados no tiene notas
-        if(this.modulosMatriculados.put(id, new Double[3])==null && this.calificaciones.put(id, this.CALIFICACIONDEFECTO)==null){
+    public int matricularModulo(int id){           //los modulos reci?n matriculados tienen 0 de nota
+        double[] comodin={0,0,0};
+        if(this.modulosMatriculados.put(id, comodin)==null && this.calificaciones.put(id, this.CALIFICACIONDEFECTO)==null){
+            
             return 0;
         }
         return -1;
@@ -46,7 +35,7 @@ public class Matricula {
     }
     
     public int modificarNota(int id, int posicion, double nota){
-        Double[] comodin= this.modulosMatriculados.get(id);
+        double[] comodin= this.modulosMatriculados.get(id);
         comodin[posicion-1]=nota;                   //[posicion-1] porque le pedi al usuario 1, 2, o 3.
         if(this.modulosMatriculados.put(id, comodin)!=null){
             return 0;
@@ -79,11 +68,7 @@ public class Matricula {
             System.out.print("Notas: [ ");
             if(this.modulosMatriculados.containsKey(id)){
                 for (int i = 0; i < this.modulosMatriculados.get(id).length; i++) {
-                    if(this.modulosMatriculados.get(id)[i]==null){
-                        System.out.printf("-nulo- ");
-                    }else{
-                        System.out.printf("-%02.2f- ",this.modulosMatriculados.get(id)[i]);
-                    }
+                    System.out.printf("-%02.2f- ",this.modulosMatriculados.get(id)[i]);
                 }
             }
             System.out.println("]  Calificaci?n: "+this.calificaciones.get(id));

@@ -56,15 +56,15 @@ public class ORM
 
     private static int menuAlumnos(){
         int opcion=0;
-        Alumno alumnoComodin=new Alumno();
+        Alumnos gestorAlumnos=new Alumno();
         do{
             try{
-                opcion=alumnoComodin.menu();
+                opcion=gestorAlumnos.menu();
                 switch(opcion){
                     case 0 -> System.out.println("Volviendo al menu previo...\n");
-                    case 1 -> alumnoComodin.darDeAlta();
-                    case 2 -> alumnoComodin.darDeBaja();
-                    case 3 -> alumnoComodin.listar();
+                    case 1 -> gestorAlumnos.darDeAlta();
+                    case 2 -> gestorAlumnos.darDeBaja();
+                    case 3 -> gestorAlumnos.listar();
                     default -> System.out.println("--Opción no valida");
                 }
             }catch(InputMismatchException ex){
@@ -77,16 +77,16 @@ public class ORM
     }            
     private static int menuModulos(){
         int opcion=0;
-        Modulo moduloComodin=new Modulo();
+        Modulos gestorModulos=new Modulo();
         do{
             try{
-                opcion=moduloComodin.menu();
+                opcion=gestorModulos.menu();
                 switch(opcion){
                     case 0 -> System.out.println("Volviendo al menu previo...\n");
-                    case 1 -> moduloComodin.darDeAlta();
-                    case 2 -> moduloComodin.darDeBaja();
-                    case 3 -> moduloComodin.listar();
-                    case 4 -> moduloComodin.matricularAlumno();
+                    case 1 -> gestorModulos.darDeAlta();
+                    case 2 -> gestorModulos.darDeBaja();
+                    case 3 -> gestorModulos.listar();
+                    case 4 -> gestorModulos.matricularAlumno();
                     default -> System.out.println("--Opción no valida");
                 }
             }catch(InputMismatchException ex){
@@ -99,15 +99,15 @@ public class ORM
     }
     private static int menuMatriculas(){
         int opcion=0;
-        Matricula matriculaComodin=new Matricula();
+        Matriculas gestorMatriculas=new Matricula();
         do{
             try{
-                opcion=matriculaComodin.menu();
+                opcion=gestorMatriculas.menu();
                 switch(opcion){
                     case 0 -> System.out.println("Volviendo al menu previo...\n");
-                    case 1 -> matriculaComodin.modificarNota();
-                    case 2 -> matriculaComodin.calificar();
-                    case 3 -> matriculaComodin.mostrar();
+                    case 1 -> gestorMatriculas.modificarNota();
+                    case 2 -> gestorMatriculas.calificar();
+                    case 3 -> gestorMatriculas.mostrar();
                     default -> System.out.println("--Opción no valida");
                 }
             }catch(InputMismatchException ex){

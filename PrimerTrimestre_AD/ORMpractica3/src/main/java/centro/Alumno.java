@@ -2,36 +2,23 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package practica.iii._sisform_almacenamiento;
-
-import java.util.Set;
+package practica.iv._sisform_fichero;
 
 /**
  *
  * @author haoen
  */
-
-@Entity
-@Table(name="Alumno")
 public class Alumno extends BaseAlumnoModulo{
-    @Id
-    @Column(name="ID")
-    private short ID;
-    @Column(name="Nombre")
-    private String nombre;
-    @ManyToOne
-    @JoinColumn(name="Matriculas")
-    private Set<Matricula> matriculas;
-
-    public Alumno(){}
-    public Alumno(String nombre){
-        this.nombre=nombre;
+    private Matricula matricula;
+    
+    //Builder
+    public Alumno(String nombre, int NIA){
+        super(nombre, NIA);
     }
-
-
+    
     //MATRICULA
     public boolean comprobarMatricula(){
-        if(this.matriculas.size()==0){
+        if(this.matricula==null){
             return false;
         }
         return true;
@@ -73,11 +60,11 @@ public class Alumno extends BaseAlumnoModulo{
     //GUARDAR EN FICHERO
     public String formatoFichero(){
         //NIA NOMBRE-APELLIDO1-APELLIDO2 NumMODULOS
-        String alumno= String.format("%n%-4d %-25s ", this.getIDENTIFICADOR(), this.getNombre().replace(' ', '-'));
+        String alumno= String.format("%n%-8d %-25s ", this.getIDENTIFICADOR(), this.getNombre().replace(' ', '-'));
         if(comprobarMatricula()){
             alumno+=this.matricula.getNumeroModulos();
         }else{
-            alumno+="-Sin Matricula-";
+            alumno+="-Sin_Matricula-";
         }
         return alumno;
     }

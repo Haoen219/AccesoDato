@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package practica.iii._sisform_almacenamiento;
+package practica.iv._sisform_fichero;
 
 import java.util.TreeSet;
 
@@ -31,11 +31,17 @@ public class Modulo extends BaseAlumnoModulo {
         }
         return -1;
     }
+    public boolean buscarAlumno(int nia){
+        if(this.alumnosMatriculados.contains(nia)){
+            return true;
+        }
+        return false;
+    }
     
     //GUARDAR EN FICHERO
     public String formatoFichero(){
         //ID NOMBRE NIA-NIA-NIA-NIA...
-        String modulo= String.format("%n%-4d %-20s ", this.getIDENTIFICADOR(), this.getNombre());
+        String modulo= String.format("%n%-4d %-20s ", this.getIDENTIFICADOR(), this.getNombre().replace(' ', '-'));
         for(int nia:this.alumnosMatriculados){
             modulo+=nia+"-";
         }
