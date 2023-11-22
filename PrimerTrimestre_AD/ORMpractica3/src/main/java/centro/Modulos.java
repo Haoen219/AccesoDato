@@ -17,71 +17,83 @@ public class Modulos implements BDDAlumnosModulos {
 //MODULO
     @Override
     public int darDeAlta() {
-        Lector sc= new Lector(System.in);
+        Lector sc = new Lector(System.in);
         System.out.println("\n-Dar de alta módulo-");
         System.out.print("Introduzca el nombre del módulo: ");
-        String nombre=sc.leer();
-        
+        String nombre = sc.leer();
+
         Modulo modulo = new Modulo(nombre);
-            
+
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
 
         session.save(modulo);
 
         session.getTransaction().commit();
-        System.out.println("Se ha dado de alta al módulo "+ nombre);
+        System.out.println("Se ha dado de alta al módulo " + nombre);
         session.close();
         return 0;
     }
-    
+
     @Override
     public int darDeBaja() {
-        Lector sc= new Lector(System.in);
+        Lector sc = new Lector(System.in);
         System.out.println("\n-Dar de baja módulo-");
         System.out.print("Introduzca ID del módulo: ");
-        int id=sc.leerEntero(0,15);
-            
+        int id = sc.leerEntero(0, 15);
+
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
 
-        Modulo deBaja = session.get(Modulo.class, (short)id);
+        Modulo deBaja = session.get(Modulo.class, (short) id);
 
-        if(deBaja!=null){
+        if (deBaja != null) {
+            for (Matricula matricula : deBaja.matriculados) {
+                Notas notas = matricula.getNotas();
+                session.delete(notas);
+                session.delete(matricula);
+            }
             session.delete(deBaja);
+
             session.getTransaction().commit();
-            System.out.println("Se ha dado de baja al módulo "+ deBaja.getNombre());
-        }else{
+            System.out.println("Se ha dado de baja al módulo " + deBaja.getNombre());
+        } else {
             System.out.println("No existe modulo con ese ID");
         }
-        
+
         session.close();
         return 0;
     }
 
 //MATRICULA
-    public int matricularAlumno(){
-        Lector sc= new Lector(System.in);
+    public int matricularAlumno() {
+        Lector sc = new Lector(System.in);
         System.out.println("\n-Matricular alumno-");
         System.out.print("Introduzca NIA del alumno: ");
-        int nia=sc.leerEntero(0,15);
-
-        System.out.print("Introduzca ID del modulo: ");
-        int id=sc.leerEntero(0,15);
+        int nia = sc.leerEntero(0, 15);
 
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
 
-        Alumno aMatricular = session.get(Alumno.class, (short)nia);
-        Modulo moduloMatri = session.get(Modulo.class, (short)id);
+        Alumno aMatricular = session.get(Alumno.class, (short) nia);
 
-        if(aMatricular!=null){
-            session.update(aMatricular);
-            session.getTransaction().commit();
-            aMatricular.actualizar((short)id);
-            System.out.println("Se ha dado de baja al módulo "+ aMatricular.getNombre());
+        if (aMatricular != null) {
+            System.out.print("Introduzca ID del modulo: ");
+            int id = sc.leerEntero(0, 15);
+
+            Modulo moduloMatri = session.get(Modulo.class, (short) id);
+
+            if (moduloMatri != null) {
+                aMatricular.matricularModulo((short)id);
+                
+                session.update(aMatricular);
+                session.getTransaction().commit();
+                System.out.println("Se ha dado de baja al módulo " + aMatricular.getNombre());
+            } else {
+                System.out.println("No existe Modulo con ese ID");
+            }
         }else{
-            System.out.println("No existe Alumno con ese ID");
+            System.out.println("El alumno no existe.");
         }
 
         session.close();
@@ -101,12 +113,13 @@ public class Modulos implements BDDAlumnosModulos {
         System.out.println("|4| Matricular Alumno      |");
         System.out.println("|" + "-".repeat(26) + "|");
         System.out.print("OPCI?N: ");
-        int opcion = sc.leerEntero(0,4);
+        int opcion = sc.leerEntero(0, 4);
         return opcion;
     }
 
     //IMPRIMIR
-//    public void listar() {
+    public void listar() {
+    }
 //        System.out.println("\n-Listar modulos-");
 //        try {
 //            this.lector = new Scanner(this.baseDeModulos);

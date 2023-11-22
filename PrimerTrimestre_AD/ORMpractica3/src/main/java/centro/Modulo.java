@@ -9,13 +9,9 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.hibernate.Session;
-
-import persistencia.ORM;
-import utilidades.Lector;
 
 /**
  *
@@ -31,7 +27,8 @@ public class Modulo {
     private String nombre;
     
     @ManyToOne
-    Set<Alumno> matriculados;
+    @JoinColumn(name="Matriculas")
+    Set<Matricula> matriculados;
     
     public Modulo(){}
     public Modulo(String nombre){
@@ -43,39 +40,6 @@ public class Modulo {
     }
     public int getIDENTIFICADOR() {
         return this.ID;
-    }
-
-    
-
-    public int matricularAlumno(){
-        //POR IMPLEMENTAR
-        
-        
-//        Lector sc= new Lector(System.in);
-//        System.out.println("\n-Matricular alumno-");
-//        System.out.print("Introduzca NIA del alumno: ");
-//        int nia=sc.leerEntero(0,15);
-//
-//        System.out.print("Introduzca ID del modulo: ");
-//        int id=sc.leerEntero(0,15);
-//
-//        Session session = new ORM().conexion().getSessionFactory().openSession();
-//        session.beginTransaction();
-//
-//        Alumno aMatricular = session.get(Alumno.class, (short)nia);
-//        Modulo moduloMatri = session.get(Modulo.class, (short)id);
-//
-//        if(aMatricular!=null){
-//            session.update(aMatricular);
-//            session.getTransaction().commit();
-//            aMatricular.actualizar((short)nia, this.ID);
-//            System.out.println("Se ha dado de baja al módulo "+ aMatricular.getNombre());
-//        }else{
-//            System.out.println("No existe Alumno con ese ID");
-//        }
-//
-//        session.close();
-        return 0;
     }
     
     public int listar(){

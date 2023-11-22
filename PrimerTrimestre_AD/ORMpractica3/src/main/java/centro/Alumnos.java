@@ -4,8 +4,9 @@
  */
 package centro;
 
-import java.util.Scanner;
+import java.util.List;
 import org.hibernate.Session;
+import org.hibernate.query.Query;
 import persistencia.ORM;
 import utilidades.Lector;
 
@@ -50,13 +51,26 @@ public class Alumnos implements BDDAlumnosModulos {
             
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
+        
+        Query query = session.createQuery("FROM Matricula WHERE ID_Alumno = :nia AND ID_Modulo = :id");
+        query.setParameter("nia", nia);
+        
+        List<Matricula> aBorrar = query.list();
 
         Alumno deBaja = session.get(Alumno.class, (short)nia);
+        
 
         if(deBaja!=null){
+            for(Matricula matricula : aBorrar){
+                Notas notas = matricula.getNotas();
+                session.delete(notas);
+                session.delete(matricula);
+            }
             session.delete(deBaja);
             session.getTransaction().commit();
             System.out.println("Se ha dado de baja al alumno "+ deBaja.getNombre());
+        }else{
+            System.out.println("No existe este alumno.");
         }
         
         session.close();
@@ -68,14 +82,14 @@ public class Alumnos implements BDDAlumnosModulos {
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
 
-        Alumno aActualizar = session.get(Alumno.class, (short)nia);
-        if(aActualizar!=null){
-            for (Matricula x : aActualizar.getMatriculas()){
-                if(x.idModulo==ID){
-                    aActualizar.eliminarModulo(ID);
-                }
-            }
-            session.update(aActualizar);
+        Query query = session.createQuery("FROM Matricula WHERE ID_Alumno = :nia AND ID_Modulo = :id");
+        query.setParameter("nia", nia);
+        query.setParameter("id", ID);
+
+        Matricula aModificar = (Matricula) query.uniqueResult();
+        
+        if(aModificar!=null){
+            session.delete(aModificar);
             session.getTransaction().commit();
         }
         session.close();
@@ -100,7 +114,7 @@ public class Alumnos implements BDDAlumnosModulos {
 
     //IMPRIMIR
 //    @Override
-//    public void listar() {
+    public void listar() {}
 //        System.out.println("\n-Listar alumnos-");
 //        try {
 //            this.lector = new Scanner(this.baseDeAlumnos);

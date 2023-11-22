@@ -16,10 +16,10 @@ import utilidades.Lector;
 public class ORM 
 {
     
-    private static Alumno alumnos;
-    private static Modulo modulos;
-    private static Matricula matriculas;
-    private static Notas notas;
+    private static Alumnos alumnos;
+    private static Modulos modulos;
+    private static Matriculas matriculas;
+    //private static Notas notas;
     
     
     private static final Conexion conexion=new Conexion();
@@ -56,15 +56,15 @@ public class ORM
 
     private static int menuAlumnos(){
         int opcion=0;
-        Alumnos gestorAlumnos=new Alumno();
+        //Alumnos gestorAlumnos=new Alumnos();
         do{
             try{
-                opcion=gestorAlumnos.menu();
+                opcion=alumnos.menu();
                 switch(opcion){
                     case 0 -> System.out.println("Volviendo al menu previo...\n");
-                    case 1 -> gestorAlumnos.darDeAlta();
-                    case 2 -> gestorAlumnos.darDeBaja();
-                    case 3 -> gestorAlumnos.listar();
+                    case 1 -> alumnos.darDeAlta();
+                    case 2 -> alumnos.darDeBaja();
+                    case 3 -> alumnos.listar();
                     default -> System.out.println("--Opción no valida");
                 }
             }catch(InputMismatchException ex){
@@ -77,16 +77,16 @@ public class ORM
     }            
     private static int menuModulos(){
         int opcion=0;
-        Modulos gestorModulos=new Modulo();
+        //Modulos gestorModulos=new Modulo();
         do{
             try{
-                opcion=gestorModulos.menu();
+                opcion=modulos.menu();
                 switch(opcion){
                     case 0 -> System.out.println("Volviendo al menu previo...\n");
-                    case 1 -> gestorModulos.darDeAlta();
-                    case 2 -> gestorModulos.darDeBaja();
-                    case 3 -> gestorModulos.listar();
-                    case 4 -> gestorModulos.matricularAlumno();
+                    case 1 -> modulos.darDeAlta();
+                    case 2 -> modulos.darDeBaja();
+                    case 3 -> modulos.listar();
+                    case 4 -> modulos.matricularAlumno();
                     default -> System.out.println("--Opción no valida");
                 }
             }catch(InputMismatchException ex){
@@ -99,15 +99,15 @@ public class ORM
     }
     private static int menuMatriculas(){
         int opcion=0;
-        Matriculas gestorMatriculas=new Matricula();
+        //Matriculas gestorMatriculas=new Matricula();
         do{
             try{
-                opcion=gestorMatriculas.menu();
+                opcion=matriculas.menu();
                 switch(opcion){
                     case 0 -> System.out.println("Volviendo al menu previo...\n");
-                    case 1 -> gestorMatriculas.modificarNotas();
-                    case 2 -> gestorMatriculas.calificar();
-                    case 3 -> gestorMatriculas.mostrar();
+                    case 1 -> matriculas.modificarNotas();
+                    case 2 -> matriculas.evaluarModulo();
+                    case 3 -> matriculas.mostrar();
                     default -> System.out.println("--Opción no valida");
                 }
             }catch(InputMismatchException ex){

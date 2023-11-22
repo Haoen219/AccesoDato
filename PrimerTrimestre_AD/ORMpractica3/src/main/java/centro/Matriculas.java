@@ -1,6 +1,5 @@
 package centro;
 
-import java.util.List;
 import java.util.Scanner;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -8,23 +7,7 @@ import persistencia.ORM;
 import utilidades.Lector;
 
 public class Matriculas {
-//    public int matricularModulo(int id, int nia) {
-//        transformarAlumno(buscarAlumno(nia));
-//
-//        if (this.alumnoComodin != null) {
-//            if (this.alumnoComodin.matricularModulo(id) == 0) {
-//                if (escribirMatricula(nia) == 0 && escribirAlumno(nia) == 0) {
-//                    this.alumnoComodin = null;
-//                    return 0;
-//                } else {
-//                    System.out.println("--No se ha podido agredar modulo al alumno");
-//                }
-//            }
-//            return 0;
-//        }
-//        return -1;
-//    }
-
+    
     private short[] preguntarMatricula() {
         Scanner sc = new Scanner(System.in);
         System.out.println("\n-Modificar notas-");
@@ -110,8 +93,12 @@ public class Matriculas {
         session.close();
         return 0;
     }
+    
+    public int mostrar(){
+        return 0;
+    }
 
-    public int menuEvaluar() {
+    public int menu() {
         Lector sc = new Lector(System.in);
         System.out.println("");
         System.out.println("|---------Evaluar----------|");

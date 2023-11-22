@@ -52,9 +52,8 @@ public class Matricula {
         return 0;
     }
     
-    public int crearNotas(){
-        //POR IMPLEMENTAR
-        return 0;
+    public Notas getNotas(){
+        return this.notas;
     }
     
 //    public int matricularModulo(short id){
