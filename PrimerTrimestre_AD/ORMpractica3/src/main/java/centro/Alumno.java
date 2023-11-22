@@ -25,12 +25,12 @@ import javax.persistence.Table;
 public class Alumno{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="ID")
-    private short ID;
-    @Column(name="Nombre")
+    @Column(name="alumno_id")
+    private int ID;
+    @Column(name="alumno_nombre")
     private String nombre;
-    @ManyToOne
-    @JoinColumn(name="Matriculas")
+    @ManyToOne(targetEntity = Matricula.class)
+    @JoinColumn(name="matricula_id")
     private Set<Matricula> matriculas;
 
     public Alumno(){}
@@ -41,7 +41,7 @@ public class Alumno{
     public String getNombre() {
         return this.nombre;
     }
-    public int getIDENTIFICADOR() {
+    public int getID() {
         return this.ID;
     }
     

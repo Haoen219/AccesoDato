@@ -8,6 +8,8 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -21,14 +23,15 @@ import javax.persistence.Table;
 @Table(name="Modulo")
 public class Modulo {
     @Id
-    @Column(name = "ID")
-    private short ID;
-    @Column(name="Nombre")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "modulo_id")
+    private int ID;
+    @Column(name="modulo_nombre")
     private String nombre;
     
-    @ManyToOne
-    @JoinColumn(name="Matriculas")
-    Set<Matricula> matriculados;
+    @ManyToOne(targetEntity = Matricula.class)
+    @JoinColumn(name="matricula_id")
+    private Set<Matricula> matriculados;
     
     public Modulo(){}
     public Modulo(String nombre){
@@ -40,6 +43,9 @@ public class Modulo {
     }
     public int getIDENTIFICADOR() {
         return this.ID;
+    }
+    public Set<Matricula> getMatriculados() {
+        return this.matriculados;
     }
     
     public int listar(){

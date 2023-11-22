@@ -16,9 +16,9 @@ import utilidades.Lector;
 public class ORM 
 {
     
-    private static Alumnos alumnos;
-    private static Modulos modulos;
-    private static Matriculas matriculas;
+    private static Alumnos alumnos= new Alumnos();
+    private static Modulos modulos= new Modulos();
+    private static Matriculas matriculas= new Matriculas();
     //private static Notas notas;
     
     

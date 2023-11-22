@@ -37,7 +37,7 @@ public class Matriculas {
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
 
-        Query query = session.createQuery("FROM Matricula WHERE ID_Alumno = :nia AND ID_Modulo = :id");
+        Query query = session.createQuery("FROM matricula WHERE alumno_id = :nia AND modulo_id = :id");
         query.setParameter("nia", niaId[0]);
         query.setParameter("id", niaId[1]);
 

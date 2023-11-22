@@ -4,28 +4,20 @@
 <hibernate-configuration>
    <session-factory>
        
-   <!-- Drop and re-create the database schema on startup -->
-   <property name="hibernate.hbm2ddl.auto">create</property>  
-
-   <!-- Enable Hibernate's automatic session context management -->
-   <property name="current_session_context_class">thread</property>
-
-   <!-- Disable the second-level cache  -->
-   <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
-
-   <!-- Echo all executed SQL to stdout -->
-   <property name="show_sql">true</property>
-       
       <!-- JDBC Database connection settings -->
-   <property name="connection.url">jdbc:mysql://10.0.219.14:3306/10624133</property>
+   <property name="connection.url">jdbc:mysql://127.0.0.1:3306/hibernate</property>
 
-   <property name="connection.username">10624133</property>
+   <property name="connection.username">root</property>
 
-   <property name="connection.password">10624133</property>
+   <property name="connection.password"></property>
 
    <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
 
    <property name="dialect">org.hibernate.dialect.MySQL8Dialect</property>
+
+   <property name="hibernate.hbm2ddl.auto">create</property>
+
+   <property name="hibernate.hbm2ddl.auto">update</property>
 
 
    <mapping class="centro.Modulo" /> 
@@ -36,5 +28,3 @@
 
    </session-factory>
 </hibernate-configuration>
-
-

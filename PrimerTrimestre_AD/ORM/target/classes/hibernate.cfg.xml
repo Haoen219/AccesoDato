@@ -4,11 +4,11 @@
 <hibernate-configuration>
    <session-factory>
       <!-- JDBC Database connection settings -->
-   <property name="connection.url">jdbc:mysql://10.0.219.14:3306/10624133</property>
+   <property name="connection.url">jdbc:mysql://127.0.0.1:3306/hibernate</property>
 
-   <property name="connection.username">10624133</property>
+   <property name="connection.username">root</property>
 
-   <property name="connection.password">10624133</property>
+   <property name="connection.password"></property>
 
    <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
 
@@ -16,7 +16,8 @@
 
 
    <mapping class="centro.Modulo" /> 
-   <mapping class="centro.Alumno" /> 
+   <mapping class="centro.Alumno" />
+
    <mapping class="centro.Matricula" /> 
    <mapping class="centro.Nota" /> 
 

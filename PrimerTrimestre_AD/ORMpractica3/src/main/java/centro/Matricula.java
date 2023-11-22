@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -24,23 +23,23 @@ import javax.persistence.Table;
 public class Matricula {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
-    private short ID;
-    @OneToMany
-    @JoinColumn(name ="ID_Alumno", nullable =false)
-    short idAlumno;
-    @OneToMany
-    @JoinColumn(name ="ID_Modulo", nullable =false)
-    short idModulo;
-    @OneToOne
-    @JoinColumn(name="ID_Notas")
+    @Column(name = "matricula_id")
+    private int ID;
+    @OneToOne(targetEntity = Alumno.class)
+    @JoinColumn(name ="alumno_id", nullable =false)
+    int idAlumno;
+    @OneToOne(targetEntity = Modulo.class)
+    @JoinColumn(name ="modulo_id", nullable =false)
+    int idModulo;
+    @OneToOne(targetEntity = Notas.class)
+    @JoinColumn(name="notas_id")
     Notas notas;
     @Column(name="Calificación")
     private String calificacion;
 
     public Matricula(){}
     
-    public Matricula(short idAlu, short idModulo){
+    public Matricula(int idAlu, int idModulo){
         this.idAlumno=idAlu;
         this.idModulo=idModulo;
         

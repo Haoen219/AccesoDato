@@ -45,10 +45,10 @@ public class Modulos implements BDDAlumnosModulos {
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
 
-        Modulo deBaja = session.get(Modulo.class, (short) id);
+        Modulo deBaja = (Modulo)session.get(Modulo.class, (short) id);
 
         if (deBaja != null) {
-            for (Matricula matricula : deBaja.matriculados) {
+            for (Matricula matricula : deBaja.getMatriculados()) {
                 Notas notas = matricula.getNotas();
                 session.delete(notas);
                 session.delete(matricula);
@@ -75,13 +75,13 @@ public class Modulos implements BDDAlumnosModulos {
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
 
-        Alumno aMatricular = session.get(Alumno.class, (short) nia);
+        Alumno aMatricular = (Alumno)session.get(Alumno.class, nia);
 
         if (aMatricular != null) {
             System.out.print("Introduzca ID del modulo: ");
             int id = sc.leerEntero(0, 15);
 
-            Modulo moduloMatri = session.get(Modulo.class, (short) id);
+            Modulo moduloMatri = (Modulo)session.get(Modulo.class, id);
 
             if (moduloMatri != null) {
                 aMatricular.matricularModulo((short)id);

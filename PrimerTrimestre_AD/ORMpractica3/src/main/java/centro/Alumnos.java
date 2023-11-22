@@ -5,6 +5,8 @@
 package centro;
 
 import java.util.List;
+import java.util.Scanner;
+
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import persistencia.ORM;
@@ -45,23 +47,25 @@ public class Alumnos implements BDDAlumnosModulos {
     @Override
     public int darDeBaja() {
         Lector sc= new Lector(System.in);
+        //Scanner sc = new Scanner(System.in);
         System.out.println("\n-Dar de baja alumno-");
         System.out.print("Introduzca NIA del alumno: ");
-        int nia=sc.leerEntero(0,15);
+        int nia=sc.leerEntero(0,999);
             
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
         
-        Query query = session.createQuery("FROM Matricula WHERE ID_Alumno = :nia AND ID_Modulo = :id");
+        String hql = "FROM Alumno WHERE alumno_id = :nia";
+        Query query = session.createQuery(hql);
         query.setParameter("nia", nia);
         
-        List<Matricula> aBorrar = query.list();
-
-        Alumno deBaja = session.get(Alumno.class, (short)nia);
+        Alumno deBaja = (Alumno)query.uniqueResult();
         
 
+        //Alumno deBaja = (Alumno) session.get(Alumno.class, nia);
+
         if(deBaja!=null){
-            for(Matricula matricula : aBorrar){
+            for(Matricula matricula : deBaja.getMatriculas()){
                 Notas notas = matricula.getNotas();
                 session.delete(notas);
                 session.delete(matricula);
@@ -77,12 +81,13 @@ public class Alumnos implements BDDAlumnosModulos {
         return 0;
     }
     
+    /*
     //ACTUALIZAR
     public int actualizar(short nia, short ID){
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
 
-        Query query = session.createQuery("FROM Matricula WHERE ID_Alumno = :nia AND ID_Modulo = :id");
+        Query query = session.createQuery("FROM Matricula WHERE alumno_id = :nia AND ID_Modulo = :id");
         query.setParameter("nia", nia);
         query.setParameter("id", ID);
 
@@ -95,6 +100,7 @@ public class Alumnos implements BDDAlumnosModulos {
         session.close();
         return 0;
     }
+    */
     
     //MENU
     @Override
