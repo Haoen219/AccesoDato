@@ -2,9 +2,23 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package practica.iv._sisform_fichero;
+package centro;
 
 import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import org.hibernate.Session;
+
+import persistencia.ORM;
+import utilidades.Lector;
 
 /**
  *
@@ -14,6 +28,7 @@ import java.util.Set;
 @Table(name="Alumno")
 public class Alumno{
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="ID")
     private short ID;
     @Column(name="Nombre")
@@ -33,11 +48,17 @@ public class Alumno{
     public int getIDENTIFICADOR() {
         return this.ID;
     }
+    
+    public Set<Matricula> getMatriculas(){
+        return this.matriculas;
+    }
 
 
+    public int actualizar(short id){
+        return 0;
+    }
 
     
-    //MATRICULA
     public boolean comprobarMatricula(){ //
         if(this.matriculas.size()==0){
             return false;
@@ -47,22 +68,25 @@ public class Alumno{
 
 
     //hay que modificar para que seleccione la matricula correspondiente
-    public boolean comprobarModulo(int id){
-        /*return this.matricula.comprobarModulo(id);*/
-    }
-    public int eliminarModulo(int id){
+//    public boolean comprobarModulo(int id){
+//        /*return this.matricula.comprobarModulo(id);*/
+//    }
+    
+    public int eliminarModulo(short id){
+        
+        
         /*if(this.matricula.eliminarModulo(id)==0){
             return 0;
         }*/
         return -1;
     }
-    public int modificarNota(int id, int posicion, double nota){
+    public int modificarNota(short id, int posicion, double nota){
         /*if(this.matricula.modificarNota(id, posicion, nota)==0){
             return 0;
         }*/
         return -1;
     }
-    public int evaluarModulo(int id, String calificacion){
+    public int evaluarModulo(short id, String calificacion){
         /*if(this.matricula.evaluarModulo(id, calificacion)==0){
             return 0;
         }*/
@@ -72,49 +96,28 @@ public class Alumno{
     
     //MODULO
     //instanciar nuevo matricula en "matriculas" con el ID_MODULO de id
-    public int matricularModulo(int id){        //no necesita comprobar porque es llamado de otra funcion comprobada
-        if (this.matricula==null){
-            this.matricula= new Matricula();        //instancia una matricula si no tiene, haciendo que
-        }                                           //un alumno no tenga matricula hasta no tener un modulo
-        if(this.matricula.matricularModulo(id)==0){
+    public int matricularModulo(short id){
+        if(this.matriculas.add(new Matricula(this.ID, id))){
             return 0;
         }
         return -1;
     }
     
-    //GUARDAR EN FICHERO
-    public String formatoFichero(){
-        //NIA NOMBRE-APELLIDO1-APELLIDO2 NumMODULOS
-        String alumno= String.format("%n%-8d %-25s ", this.getIDENTIFICADOR(), this.getNombre().replace(' ', '-'));
-        if(comprobarMatricula()){
-            alumno+=this.matricula.getNumeroModulos();
-        }else{
-            alumno+="-Sin_Matricula-";
-        }
-        return alumno;
-    }
-    public String formatoFicheroMatricula(){
-        //NIA ID_NOTA-NOTA-NOTA_CALIFICACION ID_NOTA-NOTA-NOTA_CALIFICACION ...
-        String matricula=String.format("%n%-8d %s", this.getIDENTIFICADOR(), this.matricula.formatoFichero());
-        return matricula;
-    }
-    
-    
-    //IMPRIMIR
-    public void imprimir() {
-        System.out.printf("NIA: %-8d Nombre: %-30s",this.getIDENTIFICADOR(), this.getNombre());
-        if(comprobarMatricula()){
-            System.out.printf(" Modulos: %-2d\n",this.matricula.getNumeroModulos());
-        }else{
-            System.out.println(" -Sin matricula-");
-        }
-    }
-    public void imprimirBoletin() {
-        imprimir();
-        imprimirModulos();
-    }
-    public void imprimirModulos() {
-        System.out.println("Matricula: ");
-        this.matricula.imprimirModulos();
-    }
+//    //IMPRIMIR
+//    public void imprimir() {
+//        System.out.printf("NIA: %-8d Nombre: %-30s",this.getIDENTIFICADOR(), this.getNombre());
+//        if(comprobarMatricula()){
+//            System.out.printf(" Modulos: %-2d\n",this.matricula.getNumeroModulos());
+//        }else{
+//            System.out.println(" -Sin matricula-");
+//        }
+//    }
+//    public void imprimirBoletin() {
+//        imprimir();
+//        imprimirModulos();
+//    }
+//    public void imprimirModulos() {
+//        System.out.println("Matricula: ");
+//        this.matricula.imprimirModulos();
+//    }
 }

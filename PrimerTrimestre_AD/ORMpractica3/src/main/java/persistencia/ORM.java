@@ -4,10 +4,10 @@ import java.util.InputMismatchException;
 
 import org.hibernate.Session;
 
-import centro.Alumno;
-import centro.Matricula;
-import centro.Modulo;
-import centro.Notas;
+import centro.Alumnos;
+import centro.Matriculas;
+import centro.Modulos;
+//import centro.Notas;
 
 import utilidades.App;
 import utilidades.Lector;
@@ -15,12 +15,12 @@ import utilidades.Lector;
 
 public class ORM 
 {
-    /* 
+    
     private static Alumno alumnos;
     private static Modulo modulos;
     private static Matricula matriculas;
     private static Notas notas;
-    */
+    
     
     private static final Conexion conexion=new Conexion();
     
@@ -105,7 +105,7 @@ public class ORM
                 opcion=gestorMatriculas.menu();
                 switch(opcion){
                     case 0 -> System.out.println("Volviendo al menu previo...\n");
-                    case 1 -> gestorMatriculas.modificarNota();
+                    case 1 -> gestorMatriculas.modificarNotas();
                     case 2 -> gestorMatriculas.calificar();
                     case 3 -> gestorMatriculas.mostrar();
                     default -> System.out.println("--Opción no valida");

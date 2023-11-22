@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
-package practica.iv._sisform_fichero;
+package centro;
 
 /**
  *
@@ -11,11 +11,11 @@ package practica.iv._sisform_fichero;
 public interface BDDAlumnosModulos{
     int darDeAlta();
     int darDeBaja();
-    boolean comprobarLista();
+    //boolean comprobarLista();
     //boolean comprobar(int identificador);
     int menu();
-    int actualizar(int identificador);
+    //int actualizar(short identificador, short identificador2);
     //int guardarBase();
     //int importarBase();
-    void listar();
+    //void listar();
 }

@@ -3,6 +3,19 @@
    "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
    <session-factory>
+       
+   <!-- Drop and re-create the database schema on startup -->
+   <property name="hibernate.hbm2ddl.auto">create</property>  
+
+   <!-- Enable Hibernate's automatic session context management -->
+   <property name="current_session_context_class">thread</property>
+
+   <!-- Disable the second-level cache  -->
+   <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
+
+   <!-- Echo all executed SQL to stdout -->
+   <property name="show_sql">true</property>
+       
       <!-- JDBC Database connection settings -->
    <property name="connection.url">jdbc:mysql://10.0.219.14:3306/10624133</property>
 
@@ -23,3 +36,5 @@
 
    </session-factory>
 </hibernate-configuration>
+
+

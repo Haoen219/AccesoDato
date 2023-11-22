@@ -2,54 +2,89 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package practica.iv._sisform_fichero;
+package centro;
 
-import java.util.TreeSet;
+import java.util.Set;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import org.hibernate.Session;
+
+import persistencia.ORM;
+import utilidades.Lector;
 
 /**
  *
  * @author haoen
  */
-public class Modulo extends BaseAlumnoModulo {
-    private TreeSet<Integer> alumnosMatriculados= new TreeSet<>();
+@Entity
+@Table(name="Modulo")
+public class Modulo {
+    @Id
+    @Column(name = "ID")
+    private short ID;
+    @Column(name="Nombre")
+    private String nombre;
     
-    //Builder
-    public Modulo(String nombre, int ID){
-        super(nombre, ID);
-    }
+    @ManyToOne
+    Set<Alumno> matriculados;
     
-    //ALUMNO
-    public int matricularAlumno(int nia){
-        if(this.alumnosMatriculados.add(nia)){          //devuelve true si funciona
-            return 0;
-        }
-        return -1;
-    }
-    public int anularMatriculaAlumno(int nia){
-        if(this.alumnosMatriculados.remove(nia)){
-            return 0;
-        }
-        return -1;
-    }
-    public boolean buscarAlumno(int nia){
-        if(this.alumnosMatriculados.contains(nia)){
-            return true;
-        }
-        return false;
+    public Modulo(){}
+    public Modulo(String nombre){
+        this.nombre=nombre;
     }
     
-    //GUARDAR EN FICHERO
-    public String formatoFichero(){
-        //ID NOMBRE NIA-NIA-NIA-NIA...
-        String modulo= String.format("%n%-4d %-20s ", this.getIDENTIFICADOR(), this.getNombre().replace(' ', '-'));
-        for(int nia:this.alumnosMatriculados){
-            modulo+=nia+"-";
-        }
-        return modulo;
+    public String getNombre() {
+        return this.nombre;
+    }
+    public int getIDENTIFICADOR() {
+        return this.ID;
     }
 
+    
+
+    public int matricularAlumno(){
+        //POR IMPLEMENTAR
+        
+        
+//        Lector sc= new Lector(System.in);
+//        System.out.println("\n-Matricular alumno-");
+//        System.out.print("Introduzca NIA del alumno: ");
+//        int nia=sc.leerEntero(0,15);
+//
+//        System.out.print("Introduzca ID del modulo: ");
+//        int id=sc.leerEntero(0,15);
+//
+//        Session session = new ORM().conexion().getSessionFactory().openSession();
+//        session.beginTransaction();
+//
+//        Alumno aMatricular = session.get(Alumno.class, (short)nia);
+//        Modulo moduloMatri = session.get(Modulo.class, (short)id);
+//
+//        if(aMatricular!=null){
+//            session.update(aMatricular);
+//            session.getTransaction().commit();
+//            aMatricular.actualizar((short)nia, this.ID);
+//            System.out.println("Se ha dado de baja al módulo "+ aMatricular.getNombre());
+//        }else{
+//            System.out.println("No existe Alumno con ese ID");
+//        }
+//
+//        session.close();
+        return 0;
+    }
+    
+    public int listar(){
+        //POR HACER
+        return 0;
+    }
+    
     //IMPRIMIR
-    public void imprimir() {                                                    //NO IMPRIMIA LOS ALUMNOS MATRICULADOS SINO LOS QUE HABIAN EN LA BASE DE DATOS
-        System.out.printf("\tID: %-8d %-20s Alumnos: %d\n", this.getIDENTIFICADOR(), this.getNombre(),this.alumnosMatriculados.size());
+    public void imprimir() {
+        //POR HACER
     }
 }
