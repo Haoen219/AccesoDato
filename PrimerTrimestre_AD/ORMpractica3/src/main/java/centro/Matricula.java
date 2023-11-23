@@ -25,13 +25,13 @@ public class Matricula {
     @Column(name = "matricula_id")
     private int id;
     @OneToOne(targetEntity = Alumno.class)
-    @JoinColumn(name ="alumno_id")
+    @JoinColumn(name ="alumno_id", nullable = false)
     private Alumno alumno;
     @OneToOne(targetEntity = Modulo.class)
-    @JoinColumn(name ="modulo_id")
+    @JoinColumn(name ="modulo_id", nullable = false)
     private Modulo modulo;
     @OneToOne(targetEntity = Notas.class)
-    @JoinColumn(name="notas_id")
+    @JoinColumn(name="notas_id", nullable = false)
     private Notas notas;
     @Column(name="Calificación")
     private String calificacion;

@@ -112,32 +112,6 @@ public class Matriculas {
         System.out.print("Introduzca ID del alumno: ");
         int nia=sc.leerEntero(0,999);
 
-        /*
-        try (Session session = new ORM().conexion().getSessionFactory().openSession()) {
-            Query query = session.createQuery("FROM Alumno WHERE id = :nia").setParameter("nia", nia);
-            Alumno alumno = (Alumno)query.uniqueResult();
-    
-            if(alumno!=null){
-                System.out.println(alumno.getNombre());
-    
-                Query queryMatri = session.createQuery("FROM Matricula WHERE alumno = :alu").setParameter("alu", alumno);
-                List<Matricula> matriculas = queryMatri.getResultList();
-    
-                if(!matriculas.isEmpty()){
-                    System.out.println("Matriculas:");
-                    for(Matricula matricula : matriculas){
-                        matricula.imprimir();
-                    }
-                    System.out.println("");
-                }else{
-                    System.out.println("-Sin matriculas-");
-                }
-            }else{
-                System.out.println("--No existe el alumno");
-            }
-        }
-        */
-
         Session session = new ORM().conexion().getSessionFactory().openSession();
         
         Query query = session.createQuery("FROM Alumno WHERE id = :nia").setParameter("nia", nia);
