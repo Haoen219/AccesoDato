@@ -1,0 +1,3 @@
+Para ejecutar el programa de ORM:
+-Visual Code: seleccionar cualquier archivo y pulsar en RUN del menu superior.
+-NetBeans: seleccionar el fichero App, click derecho, Run File.
