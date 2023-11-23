@@ -4,11 +4,12 @@
  */
 package centro;
 
+
 import java.util.List;
-import java.util.Scanner;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+
 import persistencia.ORM;
 import utilidades.Lector;
 
@@ -51,25 +52,28 @@ public class Alumnos implements BDDAlumnosModulos {
         System.out.println("\n-Dar de baja alumno-");
         System.out.print("Introduzca NIA del alumno: ");
         int nia=sc.leerEntero(0,999);
-            
+
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
         
-        String hql = "FROM Alumno WHERE alumno_id = :nia";
-        Query query = session.createQuery(hql);
+        Query query = session.createQuery("FROM Alumno WHERE ID = :nia");
         query.setParameter("nia", nia);
-        
         Alumno deBaja = (Alumno)query.uniqueResult();
         
-
+        System.out.println(deBaja);
         //Alumno deBaja = (Alumno) session.get(Alumno.class, nia);
 
         if(deBaja!=null){
-            for(Matricula matricula : deBaja.getMatriculas()){
-                Notas notas = matricula.getNotas();
-                session.delete(notas);
-                session.delete(matricula);
+            /*
+            if(deBaja.getMatriculas()!=null){
+                for(Matricula matricula : deBaja.getMatriculas()){
+                    Notas notas = matricula.getNotas();
+                    session.delete(notas);
+                    session.delete(matricula);
+                }
+                
             }
+            */
             session.delete(deBaja);
             session.getTransaction().commit();
             System.out.println("Se ha dado de baja al alumno "+ deBaja.getNombre());
@@ -80,27 +84,6 @@ public class Alumnos implements BDDAlumnosModulos {
         session.close();
         return 0;
     }
-    
-    /*
-    //ACTUALIZAR
-    public int actualizar(short nia, short ID){
-        Session session = new ORM().conexion().getSessionFactory().openSession();
-        session.beginTransaction();
-
-        Query query = session.createQuery("FROM Matricula WHERE alumno_id = :nia AND ID_Modulo = :id");
-        query.setParameter("nia", nia);
-        query.setParameter("id", ID);
-
-        Matricula aModificar = (Matricula) query.uniqueResult();
-        
-        if(aModificar!=null){
-            session.delete(aModificar);
-            session.getTransaction().commit();
-        }
-        session.close();
-        return 0;
-    }
-    */
     
     //MENU
     @Override
@@ -120,7 +103,22 @@ public class Alumnos implements BDDAlumnosModulos {
 
     //IMPRIMIR
 //    @Override
-    public void listar() {}
+    public void listar() {
+        Session session = new ORM().conexion().getSessionFactory().openSession();
+        session.beginTransaction();
+        
+        Query query = session.createQuery("FROM Alumno", Alumno.class);
+        List<Alumno> alumnos = query.getResultList();
+
+        if(alumnos!=null){
+            for(Alumno x : alumnos){
+                x.imprimir();
+            }
+        }else{
+            System.out.println("Lista de alumno vacio.");
+        }
+        session.close();
+    }
 //        System.out.println("\n-Listar alumnos-");
 //        try {
 //            this.lector = new Scanner(this.baseDeAlumnos);

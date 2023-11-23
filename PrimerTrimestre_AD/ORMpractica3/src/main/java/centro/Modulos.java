@@ -4,7 +4,11 @@
  */
 package centro;
 
+import java.util.List;
+
 import org.hibernate.Session;
+import org.hibernate.query.Query;
+
 import persistencia.ORM;
 import utilidades.Lector;
 
@@ -44,15 +48,21 @@ public class Modulos implements BDDAlumnosModulos {
 
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
+        
+        Query query2 = session.createQuery("FROM Modulo WHERE ID = :id");
+        query2.setParameter("id", id);
+        Modulo deBaja = (Modulo)query2.uniqueResult();
 
-        Modulo deBaja = (Modulo)session.get(Modulo.class, (short) id);
+        //Modulo deBaja = (Modulo)session.get(Modulo.class, id);
 
         if (deBaja != null) {
+            /*
             for (Matricula matricula : deBaja.getMatriculados()) {
                 Notas notas = matricula.getNotas();
                 session.delete(notas);
                 session.delete(matricula);
             }
+            */
             session.delete(deBaja);
 
             session.getTransaction().commit();
@@ -70,22 +80,26 @@ public class Modulos implements BDDAlumnosModulos {
         Lector sc = new Lector(System.in);
         System.out.println("\n-Matricular alumno-");
         System.out.print("Introduzca NIA del alumno: ");
-        int nia = sc.leerEntero(0, 15);
+        int nia = sc.leerEntero(0, 999);
 
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
 
-        Alumno aMatricular = (Alumno)session.get(Alumno.class, nia);
+        Query query = session.createQuery("FROM Alumno WHERE ID = :nia");
+        query.setParameter("nia", nia);
+        Alumno aMatricular = (Alumno)query.uniqueResult();
 
         if (aMatricular != null) {
             System.out.print("Introduzca ID del modulo: ");
-            int id = sc.leerEntero(0, 15);
+            int id = sc.leerEntero(0, 999);
 
-            Modulo moduloMatri = (Modulo)session.get(Modulo.class, id);
+            Query query2 = session.createQuery("FROM Modulo WHERE ID = :id");
+            query2.setParameter("id", id);
+            Modulo moduloMatri = (Modulo)query2.uniqueResult();
 
             if (moduloMatri != null) {
-                aMatricular.matricularModulo((short)id);
-                
+                aMatricular.matricularModulo(id);
+                //Matricula matricula=new Matricula(nia, id);
                 session.update(aMatricular);
                 session.getTransaction().commit();
                 System.out.println("Se ha dado de baja al módulo " + aMatricular.getNombre());
@@ -119,6 +133,20 @@ public class Modulos implements BDDAlumnosModulos {
 
     //IMPRIMIR
     public void listar() {
+        Session session = new ORM().conexion().getSessionFactory().openSession();
+        session.beginTransaction();
+        
+        Query query = session.createQuery("FROM Modulo", Modulo.class);
+        List<Modulo> modulos = query.getResultList();
+
+        if(modulos!=null){
+            for(Modulo x : modulos){
+                x.imprimir();
+            }
+        }else{
+            System.out.println("Lista de modulos vacio.");
+        }
+        session.close();
     }
 //        System.out.println("\n-Listar modulos-");
 //        try {

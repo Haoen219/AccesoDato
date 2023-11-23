@@ -2,29 +2,29 @@
    "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
    "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
-   <session-factory>
+    <session-factory>
        
-      <!-- JDBC Database connection settings -->
-   <property name="connection.url">jdbc:mysql://127.0.0.1:3306/hibernate</property>
+        <!-- JDBC Database connection settings -->
+        <property name="connection.url">jdbc:mysql://127.0.0.1:3306/hibernate2</property>
 
-   <property name="connection.username">root</property>
+        <property name="connection.username">root</property>
 
-   <property name="connection.password"></property>
+        <property name="connection.password"></property>
 
-   <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        
+        <property name="dialect">org.hibernate.dialect.MySQL8Dialect</property>
 
-   <property name="dialect">org.hibernate.dialect.MySQL8Dialect</property>
+        <property name="hibernate.hbm2ddl.auto">create</property>
 
-   <property name="hibernate.hbm2ddl.auto">create</property>
-
-   <property name="hibernate.hbm2ddl.auto">update</property>
-
-
-   <mapping class="centro.Modulo" /> 
-   <mapping class="centro.Alumno" /> 
-   <mapping class="centro.Matricula" /> 
-   <mapping class="centro.Nota" /> 
+        <property name="hibernate.hbm2ddl.auto">update</property>
 
 
-   </session-factory>
+        <mapping class="centro.Modulo" /> 
+        <mapping class="centro.Alumno" /> 
+        <mapping class="centro.Matricula" /> 
+        <mapping class="centro.Nota" /> 
+
+
+    </session-factory>
 </hibernate-configuration>

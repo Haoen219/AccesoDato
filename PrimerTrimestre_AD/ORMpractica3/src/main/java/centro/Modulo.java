@@ -6,6 +6,7 @@ package centro;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,7 +30,7 @@ public class Modulo {
     @Column(name="modulo_nombre")
     private String nombre;
     
-    @ManyToOne(targetEntity = Matricula.class)
+    @ManyToOne(targetEntity = Matricula.class, cascade = CascadeType.ALL)
     @JoinColumn(name="matricula_id")
     private Set<Matricula> matriculados;
     
@@ -55,6 +56,7 @@ public class Modulo {
     
     //IMPRIMIR
     public void imprimir() {
-        //POR HACER
+        System.out.printf("\tID: %-8d %-20s Alumnos: ", this.getIDENTIFICADOR(), this.getNombre());
+        System.out.println((this.matriculados!=null)?this.matriculados.size():"-Sin matriculados-");
     }
 }

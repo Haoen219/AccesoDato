@@ -4,8 +4,10 @@
  */
 package centro;
 
+import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
 
 
 /**
@@ -29,7 +32,7 @@ public class Alumno{
     private int ID;
     @Column(name="alumno_nombre")
     private String nombre;
-    @ManyToOne(targetEntity = Matricula.class)
+    @ManyToOne(targetEntity = Matricula.class, cascade = CascadeType.ALL)
     @JoinColumn(name="matricula_id")
     private Set<Matricula> matriculas;
 
@@ -51,22 +54,29 @@ public class Alumno{
     
     //MODULO
     //instanciar nuevo matricula en "matriculas" con el ID_MODULO de id
-    public int matricularModulo(short id){
-        if(this.matriculas.add(new Matricula(this.ID, id))){
+    public int matricularModulo(int id){
+        if(this.matriculas==null){
+            this.matriculas=new HashSet<Matricula>();
+        }
+        Matricula matricula = new Matricula();
+        matricula.setAlumno(this.ID);
+        matricula.setModulo(id);
+
+        if(this.matriculas.add(matricula)){
             return 0;
         }
         return -1;
     }
     
-//    //IMPRIMIR
-//    public void imprimir() {
-//        System.out.printf("NIA: %-8d Nombre: %-30s",this.getIDENTIFICADOR(), this.getNombre());
-//        if(comprobarMatricula()){
-//            System.out.printf(" Modulos: %-2d\n",this.matricula.getNumeroModulos());
-//        }else{
-//            System.out.println(" -Sin matricula-");
-//        }
-//    }
+    //IMPRIMIR
+    public void imprimir() {
+        System.out.printf("NIA: %-8d Nombre: %-30s",this.getID(), this.getNombre());
+        if(this.matriculas!=null){
+            System.out.printf(" Modulos: %-2d\n",this.matriculas.size());
+        }else{
+            System.out.println(" -Sin matricula-");
+        }
+    }
 //    public void imprimirBoletin() {
 //        imprimir();
 //        imprimirModulos();
