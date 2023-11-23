@@ -37,7 +37,7 @@ public class Alumnos implements BDDAlumnosModulos {
 
         session.getTransaction().commit();
         session.close();
-        System.out.println("Se ha dado de alta al alumno "+ nombre+ "ID:"+alumno.getId());
+        System.out.println("Se ha dado de alta al alumno "+ nombre+ " ID:"+alumno.getId());
         return 0;
     }
 
@@ -45,13 +45,13 @@ public class Alumnos implements BDDAlumnosModulos {
     public int darDeBaja() {
         Lector sc= new Lector(System.in);
         System.out.println("\n-Dar de baja alumno-");
-        System.out.print("Introduzca NIA del alumno: ");
+        System.out.print("Introduzca ID del alumno: ");
         int nia=sc.leerEntero(0,999);
 
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
         
-        Query query = session.createQuery("FROM Alumno WHERE ID = :nia");
+        Query query = session.createQuery("FROM Alumno WHERE id = :nia");
         query.setParameter("nia", nia);
         Alumno deBaja = (Alumno)query.uniqueResult();
 
@@ -69,7 +69,7 @@ public class Alumnos implements BDDAlumnosModulos {
             session.getTransaction().commit();
             System.out.println("Se ha dado de baja al alumno "+ deBaja.getNombre());
         }else{
-            System.out.println("No existe este alumno.");
+            System.out.println("--No existe este alumno");
         }
         
         session.close();

@@ -75,19 +75,9 @@ public class Matricula {
     }
 
     
-//    //IMPRIMIR NOTAS
-//    public void imprimirModulos(){
-//        for(int id: this.modulosMatriculados.keySet()){
-//            Modulo comodin=BaseDeDatos.modulos.getModulo(id);
-//            System.out.printf("\tID: %-8d %-20s ",comodin.getIDENTIFICADOR(),comodin.getNombre());
-//            
-//            System.out.print("Notas: [ ");
-//            if(this.modulosMatriculados.containsKey(id)){
-//                for (int i = 0; i < this.modulosMatriculados.get(id).length; i++) {
-//                    System.out.printf("-%02.2f- ",this.modulosMatriculados.get(id)[i]);
-//                }
-//            }
-//            System.out.println("]  Calificaci?n: "+this.calificaciones.get(id));
-//        }
-//    }
+    //IMPRIMIR NOTAS
+    public void imprimir(){
+        System.out.printf("ID: %-8d Modulo: %-30s  ",this.id, this.modulo.getNombre());
+        System.out.printf("Notas: %2d | %2d | %2d    Calificacion: %s", this.notas.getNota1(),this.notas.getNota2(),this.notas.getNota3(), this.calificacion);
+    }
 }

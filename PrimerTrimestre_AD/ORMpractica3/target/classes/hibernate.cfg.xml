@@ -25,6 +25,5 @@
         <mapping class="centro.Matricula" /> 
         <mapping class="centro.Nota" /> 
 
-
     </session-factory>
 </hibernate-configuration>

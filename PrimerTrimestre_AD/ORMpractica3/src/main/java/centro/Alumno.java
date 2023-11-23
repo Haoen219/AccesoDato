@@ -49,10 +49,12 @@ public class Alumno{
     
     //IMPRIMIR
     public void imprimir() {
-        System.out.printf("NIA: %-8d Nombre: %-30s",this.getId(), this.getNombre());
+        System.out.printf("ID: %-8d Nombre: %-30s",this.getId(), this.getNombre());
 
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
+        
+        session.clear();
 
         Query query = session.createQuery("FROM Matricula WHERE alumno = :nia");
         query.setParameter("nia", this);
