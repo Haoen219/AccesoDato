@@ -34,7 +34,7 @@ public class Modulos implements BDDAlumnosModulos {
         session.save(modulo);
 
         session.getTransaction().commit();
-        System.out.println("Se ha dado de alta al módulo " + nombre);
+        System.out.println("Se ha dado de alta al módulo " + nombre+ "ID:"+modulo.getId());
         session.close();
         return 0;
     }
@@ -53,16 +53,16 @@ public class Modulos implements BDDAlumnosModulos {
         query2.setParameter("id", id);
         Modulo deBaja = (Modulo)query2.uniqueResult();
 
-        //Modulo deBaja = (Modulo)session.get(Modulo.class, id);
-
         if (deBaja != null) {
-            /*
-            for (Matricula matricula : deBaja.getMatriculados()) {
+            Query queryMatri = session.createQuery("FROM Matricula m WHERE  m.modulo = :modu").setParameter("modu", deBaja);
+            List<Matricula> matriculaExistente = queryMatri.getResultList();
+            
+            for (Matricula matricula : matriculaExistente) {
                 Notas notas = matricula.getNotas();
                 session.delete(notas);
                 session.delete(matricula);
             }
-            */
+            
             session.delete(deBaja);
 
             session.getTransaction().commit();
@@ -85,27 +85,43 @@ public class Modulos implements BDDAlumnosModulos {
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
 
-        Query query = session.createQuery("FROM Alumno WHERE ID = :nia");
-        query.setParameter("nia", nia);
+        Query query = session.createQuery("FROM Alumno WHERE ID = :nia").setParameter("nia", nia);
         Alumno aMatricular = (Alumno)query.uniqueResult();
 
         if (aMatricular != null) {
             System.out.print("Introduzca ID del modulo: ");
             int id = sc.leerEntero(0, 999);
 
-            Query query2 = session.createQuery("FROM Modulo WHERE ID = :id");
-            query2.setParameter("id", id);
+            Query query2 = session.createQuery("FROM Modulo WHERE ID = :id").setParameter("id", id);
             Modulo moduloMatri = (Modulo)query2.uniqueResult();
 
-            if (moduloMatri != null) {
-                aMatricular.matricularModulo(id);
-                //Matricula matricula=new Matricula(nia, id);
-                session.update(aMatricular);
-                session.getTransaction().commit();
-                System.out.println("Se ha dado de baja al módulo " + aMatricular.getNombre());
-            } else {
+            if(moduloMatri != null){
+                //quey para comprobar que no exista una matricula de este alumno y modulo
+                Query queryMatri = session.createQuery("FROM Matricula m WHERE m.alumno = :alu AND m.modulo = :modu").setParameter("alu", aMatricular).setParameter("modu", moduloMatri);
+                List<Matricula> matriculaExistente = queryMatri.getResultList();
+
+                if (matriculaExistente.isEmpty()) {
+                    //notas
+                    Notas notas = new Notas();
+                    notas.instanciarNotas();
+                    session.save(notas);
+
+                    //matricula
+                    Matricula matricula=new Matricula();
+                    matricula.setAlumno(aMatricular);
+                    matricula.setModulo(moduloMatri);
+                    matricula.setNotas(notas);
+                    session.save(matricula);
+
+                    session.getTransaction().commit();
+                    System.out.println("Se ha dado de matriculado al alumno " + aMatricular.getNombre()+ " en el módulo "+moduloMatri.getNombre());
+                } else {
+                    System.out.println("Ya existe una Matricula de este modulo para el alumno.");
+                }
+            }else{
                 System.out.println("No existe Modulo con ese ID");
             }
+            
         }else{
             System.out.println("El alumno no existe.");
         }
@@ -133,52 +149,21 @@ public class Modulos implements BDDAlumnosModulos {
 
     //IMPRIMIR
     public void listar() {
+        System.out.println("\n-Listar modulos-");
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
         
         Query query = session.createQuery("FROM Modulo", Modulo.class);
         List<Modulo> modulos = query.getResultList();
 
-        if(modulos!=null){
+        if(!modulos.isEmpty()){
             for(Modulo x : modulos){
                 x.imprimir();
             }
+            System.out.println("--Fin de la lista--");
         }else{
-            System.out.println("Lista de modulos vacio.");
+            System.out.println("Lista de modulos vacio");
         }
         session.close();
     }
-//        System.out.println("\n-Listar modulos-");
-//        try {
-//            this.lector = new Scanner(this.baseDeModulos);
-//            this.lector.nextLine();
-//
-//            while (this.lector.hasNextLine()) {
-//                transformarModulo(this.lector.nextLine());
-//                if (this.moduloComodin != null) {
-//                    this.moduloComodin.imprimir();
-//                }
-//            }
-//        } catch (InputMismatchException ex) {
-//            System.out.println("--Error listando, el elemento no era del tipo esperado");
-//        } catch (NoSuchElementException ex) {
-//            System.out.println("--Error listando, no hay más líneas en el archivo");
-//        } catch (Exception ex) {
-//            System.out.println("--Error listando, error inesperado\n" + ex);
-//        } finally {
-//            this.lector.close();
-//            this.moduloComodin = null;
-//        }
-//        System.out.println("--Fin de la lista");
-//    }
-
-    //GETTER
-//    public Modulo getModulo(int id) {
-//        transformarModulo(buscarModulo(id));
-//        try {
-//            return this.moduloComodin;
-//        } finally {
-//            this.moduloComodin = null;
-//        }
-//    }
 }

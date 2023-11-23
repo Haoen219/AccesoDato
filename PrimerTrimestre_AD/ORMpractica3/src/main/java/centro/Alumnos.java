@@ -27,10 +27,6 @@ public class Alumnos implements BDDAlumnosModulos {
         System.out.println("\n-Dar de alta alumno-");
         System.out.print("Introduzca el nombre del alumno: ");
         String nombre=sc.leer();
-        /*
-        System.out.print("Introduzca NIA del alumno: ");
-        int nia=sc.leerEntero(0,15);
-        */
         
         Alumno alumno = new Alumno(nombre);
             
@@ -41,14 +37,13 @@ public class Alumnos implements BDDAlumnosModulos {
 
         session.getTransaction().commit();
         session.close();
-        System.out.println("Se ha dado de alta al alumno "+ nombre);
+        System.out.println("Se ha dado de alta al alumno "+ nombre+ "ID:"+alumno.getId());
         return 0;
     }
 
     @Override
     public int darDeBaja() {
         Lector sc= new Lector(System.in);
-        //Scanner sc = new Scanner(System.in);
         System.out.println("\n-Dar de baja alumno-");
         System.out.print("Introduzca NIA del alumno: ");
         int nia=sc.leerEntero(0,999);
@@ -59,21 +54,17 @@ public class Alumnos implements BDDAlumnosModulos {
         Query query = session.createQuery("FROM Alumno WHERE ID = :nia");
         query.setParameter("nia", nia);
         Alumno deBaja = (Alumno)query.uniqueResult();
-        
-        System.out.println(deBaja);
-        //Alumno deBaja = (Alumno) session.get(Alumno.class, nia);
 
         if(deBaja!=null){
-            /*
-            if(deBaja.getMatriculas()!=null){
-                for(Matricula matricula : deBaja.getMatriculas()){
-                    Notas notas = matricula.getNotas();
-                    session.delete(notas);
-                    session.delete(matricula);
-                }
-                
+            Query queryMatri = session.createQuery("FROM Matricula WHERE alumno = :alu").setParameter("alu", deBaja);
+            List<Matricula> matriculaExistente = queryMatri.getResultList();
+            
+            for (Matricula matricula : matriculaExistente) {
+                Notas notas = matricula.getNotas();
+                session.delete(notas);
+                session.delete(matricula);
             }
-            */
+
             session.delete(deBaja);
             session.getTransaction().commit();
             System.out.println("Se ha dado de baja al alumno "+ deBaja.getNombre());
@@ -102,61 +93,22 @@ public class Alumnos implements BDDAlumnosModulos {
     }
 
     //IMPRIMIR
-//    @Override
     public void listar() {
+        System.out.println("\n-Listar Alumnos-");
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
         
         Query query = session.createQuery("FROM Alumno", Alumno.class);
         List<Alumno> alumnos = query.getResultList();
 
-        if(alumnos!=null){
+        if(!alumnos.isEmpty()){
             for(Alumno x : alumnos){
                 x.imprimir();
             }
+            System.out.println("--Fin de la lista--");
         }else{
-            System.out.println("Lista de alumno vacio.");
+            System.out.println("Lista de alumno vacio");
         }
         session.close();
     }
-//        System.out.println("\n-Listar alumnos-");
-//        try {
-//            this.lector = new Scanner(this.baseDeAlumnos);
-//            this.lector.nextLine();
-//
-//            while (this.lector.hasNextLine()) {
-//                transformarAlumno(this.lector.nextLine());
-//                this.alumnoComodin.imprimir();
-//                this.alumnoComodin = null;
-//            }
-//        } catch (InputMismatchException ex) {
-//            System.out.println("--Error listando alumnos, el elemento no era del tipo esperado");
-//        } catch (NoSuchElementException ex) {
-//            System.out.println("--Error listando alumnos, no hay más líneas en el archivo");
-//        } catch (Exception ex) {
-//            System.out.println("--Error listando alumnos, error inesperado\n" + ex);
-//        } finally {
-//            this.lector.close();
-//            this.alumnoComodin = null;
-//        }
-//        System.out.println("--Fin de la lista");
-//    }
-
-//    public void imprimirBoletin() {
-//        Scanner sc = new Scanner(System.in);
-//        System.out.println("\n-Imprimir Bolet?n-");
-//        System.out.print("Introduzca NIA del alumno: ");
-//        int nia = sc.nextInt();
-//        if (buscarAlumno(nia) != null) {
-//            transformarAlumno(buscarAlumno(nia));
-//            if (this.alumnoComodin.comprobarMatricula()) {
-//                this.alumnoComodin.imprimirBoletin();
-//            } else {
-//                System.out.println("--Este alumno no tiene Matricula a?n");
-//            }
-//            this.alumnoComodin = null;
-//        } else {
-//            System.out.println("--No existe ese alumno en la base");
-//        }
-//    }
 }

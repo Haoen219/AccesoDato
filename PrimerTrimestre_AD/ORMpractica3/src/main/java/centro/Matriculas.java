@@ -83,7 +83,7 @@ public class Matriculas {
                     return 0;
                 }
             }
-            aModificar.evaluarModulo(calificacion);
+            aModificar.setCalificacion(calificacion);
             session.getTransaction().commit();
             System.out.println("Se ha dado de ha modificado la evaluación.");
         } else {

@@ -4,18 +4,19 @@
  */
 package centro;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+
+import persistencia.ORM;
 
 
 
@@ -29,60 +30,40 @@ public class Alumno{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="alumno_id")
-    private int ID;
+    private int id;
     @Column(name="alumno_nombre")
     private String nombre;
-    @ManyToOne(targetEntity = Matricula.class, cascade = CascadeType.ALL)
-    @JoinColumn(name="matricula_id")
-    private Set<Matricula> matriculas;
 
     public Alumno(){}
     public Alumno(String nombre){
         this.nombre=nombre;
     }
     
+    //GETTER
     public String getNombre() {
         return this.nombre;
     }
-    public int getID() {
-        return this.ID;
-    }
-    
-    public Set<Matricula> getMatriculas(){
-        return this.matriculas;
-    }
-    
-    //MODULO
-    //instanciar nuevo matricula en "matriculas" con el ID_MODULO de id
-    public int matricularModulo(int id){
-        if(this.matriculas==null){
-            this.matriculas=new HashSet<Matricula>();
-        }
-        Matricula matricula = new Matricula();
-        matricula.setAlumno(this.ID);
-        matricula.setModulo(id);
-
-        if(this.matriculas.add(matricula)){
-            return 0;
-        }
-        return -1;
+    public int getId() {
+        return this.id;
     }
     
     //IMPRIMIR
     public void imprimir() {
-        System.out.printf("NIA: %-8d Nombre: %-30s",this.getID(), this.getNombre());
-        if(this.matriculas!=null){
-            System.out.printf(" Modulos: %-2d\n",this.matriculas.size());
+        System.out.printf("NIA: %-8d Nombre: %-30s",this.getId(), this.getNombre());
+
+        Session session = new ORM().conexion().getSessionFactory().openSession();
+        session.beginTransaction();
+
+        Query query = session.createQuery("FROM Matricula WHERE alumno = :nia");
+        query.setParameter("nia", this);
+        List<Matricula> matriculas = query.getResultList();
+
+        if(!matriculas.isEmpty()){
+            System.out.printf(" Modulos: %-2d\n",matriculas.size());
         }else{
             System.out.println(" -Sin matricula-");
         }
+
+        session.close();
     }
-//    public void imprimirBoletin() {
-//        imprimir();
-//        imprimirModulos();
-//    }
-//    public void imprimirModulos() {
-//        System.out.println("Matricula: ");
-//        this.matricula.imprimirModulos();
-//    }
 }
