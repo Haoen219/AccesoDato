@@ -91,6 +91,39 @@ CLASE Modulos
 		FIN SESSION
 	FIN METODO
 
+	METODO matricularAlumno
+		IMPRIMIR "Introduzca ID del alumno"
+		nia <-- ENTRADA
+
+		SESSION con la BDD
+			QUERY <-- Alumno cuyo id sea igual al "nia"
+			Alumno alumno <-- QUERY
+
+			SI alumno no es NULL
+				IMPRIMIR "Introduzca ID del modulo"
+				id <-- ENTRADA
+
+				QUERY <-- Modulo cuyo id sea igual al "id"
+				Modulo modulo <-- QUERY
+				
+				SI modulo no es NULL
+					QUERY <-- Matricula cuyo alumno igual a "alumno" y modulo a "modulo"
+					Matricula matricula <-- QUERY
+					
+					SI matricula es NULL
+						INSTANCIAR objeto Notas
+						GUARDAR Notas en BDD (save)
+	
+						INSTANCIAR objeto Matricula
+						LLAMAR matricula.setNotas <-- Notas
+						GUARDAR matricula en BDD (save)
+					FIN SI
+				FIN SI
+				ELIMINAR modulo "deBaja" (delete)
+			FIN SI
+		FIN SESSION
+	FIN METODO
+
 	METODO INT menu
 		IMPRIME el menu para los objetos Modulo
 		opcion <-- ENTRADA
