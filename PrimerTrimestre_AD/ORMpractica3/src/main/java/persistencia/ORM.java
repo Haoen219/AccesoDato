@@ -39,7 +39,7 @@ public class ORM
             System.out.println("|3|-Mantener Matricula     |");
             System.out.println("|"+"-".repeat(26)+"|");
             System.out.print("OPCIÓN: ");
-            option=in.leerEntero(0,5);
+            option=in.leerEntero(0,3);
         }
         return option;        
     }

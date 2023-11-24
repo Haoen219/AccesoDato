@@ -37,11 +37,6 @@ public class Matricula {
     private String calificacion;
 
     public Matricula(){}
-    
-    public int modificarNotas(){
-        //POR IMPLEMENTAR
-        return 0;
-    }
 
     //GETTERS
     public int getId(){
@@ -78,6 +73,6 @@ public class Matricula {
     //IMPRIMIR NOTAS
     public void imprimir(){
         System.out.printf("ID: %-8d Modulo: %-30s  ",this.id, this.modulo.getNombre());
-        System.out.printf("Notas: %2d | %2d | %2d    Calificacion: %s", this.notas.getNota1(),this.notas.getNota2(),this.notas.getNota3(), this.calificacion);
+        System.out.printf("Notas: %2d | %2d | %2d    Calificacion: %s\n", this.notas.getNota1(),this.notas.getNota2(),this.notas.getNota3(), this.calificacion);
     }
 }

@@ -54,8 +54,6 @@ public class Alumno{
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
         
-        session.clear();
-
         Query query = session.createQuery("FROM Matricula WHERE alumno = :nia");
         query.setParameter("nia", this);
         List<Matricula> matriculas = query.getResultList();

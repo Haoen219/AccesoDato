@@ -118,13 +118,10 @@ public class Matriculas {
         Alumno alumno = (Alumno)query.uniqueResult();
 
         if(alumno!=null){
-            System.out.println(alumno.getNombre());
+            System.out.println("\nMatricula de "+alumno.getNombre());
 
             Query queryMatri = session.createQuery("FROM Matricula WHERE alumno = :alu").setParameter("alu", alumno);
             List<Matricula> matriculas = queryMatri.getResultList();
-
-            //Query queryMatri = session.createQuery("FROM Matricula WHERE alumno = :alu").setParameter("alu", alumno, );
-            //List<Matricula> matriculas = queryMatri.getResultList();
 
             if(!matriculas.isEmpty()){
                 System.out.println("Matriculas:");

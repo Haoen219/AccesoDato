@@ -45,11 +45,6 @@ public class Modulo {
         return this.id;
     }
     
-    public int listar(){
-        //POR HACER
-        return 0;
-    }
-    
     //IMPRIMIR
     public void imprimir() {
         System.out.printf("\tID: %-8d %-20s Alumnos: ", this.getId(), this.getNombre());
