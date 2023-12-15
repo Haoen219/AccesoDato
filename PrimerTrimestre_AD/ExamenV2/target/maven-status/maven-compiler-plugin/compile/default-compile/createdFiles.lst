@@ -1,0 +1,15 @@
+centro\BDDAlumnosModulos.class
+centro\Alumno.class
+centro\Matricula.class
+centro\Notas.class
+centro\Profesor.class
+utilidades\TextoValor.class
+centro\Matriculas.class
+centro\Modulo.class
+persistencia\Conexion.class
+utilidades\Lector.class
+centro\Profesores.class
+utilidades\App.class
+centro\Modulos.class
+centro\Alumnos.class
+persistencia\ORM.class

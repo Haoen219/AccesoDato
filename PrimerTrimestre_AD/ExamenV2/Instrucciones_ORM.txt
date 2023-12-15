@@ -1,0 +1,9 @@
+Para ejecutar el programa de ORM:
+-Visual Code: seleccionar cualquier archivo y pulsar en RUN del menu superior.
+-NetBeans: seleccionar el fichero App, click derecho, Run File.
+
+Esta práctica esta hecho para funcionar con el servidor de Carlos.
+Si se va a usar otro servidor entonces hay que modificar la Conexión.
+
+El programa es capaz de crear automaticamente las tablas, solo hay que
+asignarle una tabla nueva.

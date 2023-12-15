@@ -1,0 +1,425 @@
+/////CLASES GESTORES/////
+
+CLASE Alumnos
+	METODO darAlta
+		IMPRIMIR "Introduzca nombre del alumno"
+		nombre <-- ENTRADA
+		
+		INSTANCIAR objeto Alumno con "nombre"
+		
+		SESSION con la BDD
+			GUARDAR Alumno en BDD (save)
+		FIN SESSION
+	FIN METODO
+
+	METODO darBaja
+		IMPRIMIR "Introduzca ID del alumno"
+		id <-- ENTRADA
+
+		SESSION con la BDD
+			QUERY <-- Alumno cuyo id sea igual al "id"
+			Alumno deBaja <-- QUERY
+
+			SI deBaja no es NULL
+				QUERY <-- Matricula cuyo alumno sea igual a "deBaja"
+				Lista matriculas <-- QUERY
+
+				PARA cada entrada de "matriculas"
+					ELIMINAR Notas de la Matricula (delete)
+					ELIMINAR la Matricula (delete)
+				FIN PARA
+				ELIMINAR alumno "deBaja" (delete)
+			FIN SI
+		FIN SESSION
+	FIN METODO
+
+	METODO INT menu
+		IMPRIME el menu para los objetos Alumno
+		opcion <-- ENTRADA
+
+		DEVUELVE opcion
+	FIN METODO
+
+	METODO listar
+		SESSION con la BDD
+			QUERY <-- "todos los alumnos" 
+			Lista alumnos <-- QUERY
+
+			SI alumnos no está vacía
+				PARA cada entrada de "alumnos"
+					IMPRIMIR alumno (alumno.imprimir)
+				FIN PARA
+			SINO
+				IMPRIMIR "Lista de alumno vacio"
+			FIN SI
+		FIN SESSION
+	FIN METODO
+FIN CLASE
+
+
+
+CLASE Modulos
+	METODO darAlta
+		IMPRIMIR "Introduzca nombre del modulo"
+		nombre <-- ENTRADA
+		
+		INSTANCIAR objeto Modulo con "nombre"
+		
+		SESSION con la BDD
+			GUARDAR Modulo en BDD (save)
+		FIN SESSION
+	FIN METODO
+
+	METODO darBaja
+		IMPRIMIR "Introduzca ID del modulo"
+		id <-- ENTRADA
+
+		SESSION con la BDD
+			QUERY <-- Modulo cuyo id sea igual al "id"
+			Modulo deBaja <-- QUERY
+
+			SI deBaja no es NULL
+				QUERY <-- Matricula cuyo modulo sea igual a "deBaja"
+				Lista matriculas <-- QUERY
+
+				PARA cada entrada de "matriculas"
+					ELIMINAR Notas de la Matricula (delete)
+					ELIMINAR la Matricula (delete)
+				FIN PARA
+				ELIMINAR modulo "deBaja" (delete)
+			FIN SI
+		FIN SESSION
+	FIN METODO
+
+	METODO matricularAlumno
+		IMPRIMIR "Introduzca ID del alumno"
+		nia <-- ENTRADA
+
+		SESSION con la BDD
+			QUERY <-- Alumno cuyo id sea igual al "nia"
+			Alumno alumno <-- QUERY
+
+			SI alumno no es NULL
+				IMPRIMIR "Introduzca ID del modulo"
+				id <-- ENTRADA
+
+				QUERY <-- Modulo cuyo id sea igual al "id"
+				Modulo modulo <-- QUERY
+				
+				SI modulo no es NULL
+					QUERY <-- Matricula cuyo alumno igual a "alumno" y modulo a "modulo"
+					Matricula matricula <-- QUERY
+					
+					SI matricula es NULL
+						INSTANCIAR objeto Notas
+						GUARDAR Notas en BDD (save)
+	
+						INSTANCIAR objeto Matricula
+						LLAMAR matricula.setNotas <-- Notas
+						GUARDAR matricula en BDD (save)
+					FIN SI
+				FIN SI
+				ELIMINAR modulo "deBaja" (delete)
+			FIN SI
+		FIN SESSION
+	FIN METODO
+
+	METODO INT menu
+		IMPRIME el menu para los objetos Modulo
+		opcion <-- ENTRADA
+
+		DEVUELVE opcion
+	FIN METODO
+
+	METODO listar
+		SESSION con la BDD
+			QUERY <-- "todos los modulos" 
+			Lista modulos <-- QUERY
+
+			SI modulos no está vacía
+				PARA cada entrada de "modulos"
+					IMPRIMIR modulo (modulo.imprimir)
+				FIN PARA
+			SINO
+				IMPRIMIR "Lista de modulos vacio"
+			FIN SI
+		FIN SESSION
+	FIN METODO
+FIN CLASE
+
+
+
+CLASE Matriculas
+	METODO INT[] preguntarMatricula
+		IMPRIMIR "Introduzca el ID del alumno"
+		nia <-- ENTRADA
+		IMPRIMIR "Introduzca el ID del modulo"
+		id <-- ENTRADA
+
+		niaId <-- {nia, id}
+		DEVOLVER niaId
+	FIN METODO
+
+	METODO modificarNotas
+		niaId <-- preguntarMatricula()
+
+		SESSION con la BDD
+			QUERY <-- Alumno cuyo id sea igual a niaId[0]
+			Alumno alumno <-- QUERY
+
+			QUERY <-- Modulo cuyo id sea igual a niaId[1]
+			Modulo modulo <-- QUERY
+
+			QUERY <-- Matricula cuyo alumno sea igual a "alumno" y modulo igual a "modulo"
+			Matricula aModificar <-- QUERY
+
+			SI aModificar no es NULL
+				LLAMAR al objeto Notas de aModificar, notas.modificarNota() para modificar notas.
+
+				ACTUALIZAR matricula "aModificar" (update)
+			FIN SI
+		FIN SESSION
+	FIN METODO
+
+	METODO evaluarModulo
+		niaId <-- preguntarMatricula()
+
+		SESSION con la BDD
+			QUERY <-- Alumno cuyo id sea igual a niaId[0]
+			Alumno alumno <-- QUERY
+
+			QUERY <-- Modulo cuyo id sea igual a niaId[1]
+			Modulo modulo <-- QUERY
+
+			QUERY <-- Matricula cuyo alumno sea igual a "alumno" y modulo igual a "modulo"
+			Matricula aModificar <-- QUERY
+
+			SI aModificar no es NULL
+				SWITCH criterio es el RETURN de menuCalificar()
+					1: calificacion = "Suspendido"
+					2: calificacion = "Bien"
+					3: calificacion = "Notable"
+					4: calificacion = "Excelente"
+				FIN SWITCH
+
+				LLAMAR aModificar.setCalificacion con "calificacion"
+				ACTUALIZAR matricula "aModificar" (update)
+			FIN SI
+		FIN SESSION
+	FIN METODO
+
+	METODO mostrar
+		IMPRIMIR "Introduzca el ID del alumno"
+		nia <-- ENTRADA
+
+		SESSION con la BDD
+			QUERY <-- Alumno cuyo id sea igual a "nia"
+			Alumno alumno <-- QUERY
+
+			SI alumno no es NULL
+				IMPRIMIR nombre de "alumno"
+
+				QUERY <-- Matricula cuyo alumno sea igual a "alumno"
+				Lista matriculas <-- QUERY
+
+				SI matriculas no esta vacio
+					PARA cada entrada de "matriculas"
+						IMPRIMIR matricula (matricula.imprimir)
+					FIN PARA
+				SINO
+					IMPRIMIR "Sin matriculas"
+				FIN SI
+			SINO
+				IMPRIMIR "Alumno no existe"
+			FIN SI
+		FIN SESSION
+	FIN METODO
+
+	METODO INT menu
+		IMPRIME el menu para los objetos Matricula
+		opcion <-- ENTRADA
+
+		DEVUELVE opcion
+	FIN METODO
+
+	METODO INT menuCalificar
+		IMPRIME el menu para las calificaciones
+		opcion <-- ENTRADA
+
+		DEVUELVE opcion
+	FIN METODO
+FIN CLASE
+
+
+/////CLASES DE ENTIDADES/////
+
+ENTIDAD
+CLASE Alumno
+	INT id (autogenerado)
+	STRING nombre
+
+	BUILDER Alumno FIN BUILDER
+	BUILDER Alumno (String nombre)
+		nombre <-- "nombre"
+	FIN BUILDER
+
+	GETTER de "nombre" y "id"
+
+	METODO imprimir 
+		IMPRIMIR "id" y "nombre"
+
+		SESSION con la BDD
+			QUERY <-- Matricula cuyo alumno sea igual a "esta instancia de Alumno"
+			Lista matriculas <-- QUERY
+
+			SI matriculas no esta vacio
+				IMPRIMIR tamaño de "matriculas" (size)
+			SINO
+				IMPRIMIR "Sin matricula"
+			FIN SI
+		FIN SESSION
+	FIN METODO
+FIN CLASE
+
+
+ENTIDAD
+CLASE Modulo
+	INT id (autogenerado)
+	STRING nombre
+
+	BUILDER Modulo FIN BUILDER
+	BUILDER Modulo (String nombre)
+		nombre <-- "nombre"
+	FIN BUILDER
+
+	GETTER de "nombre" y "id"
+
+	METODO imprimir 
+		IMPRIMIR "id" y "nombre"
+
+		SESSION con la BDD
+			QUERY <-- Matricula cuyo modulo sea igual a "esta instancia de Modulo"
+			Lista matriculas <-- QUERY
+
+			SI matriculas no esta vacio
+				IMPRIMIR tamaño de "matriculas" (size)
+			SINO
+				IMPRIMIR "Sin matriculados"
+			FIN SI
+		FIN SESSION
+	FIN METODO
+FIN CLASE
+
+
+ENTIDAD
+CLASE Matricula
+	INT id (autogenerado)
+	Alumno alumno				(ONE TO ONE)
+	Modulo modulo				(ONE TO ONE)
+	Notas notas					(ONE TO ONE)
+	String calificacion
+
+	BUILDER Matricula FIN BUILDER
+
+	GETTER de "id", "notas", "alumno", "modulo" y "calificacion"
+	SETTER de "notas", "alumno", "modulo" y "calificacion"
+
+	METODO imprimir
+		IMPRIMIR "id" y "modulo.nombre"
+		IMPRIMIR "notas.nota1", "notas.nota2", "notas.nota3"
+		IMPRIMIR "calificacion"
+	FIN METODO
+FIN CLASE
+
+
+ENTIDAD
+CLASE Notas
+	INT id (autogenerado)
+	INT nota1
+	INT nota2
+	INT nota3
+
+	BUILDER Notas FIN BUILDER
+
+	METODO instanciarNotas
+		nota1, nota2 y nota3 <-- 0
+	FIN METODO
+
+	METODO modificarNota()
+		IMPRIMIR "nota1", "nota2", "nota3"
+		posicion <-- ENTRADA
+
+		IMPRIMIR "Introduzca nota deseada (0-10)"
+		nota <-- ENTRADA
+
+		SWITCH criterio es "posicion"
+			1: nota1 <-- "nota"
+			2: nota2 <-- "nota"
+			3: nota3 <-- "nota"
+		FIN SWITCH
+	FIN METODO
+
+	SETTER de nota1, nota 2 y nota3
+	GETTER de id, nota1, nota2 y nota3
+FIN CLASE
+
+
+/////OTRAS CLASES/////
+
+CLASE ORM
+	Alumnos alumno
+	Modulos modulos
+	Matriculas matriculas
+
+	Conexion conexion
+
+	METODO INT menu
+		IMPRIME el menu principal del programa
+		opcion <-- ENTRADA
+
+		DEVUELVE opcion
+	FIN METODO
+
+	METODO realizarOpcion (INT choice)
+		SWITCH criterio es "choice"
+			0: ----
+			1: LLAMAR menuAlumnos()
+			2: LLAMAR menuModulos()
+			3: LLAMAR menuMatriculas()
+		FIN SWITCH
+	FIN METODO
+
+	METODO menuAlumnos (INT choice)
+		LLAMA alumnos.menu() --> opcion
+
+		SWITCH criterio es "opcion"
+		0: IMPRIMIR "Volviendo al menu previo..."
+			1: LLAMAR alumnos.darDeAlta()
+			2: LLAMAR alumnos.darDebaja()
+			3: LLAMAR alumnos.listar()
+		FIN SWITCH
+	FIN METODO
+
+	METODO menuModulos (INT choice)
+		LLAMA modulos.menu() --> opcion
+
+		SWITCH criterio es "opcion"
+			0: IMPRIMIR "Volviendo al menu previo..."
+			1: LLAMAR modulos.darDeAlta()
+			2: LLAMAR modulos.darDebaja()
+			3: LLAMAR modulos.listar()
+			4: LLAMAR modulos.matricularAlumno()
+		FIN SWITCH
+	FIN METODO
+
+	METODO menuMatriculas (INT choice)
+		LLAMA matriculas.menu() --> opcion
+
+		SWITCH criterio es "opcion"
+			0: IMPRIMIR "Volviendo al menu previo..."
+			1: LLAMAR matriculas.modificarNotas()
+			2: LLAMAR matriculas.evaluarModulo()
+			3: LLAMAR matriculas.mostrar()
+		FIN SWITCH
+	FIN METODO
+FIN CLASE
