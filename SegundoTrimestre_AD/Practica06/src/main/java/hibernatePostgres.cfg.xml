@@ -1,0 +1,24 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+   "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+   "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+       
+        <property name="connection.url">jdbc:postgresql://127.0.0.1:5432/Haoen</property>
+
+        <property name="connection.username">postgres</property>
+
+        <property name="connection.password">user</property>
+
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+
+        <property name="hibernate.hbm2ddl.auto">create</property>
+
+        <mapping class="centro.Modulo" /> 
+        <mapping class="centro.Alumno" /> 
+        <mapping class="centro.Matricula" /> 
+        <mapping class="centro.Notas" /> 
+
+    </session-factory>
+</hibernate-configuration>
