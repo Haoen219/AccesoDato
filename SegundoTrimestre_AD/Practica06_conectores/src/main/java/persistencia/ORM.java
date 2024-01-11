@@ -6,12 +6,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
-
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 
 import centro.Alumno;
 import centro.Alumnos;
@@ -25,12 +23,17 @@ import utilidades.App;
 import utilidades.Lector;
 
 public class ORM {
+    //SQL
+    private String buscarAlumno = "";
+    private String buscarModulo = "";
+    private String buscarMatricula = "";
+
     private static Alumnos alumnos = new Alumnos();
     private static Modulos modulos = new Modulos();
     private static Matriculas matriculas = new Matriculas();
     public static final File importFile = new File("import.txt");
 
-    private static Conexion conexion = new Conexion();
+    private static  Connection connection = new Conexion().getConnection();
 
     // MENU DE PROGRAMA
     private int menu() {
@@ -55,6 +58,8 @@ public class ORM {
 
     private void exportarDatos() {
         System.out.println("\nEXPORTANDO...");
+
+        connection.createStatement();
         Session session = new ORM().conexion().getSessionFactory().openSession();
         Query queryAlu = session.createQuery("FROM Alumno", Alumno.class);
         Query queryModu = session.createQuery("FROM Modulo", Modulo.class);
@@ -90,12 +95,10 @@ public class ORM {
             }
             matriculas = null;
 
-            List<Notas> notas = queryNota.getResultList();
-            for (Notas nota : notas) {
+            for (Notas nota : listaNotas) {
                 writer.write(nota.toString() + "\n");
                 System.out.println("Exportando NOTAS ID: " + nota.getId());
             }
-            notas = null;
 
             writer.close();
         } catch (IOException ex) {
@@ -333,6 +336,9 @@ public class ORM {
         }
 
         int opcion;
+        Connection connection = dataSource.getConnection();
+
+
         Session sesion = conexion.getSessionFactory().openSession();
         String resultado = (String) sesion.createNativeQuery("SELECT VERSION()").getSingleResult();
         System.out.println("La versión que estás usando es: " + resultado);
