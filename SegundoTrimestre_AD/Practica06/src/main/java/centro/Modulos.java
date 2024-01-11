@@ -29,6 +29,16 @@ public class Modulos implements BDDAlumnosModulos {
 
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
+
+        Query query = session.createQuery("FROM Modulo", Modulo.class);
+        List<Modulo> lista = query.getResultList();
+        int id;
+        if (!lista.isEmpty()) {
+            id = lista.get(lista.size() - 1).getId() + 1;
+        } else {
+            id = 0;
+        }
+
         while (seguir) {
             System.out.print("Introduzca el nombre del módulo: ");
             String nombre = sc.leer();
@@ -37,6 +47,7 @@ public class Modulos implements BDDAlumnosModulos {
                 seguir = false;
             } else {
                 Modulo modulo = new Modulo(nombre);
+                modulo.setId(id);
                 session.save(modulo);
                 modulos.add(modulo);
                 System.out.println("\t" + nombre + " añadido a la lista de espera.");
@@ -128,6 +139,24 @@ public class Modulos implements BDDAlumnosModulos {
                         Query query2 = session.createQuery("FROM Modulo WHERE id = :id").setParameter("id", id);
                         Modulo moduloMatri = (Modulo) query2.uniqueResult();
 
+                        Query queryId = session.createQuery("FROM Matricula", Matricula.class);
+                        List<Matricula> lista = queryId.getResultList();
+                        int idMatri;
+                        if (!lista.isEmpty()) {
+                            idMatri = lista.get(lista.size() - 1).getId() + 1;
+                        } else {
+                            idMatri = 1;
+                        }
+
+                        Query queryId2 = session.createQuery("FROM Notas", Notas.class);
+                        List<Notas> lista2 = queryId2.getResultList();
+                        int idNotas;
+                        if (!lista2.isEmpty()) {
+                            idNotas = lista2.get(lista2.size() - 1).getId() + 1;
+                        } else {
+                            idNotas = 0;
+                        }
+
                         if (moduloMatri != null) {
                             // quey para comprobar que no exista una matricula de este alumno y modulo
                             Query queryMatri = session
@@ -140,10 +169,12 @@ public class Modulos implements BDDAlumnosModulos {
                                 // notas
                                 Notas notas = new Notas();
                                 notas.instanciarNotas();
+                                notas.setId(idNotas);
                                 session.save(notas);
 
                                 // matricula
                                 Matricula matricula = new Matricula();
+                                matricula.setId(idMatri);
                                 matricula.setNotas(notas);
                                 matricula.setAlumno(aMatricular);
                                 matricula.setModulo(moduloMatri);

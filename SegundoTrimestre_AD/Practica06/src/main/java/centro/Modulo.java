@@ -25,7 +25,7 @@ import persistencia.ORM;
 @Table(name="Modulo")
 public class Modulo {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "modulo_id")
     private int id;
     @Column(name="modulo_nombre")

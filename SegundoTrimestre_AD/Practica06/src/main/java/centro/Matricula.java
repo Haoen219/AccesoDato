@@ -23,7 +23,7 @@ import javax.persistence.Table;
 @Table(name="Matricula")
 public class Matricula {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "matricula_id")
     private int id;
 

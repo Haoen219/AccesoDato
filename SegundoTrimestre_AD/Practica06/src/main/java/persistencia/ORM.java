@@ -9,11 +9,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
+import java.util.Scanner;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
-
-import com.mysql.cj.ParseInfo;
 
 import centro.Alumno;
 import centro.Alumnos;
@@ -133,13 +132,13 @@ public class ORM {
                         Alumno alu = new Alumno(datos[2]);
                         alu.setId(Integer.parseInt(datos[1]));
                         System.out.println("Importando ALUMNO ID: " + datos[1] + " " + datos[2]);
-                        session.save(alu);
+                        session.saveOrUpdate(alu);
                         break;
                     case "Modulo":
                         Modulo modu = new Modulo(datos[2]);
                         modu.setId(Integer.parseInt(datos[1]));
                         System.out.println("Importando MODULO ID: " + datos[1] + " " + datos[2]);
-                        session.save(modu);
+                        session.saveOrUpdate(modu);
                         break;
                     case "Matricula":
                         matriculas.add(line); // sacamos las matriculas para más tarde porque hay que importar las notas
@@ -152,7 +151,7 @@ public class ORM {
                         notas.setNota2(Integer.parseInt(datos[3]));
                         notas.setNota3(Integer.parseInt(datos[4]));
                         System.out.println("Importando NOTAS ID: " + datos[1]);
-                        session.save(notas);
+                        session.saveOrUpdate(notas);
                         break;
                     default:
                         System.out.println("Formato de línea no admitida en la línea " + lineNum);
@@ -168,23 +167,29 @@ public class ORM {
                     String[] datos = matricula.split("::");
                     Matricula matri = new Matricula();
 
+                    System.out.println("Importando MATRICULA ID: " + datos[1] + " Alu: " + Integer.parseInt(datos[2])
+                            + " Modu: " + Integer.parseInt(datos[3]) + " Notas: " + Integer.parseInt(datos[4]));
+
                     Query queryAlu = session.createQuery("FROM Alumno WHERE id = :nia").setParameter("nia",
                             Integer.parseInt(datos[2]));
+                    Alumno alu = (Alumno) queryAlu.uniqueResult();
+                    System.out.println(alu);
                     Query queryModu = session.createQuery("FROM Modulo WHERE id = :id").setParameter("id",
                             Integer.parseInt(datos[3]));
+                    Modulo modu = (Modulo) queryModu.uniqueResult();
+                    System.out.println(modu);
                     Query queryNota = session.createQuery("FROM Notas WHERE id = :id").setParameter("id",
                             Integer.parseInt(datos[4]));
-
-                    System.out.println((Notas) queryNota.uniqueResult());
+                    Notas nota = (Notas) queryNota.uniqueResult();
+                    System.out.println("Notas::" + nota.getId());
 
                     matri.setId(Integer.parseInt(datos[1]));
-                    matri.setAlumno((Alumno) queryAlu.uniqueResult());
-                    matri.setModulo((Modulo) queryModu.uniqueResult());
-                    matri.setNotas((Notas) queryNota.uniqueResult());
+                    matri.setAlumno(alu);
+                    matri.setModulo(modu);
+                    matri.setNotas(nota);
                     matri.setCalificacion((datos[5]));
-                    System.out.println("Importando MATRICULA ID: " + datos[1] + " Alu: " + Integer.parseInt(datos[2])
-                            + "Modu: " + Integer.parseInt(datos[3]) + "Notas: " + Integer.parseInt(datos[4]));
-                    session.save(matri);
+
+                    session.saveOrUpdate(matri);
                 }
                 session.getTransaction().commit();
             }
@@ -203,6 +208,8 @@ public class ORM {
     }
 
     private void realizarOpcion(int choice) {
+        Lector sc = new Lector(System.in);
+        String opcion= "";
         switch (choice) {
             case 0:
                 break;
@@ -216,10 +223,22 @@ public class ORM {
                 menuMatriculas();
                 break;
             case 4:
-                exportarDatos();
+                System.out.println("Esto sustituirá los datos previos si existen.\n¿Quieres continuar? [0] para contiuar, otra tecla para cancelar.");
+                opcion=sc.leer();
+                if(opcion.equals("0")){
+                    exportarDatos();
+                }else{
+                    System.out.println("No se va a realizar acción, volviendo...");
+                }
                 break;
             case 5:
-                importarDatos();
+                System.out.println("Esto sustituirán los elementos que coincidan en ID.\n¿Quieres continuar? [0] para contiuar, otra tecla para cancelar.");
+                opcion=sc.leer();
+                if(opcion.equals("0")){
+                    importarDatos();
+                }else{
+                    System.out.println("No se va a realizar acción, volviendo...");
+                }
                 break;
             default:
                 System.out.println(App.ANSI_CYAN + "Hay que elegit una de las opciones (numero entre parentesis)"

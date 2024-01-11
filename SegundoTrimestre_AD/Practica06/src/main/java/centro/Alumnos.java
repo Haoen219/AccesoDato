@@ -32,6 +32,17 @@ public class Alumnos implements BDDAlumnosModulos {
         Session session = new ORM().conexion().getSessionFactory().openSession();
         session.beginTransaction();
 
+        Query query = session.createQuery("FROM Alumno", Alumno.class);
+        List<Alumno> lista = query.getResultList();
+
+        int id;
+        if(!lista.isEmpty()){
+            id = lista.get(lista.size()-1).getId()+1;
+        }else{
+            id = 1;
+        }
+        
+
         while (seguir) {
             System.out.print("Introduzca el nombre del alumno: ");
             String nombre = sc.leer();
@@ -40,6 +51,8 @@ public class Alumnos implements BDDAlumnosModulos {
                 seguir = false;
             } else {
                 Alumno alumno = new Alumno(nombre);
+                alumno.setId(id);
+
                 alumnos.add(alumno);
                 session.save(alumno);
                 System.out.println("\t" + nombre + " añadido a la lista de espera.");
@@ -84,6 +97,7 @@ public class Alumnos implements BDDAlumnosModulos {
                     for (Matricula matricula : matriculaExistente) {
                         session.delete(matricula);
                     }
+
 
                     session.delete(deBaja);
                     alumnos.add(deBaja);

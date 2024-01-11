@@ -14,7 +14,7 @@ import utilidades.Lector;
 public class Notas {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notas_id")
     private int id;
 
