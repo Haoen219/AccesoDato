@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
-import java.util.Scanner;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -184,12 +183,16 @@ public class ORM {
                     System.out.println("Notas::" + nota.getId());
 
                     matri.setId(Integer.parseInt(datos[1]));
-                    matri.setAlumno(alu);
-                    matri.setModulo(modu);
-                    matri.setNotas(nota);
-                    matri.setCalificacion((datos[5]));
+                    if (alu != null || modu != null || nota != null) {
+                        matri.setAlumno(alu);
+                        matri.setModulo(modu);
+                        matri.setNotas(nota);
+                        matri.setCalificacion((datos[5]));
 
-                    session.saveOrUpdate(matri);
+                        session.saveOrUpdate(matri);
+                    } else {
+                        System.out.println("\tLos datos requeridos no existen, saltando la matricula...");
+                    }
                 }
                 session.getTransaction().commit();
             }
@@ -209,7 +212,7 @@ public class ORM {
 
     private void realizarOpcion(int choice) {
         Lector sc = new Lector(System.in);
-        String opcion= "";
+        String opcion = "";
         switch (choice) {
             case 0:
                 break;
@@ -223,20 +226,22 @@ public class ORM {
                 menuMatriculas();
                 break;
             case 4:
-                System.out.println("Esto sustituirá los datos previos si existen.\n¿Quieres continuar? [0] para contiuar, otra tecla para cancelar.");
-                opcion=sc.leer();
-                if(opcion.equals("0")){
+                System.out.println(
+                        "Esto sustituirá los datos previos si existen.\n¿Quieres continuar? [0] para contiuar, otra tecla para cancelar.");
+                opcion = sc.leer();
+                if (opcion.equals("0")) {
                     exportarDatos();
-                }else{
+                } else {
                     System.out.println("No se va a realizar acción, volviendo...");
                 }
                 break;
             case 5:
-                System.out.println("Esto sustituirán los elementos que coincidan en ID.\n¿Quieres continuar? [0] para contiuar, otra tecla para cancelar.");
-                opcion=sc.leer();
-                if(opcion.equals("0")){
+                System.out.println(
+                        "Esto sustituirán los elementos que coincidan en ID.\n¿Quieres continuar? [0] para contiuar, otra tecla para cancelar.");
+                opcion = sc.leer();
+                if (opcion.equals("0")) {
                     importarDatos();
-                }else{
+                } else {
                     System.out.println("No se va a realizar acción, volviendo...");
                 }
                 break;
