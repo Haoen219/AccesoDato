@@ -1,5 +1,0 @@
-
-INSERT INTO alumno (alumno_nombre) VALUES ('Haoen'), ('Jose'), ('Pedro'), ('Pablo'), ('Adrian'), ('Manolo');
-INSERT INTO modulo (modulo_nombre) VALUES('DAM'),('DAW'),('EIE');
-INSERT INTO notas (nota1, nota2, nota3) VALUES(10, 0, 5),(0, 0, 0),(0, 0, 0),(0, 0, 0),(0, 0, 0),(0, 0, 0),(0, 0, 0),(0, 0, 0),(0, 0, 0),(0, 0, 0),(0, 0, 0),(0, 0, 0),( 0, 0, 0),(0, 0, 0),(0, 0, 0),(0, 0, 0),(0, 0, 0),(0, 0, 0),(0, 0, 0),(0, 0, 0),(0, 0, 0),(0, 0, 0),(0, 0, 0);
-INSERT INTO matricula (calificacion, alumno_id, modulo_id, notas_id) VALUES (NULL, 1, 1, 1),(NULL, 1, 2, 2),(NULL, 1, 3, 3),(NULL, 2, 1, 5),(NULL, 2, 2, 6),(NULL, 2, 3, 7),(NULL, 3, 1, 9),(NULL, 3, 2, 10),(NULL, 3, 3, 11),(NULL, 4, 3, 14),(NULL, 4, 2, 15),(NULL, 4, 1, 16),(NULL, 5, 3, 17),(NULL, 5, 1, 18),(NULL, 5, 2, 19),(NULL, 6, 1, 21),(NULL, 6, 2, 22),(NULL, 6, 3, 23);

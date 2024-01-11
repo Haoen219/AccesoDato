@@ -185,37 +185,6 @@ public class Matriculas {
         return 0;
     }
 
-    /*
-    public int evaluarModulo2() {
-        if (hayMatriculas()) {
-
-            System.out.println("\n-Evaluar módulos-");
-            int[] niaId = preguntarMatricula();
-
-            Session session = new ORM().conexion().getSessionFactory().openSession();
-            session.beginTransaction();
-
-            // Buscar Alumno
-            Query query = session.createQuery("FROM Alumno WHERE id = :nia");
-            query.setParameter("nia", niaId[0]);
-            Alumno alumno = (Alumno) query.uniqueResult();
-            // Buscar Modulo
-            Query query2 = session.createQuery("FROM Modulo WHERE id = :id");
-            query2.setParameter("id", niaId[1]);
-            Modulo modulo = (Modulo) query2.uniqueResult();
-
-            Query queryMatri = session.createQuery("FROM Matricula WHERE alumno = :alu AND modulo = :modu")
-                    .setParameter("alu", alumno).setParameter("modu", modulo);
-            Matricula aModificar = (Matricula) queryMatri.uniqueResult();
-
-            session.close();
-        } else {
-            System.out.println("No tienes ninguna matricula aún.");
-        }
-        return 0;
-    }
-    */
-
     public void mostrar() {
         Lector sc = new Lector(System.in);
         System.out.println("\n-Boletín-");

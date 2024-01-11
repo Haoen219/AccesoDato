@@ -12,8 +12,9 @@ public class App {
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
 
-    //Variable que define el BDD a usar, leido por la clase ORM
+    // Variable que define el BDD a usar, leido por la clase ORM
     private static int opcionDeConexion;
+
     public static int getOpcion() {
         return opcionDeConexion;
     }
@@ -21,9 +22,13 @@ public class App {
     private static int menu() {
         int option = -1;
         Lector in = new Lector(System.in);
-        System.out.println("\n(0)- Salir");
-        System.out.println("(1)- MySQL");
-        System.out.println("(2)- PostgreSQL");
+        System.out.println("");
+        System.out.println("|------MENÚ  CONEXIÓN------|");
+        System.out.println("|0|-Salir del programa     |");
+        System.out.println("|1|-Conx. MySQL            |");
+        System.out.println("|2|-Conx. PostgreSQL       |");
+        System.out.println("|" + "-".repeat(26) + "|");
+        System.out.print("OPCIÓN: ");
         option = in.leerEntero(0, 2);
         in = null;
         System.gc();
@@ -57,7 +62,10 @@ public class App {
 
     public static void main(String[] args) {
         int opcion = -1;
-        opcion = menu();
-        haz(opcion);
+
+        do {
+            opcion = menu();
+            haz(opcion);
+        } while (opcion != 0);
     }
 }

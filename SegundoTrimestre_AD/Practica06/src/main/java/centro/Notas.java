@@ -16,7 +16,7 @@ public class Notas {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notas_id")
-    int id;
+    private int id;
 
     @Column(name = "nota1")
     private int nota1;
@@ -67,6 +67,9 @@ public class Notas {
     }
 
     //SETTERS
+    public void setId(int id) {
+        this.id = id;
+    }
     public void setNota1(int nota){
         this.nota1=nota;
     }
@@ -88,5 +91,10 @@ public class Notas {
     }
     public int getNota3(){
         return this.nota3;
+    }
+
+    //EXPORT
+    public String toString(){
+        return "Notas::"+this.id+"::"+this.nota1+"::"+this.nota2+"::"+this.nota3;
     }
 }

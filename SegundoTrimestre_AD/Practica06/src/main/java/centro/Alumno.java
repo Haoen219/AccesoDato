@@ -38,13 +38,6 @@ public class Alumno{
     @Column(name="alumno_nombre")
     private String nombre;
 
-    /*
-    @Column(name= "matricula_id")
-    @OneToMany(targetEntity = Matricula.class, cascade = CascadeType.ALL)
-    @JoinColumn(name ="matricula_id", nullable = true)
-    private Set<Matricula> matriculas;
-    */
-
     public Alumno(){}
     public Alumno(String nombre){
         this.nombre=nombre;
@@ -57,9 +50,17 @@ public class Alumno{
     public int getId() {
         return this.id;
     }
+    //SETTER
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public void addMatricula(Matricula matricula) {
-        //this.matriculas.add(matricula);
+    //EXPORT
+    public String toString(){
+        return "Alumno::"+this.id+"::"+this.nombre;
     }
     
     //IMPRIMIR

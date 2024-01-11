@@ -42,7 +42,7 @@ public class Alumnos implements BDDAlumnosModulos {
                 Alumno alumno = new Alumno(nombre);
                 alumnos.add(alumno);
                 session.save(alumno);
-                System.out.println("\t"+nombre + " añadido a la lista de espera.");
+                System.out.println("\t" + nombre + " añadido a la lista de espera.");
             }
         }
 
@@ -51,7 +51,7 @@ public class Alumnos implements BDDAlumnosModulos {
         if (alumnos.size() > 0) {
             System.out.println("\nSe ha dado de alta a:");
             for (Alumno alu : alumnos) {
-                System.out.println("ID:" + alu.getId() + "\t"+alu.getNombre());
+                System.out.println("ID:" + alu.getId() + "\t" + alu.getNombre());
             }
         }
         return 0;
@@ -69,9 +69,9 @@ public class Alumnos implements BDDAlumnosModulos {
         while (seguir) {
             System.out.print("Introduzca ID del alumno: ");
             int nia = sc.leerEntero(0, 999);
-            if(nia==0){
-                seguir=false;
-            }else{
+            if (nia == 0) {
+                seguir = false;
+            } else {
                 Query query = session.createQuery("FROM Alumno WHERE id = :nia");
                 query.setParameter("nia", nia);
                 Alumno deBaja = (Alumno) query.uniqueResult();
@@ -87,7 +87,7 @@ public class Alumnos implements BDDAlumnosModulos {
 
                     session.delete(deBaja);
                     alumnos.add(deBaja);
-                    System.out.println("\t"+deBaja.getNombre() + " añadido a la lista de espera.");
+                    System.out.println("\t" + deBaja.getNombre() + " añadido a la lista de espera.");
                 } else {
                     System.out.println("--No existe este alumno");
                 }
@@ -98,7 +98,7 @@ public class Alumnos implements BDDAlumnosModulos {
         if (alumnos.size() > 0) {
             System.out.println("\nSe ha dado de baja a:");
             for (Alumno alu : alumnos) {
-                System.out.println("ID:" + alu.getId() + "\t"+alu.getNombre());
+                System.out.println("ID:" + alu.getId() + "\t" + alu.getNombre());
             }
         }
         return 0;

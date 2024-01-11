@@ -40,7 +40,9 @@ public class Matricula {
     @Column(name="calificacion")
     private String calificacion;
 
-    public Matricula(){}
+    public Matricula(){
+        this.calificacion="No calificada";
+    }
 
     //GETTERS
     public int getId(){
@@ -58,6 +60,10 @@ public class Matricula {
     public String getCalificacion(){
         return this.calificacion;
     }
+    //SETTER
+    public void setId(int id) {
+        this.id = id;
+    }
 
     //SETTER
     public void setAlumno(Alumno alumno){
@@ -73,6 +79,10 @@ public class Matricula {
         this.calificacion=calificacion;
     }
 
+    //EXPORT
+    public String toString(){
+        return "Matricula::"+this.id+"::"+this.alumno.getId()+"::"+this.modulo.getId()+"::"+this.notas.getId()+"::"+this.calificacion;
+    }
     
     //IMPRIMIR NOTAS
     public void imprimir(){
