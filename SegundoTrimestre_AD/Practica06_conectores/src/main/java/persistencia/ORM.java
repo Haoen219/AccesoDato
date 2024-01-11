@@ -24,9 +24,22 @@ import utilidades.Lector;
 
 public class ORM {
     //SQL
-    private String buscarAlumno = "";
-    private String buscarModulo = "";
-    private String buscarMatricula = "";
+    public static String buscarAlumnoID(int identificador){
+        return "FROM alumno WHERE id = "+identificador;
+    }
+    public static String buscarModuloID(int identificador){
+        return "FROM modulo WHERE id = "+identificador;
+    }
+    public static String buscarMatriculaID(int identificador){
+        return "FROM maticula WHERE id = "+identificador;
+    }
+    public static String buscaNotaID(int identificador){
+        return "FROM notas WHERE id = "+identificador;
+    }
+
+
+
+
 
     private static Alumnos alumnos = new Alumnos();
     private static Modulos modulos = new Modulos();
