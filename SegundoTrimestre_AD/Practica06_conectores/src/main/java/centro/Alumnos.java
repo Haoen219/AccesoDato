@@ -4,11 +4,9 @@
  */
 package centro;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.hibernate.Session;
-import org.hibernate.query.Query;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import persistencia.ORM;
 import utilidades.Lector;
@@ -17,109 +15,107 @@ import utilidades.Lector;
  *
  * @author haoen
  */
-public class Alumnos implements BDDAlumnosModulos {
+public class Alumnos {
+
+    private static Connection conect = new ORM().getConnection();
 
     public Alumnos() {
     }
 
-    @Override
     public int darDeAlta() {
         Lector sc = new Lector(System.in);
         boolean seguir = true;
         System.out.println("\n-Dar de alta alumno-  (volver con [0])");
-        ArrayList<Alumno> alumnos = new ArrayList<>();
 
-        Session session = new ORM().conexion().getSessionFactory().openSession();
-        session.beginTransaction();
+        
+        while (seguir) {
+            System.out.print("Introduzca el NIA del alumno: ");
+            String nia = sc.leer();
+            
+            ResultSet queryAlu = null;
+            try {
+                queryAlu = conect.createStatement().executeQuery(ORM.buscarAlumnoID(nia));
 
-        Query query = session.createQuery("FROM Alumno", Alumno.class);
-        List<Alumno> lista = query.getResultList();
+                if (nia.equals("0")) {
+                    seguir = false;
+                } else if (queryAlu.next()) {
+                    System.out.println("-Ya existe un alumno con ese NIA");
+                } else {
+                    System.out.print("Introduzca el nombre del alumno: ");
+                    String nombre = sc.leer();
 
-        int id;
-        if(!lista.isEmpty()){
-            id = lista.get(lista.size()-1).getId()+1;
-        }else{
-            id = 1;
+                    if (nombre.equalsIgnoreCase("0")) {
+                        seguir = false;
+                    } else {
+                        try {
+                            conect.createStatement().execute(ORM.insertarAlumno(nia, nombre));
+                            System.out.println("\tNIA:" + nia + " " + nombre + " dado de alta.\n");
+                        } catch (SQLException ex) {
+                            System.out.println("Error insertando el alumno\n" + ex);
+                        }
+                    }
+                }
+                
+                queryAlu.close();
+            } catch (SQLException ex) {
+                System.out.println("Error buscando alumno con ese NIA\n" + ex);
+            }
+                
         }
         
-
-        while (seguir) {
-            System.out.print("Introduzca el nombre del alumno: ");
-            String nombre = sc.leer();
-
-            if (nombre.equalsIgnoreCase("0")) {
-                seguir = false;
-            } else {
-                Alumno alumno = new Alumno(nombre);
-                alumno.setId(id);
-
-                alumnos.add(alumno);
-                session.save(alumno);
-                System.out.println("\t" + nombre + " añadido a la lista de espera.");
-            }
-        }
-
-        session.getTransaction().commit();
-        session.close();
-        if (alumnos.size() > 0) {
-            System.out.println("\nSe ha dado de alta a:");
-            for (Alumno alu : alumnos) {
-                System.out.println("ID:" + alu.getId() + "\t" + alu.getNombre());
-            }
-        }
+        System.out.println("Volviendo...");
         return 0;
     }
 
-    @Override
     public int darDeBaja() {
         Lector sc = new Lector(System.in);
-        ArrayList<Alumno> alumnos = new ArrayList<>();
         boolean seguir = true;
         System.out.println("\n-Dar de baja alumno-  (volver con [0])");
 
-        Session session = new ORM().conexion().getSessionFactory().openSession();
-        session.beginTransaction();
         while (seguir) {
-            System.out.print("Introduzca ID del alumno: ");
-            int nia = sc.leerEntero(0, 999);
-            if (nia == 0) {
+            System.out.print("Introduzca el NIA del alumno: ");
+            String nia = sc.leer();
+            if (nia.equals("0")) {
                 seguir = false;
             } else {
-                Query query = session.createQuery("FROM Alumno WHERE id = :nia");
-                query.setParameter("nia", nia);
-                Alumno deBaja = (Alumno) query.uniqueResult();
+                try {
+                    ResultSet queryAlu = conect.createStatement().executeQuery(ORM.buscarAlumnoID(nia));
 
-                if (deBaja != null) {
-                    Query queryMatri = session.createQuery("FROM Matricula WHERE alumno = :alu").setParameter("alu",
-                            deBaja);
-                    List<Matricula> matriculaExistente = queryMatri.getResultList();
+                    if (!queryAlu.next()) {
+                        System.out.println("-No existe un alumno con ese NIA");
+                    } else {
+                        try {
+                            String nombre = queryAlu.getString("alumno_nombre");
+                            ResultSet queryMat = conect.createStatement()
+                                    .executeQuery(ORM.buscarMatriculaAluID(nia));
 
-                    for (Matricula matricula : matriculaExistente) {
-                        session.delete(matricula);
+                            while (queryMat.next()) {
+                                String idMatri = queryMat.getString("matricula_id");
+                                String idNotas = queryMat.getString("notas_id");
+                                try {
+                                    conect.createStatement().executeQuery(ORM.borrarNotas(idNotas));
+                                    conect.createStatement().executeQuery(ORM.borrarNotas(idMatri));
+                                } catch (SQLException ex) {
+                                    System.out.println("Error borrando notas/matricula del alumno.\n" + ex);
+                                }
+
+                            }
+                            queryMat.close();
+                            queryAlu.close();
+                            System.out.println("\tNIA: " + nia + " " + nombre + " dado de baja.");
+                        } catch (SQLException ex) {
+                            System.out.println("Error buscando las notas/matricula en la base.\n" + ex);
+                        }
                     }
-
-
-                    session.delete(deBaja);
-                    alumnos.add(deBaja);
-                    System.out.println("\t" + deBaja.getNombre() + " añadido a la lista de espera.");
-                } else {
-                    System.out.println("--No existe este alumno");
+                } catch (SQLException ex) {
+                    System.out.println("Error buscando el alumno en la base.\n" + ex);
                 }
-            }
-        }
-        session.getTransaction().commit();
-        session.close();
-        if (alumnos.size() > 0) {
-            System.out.println("\nSe ha dado de baja a:");
-            for (Alumno alu : alumnos) {
-                System.out.println("ID:" + alu.getId() + "\t" + alu.getNombre());
             }
         }
         return 0;
     }
 
     // MENU
-    @Override
     public int menu() {
         Lector sc = new Lector(System.in);
         System.out.println("");
@@ -136,21 +132,51 @@ public class Alumnos implements BDDAlumnosModulos {
 
     // IMPRIMIR
     public void listar() {
-        System.out.println("\n-Listar Alumnos-");
-        Session session = new ORM().conexion().getSessionFactory().openSession();
-        session.beginTransaction();
+        System.out.print("\n-Listar Alumnos-");
+        try {
+            ResultSet alumnos = conect.createStatement().executeQuery(ORM.todoAlumno);
 
-        Query query = session.createQuery("FROM Alumno", Alumno.class);
-        List<Alumno> alumnos = query.getResultList();
-
-        if (!alumnos.isEmpty()) {
-            for (Alumno x : alumnos) {
-                x.imprimir();
+            if (alumnos.next()) {
+                alumnos = conect.createStatement().executeQuery(ORM.todoAlumno);
+                while (alumnos.next()) {
+                    int numMatri = 0;
+                    String nia = alumnos.getString("alumno_nia");
+                    String nombre = alumnos.getString("alumno_nombre");
+                    try {
+                        ResultSet matriculas = conect.createStatement()
+                                .executeQuery(ORM.buscarMatriculaAluID(nia));
+                        while (matriculas.next()) {
+                            numMatri++;
+                        }
+                        matriculas.close();
+                    } catch (Exception ex) {
+                        System.out.println(
+                                "Error de SQL al buscar las matriculas del alumno ." + nombre + " NIA: " + nia + "\n"
+                                        + ex);
+                    }
+                    System.out.printf("\nNIA:%-10s %-30s ", nia, nombre);
+                    if (numMatri > 0) {
+                        System.out.print("Matriculas: " + numMatri);
+                    } else {
+                        System.out.print("-Sin Matriculas-");
+                    }
+                }
+                System.out.println("\n--Fin de la lista--");
+            } else {
+                System.out.println("\nLista de alumno vacio");
             }
-            System.out.println("--Fin de la lista--");
-        } else {
-            System.out.println("Lista de alumno vacio");
+            alumnos.close();
+        } catch (Exception ex) {
+            System.out.println("Error de SQL al retirar todos los alumnos\n" + ex);
         }
-        session.close();
+    }
+
+    public void cerrarConex(){
+        try{
+            conect.close();
+        } catch (SQLException ex){
+            System.out.println("Error cerrando el conector de Alumnos.");
+            System.out.println(ex);
+        }
     }
 }

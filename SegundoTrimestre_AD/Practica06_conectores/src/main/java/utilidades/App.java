@@ -38,6 +38,7 @@ public class App {
     private static void haz(int choice) {
         switch (choice) {
             case 0:
+            System.out.println("¡Hasta luego!");
                 break;
             case 1:
                 opcionDeConexion = 1;

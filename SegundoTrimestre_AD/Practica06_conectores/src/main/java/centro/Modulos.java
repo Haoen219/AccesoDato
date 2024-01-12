@@ -4,11 +4,9 @@
  */
 package centro;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.hibernate.Session;
-import org.hibernate.query.Query;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import persistencia.ORM;
 import utilidades.Lector;
@@ -17,96 +15,95 @@ import utilidades.Lector;
  *
  * @author haoen
  */
-public class Modulos implements BDDAlumnosModulos {
+public class Modulos {
+
+    private static Connection conect = new ORM().getConnection();
 
     // MODULO
-    @Override
     public int darDeAlta() {
-        boolean seguir = true;
-        ArrayList<Modulo> modulos = new ArrayList<>();
         Lector sc = new Lector(System.in);
+        boolean seguir = true;
         System.out.println("\n-Dar de alta módulo-  (volver con [0])");
 
-        Session session = new ORM().conexion().getSessionFactory().openSession();
-        session.beginTransaction();
-
-        Query query = session.createQuery("FROM Modulo", Modulo.class);
-        List<Modulo> lista = query.getResultList();
-        int id;
-        if (!lista.isEmpty()) {
-            id = lista.get(lista.size() - 1).getId() + 1;
-        } else {
-            id = 0;
-        }
-
         while (seguir) {
-            System.out.print("Introduzca el nombre del módulo: ");
-            String nombre = sc.leer();
+            try {
+                ResultSet queryMod = conect.createStatement().executeQuery(ORM.todoModulo);
+                int id = 0;
+                try {
+                    while (queryMod.next()) {
+                        id++;
+                    }
+                    id++;
+                } catch (SQLException ex) {
+                    System.out.println("Error retirando lista de modulos para asignar último ID\n" + ex);
+                }
+                queryMod.close();
 
-            if (nombre.equalsIgnoreCase("0")) {
-                seguir = false;
-            } else {
-                Modulo modulo = new Modulo(nombre);
-                modulo.setId(id);
-                session.save(modulo);
-                modulos.add(modulo);
-                System.out.println("\t" + nombre + " añadido a la lista de espera.");
+                System.out.print("Introduzca el nombre del modulo: ");
+                String nombre = sc.leer();
+
+                if (nombre.equalsIgnoreCase("0")) {
+                    seguir = false;
+                } else {
+                    try {
+                        conect.createStatement().execute(ORM.insertarModulo(Integer.toString(id), nombre));
+                        System.out.println("\tID:" + id + " " + nombre + " dado de alta.");
+                    } catch (SQLException ex) {
+                        System.out.println("Error insertando el modulo\n" + ex);
+                    }
+                }
+            } catch (SQLException ex) {
+                System.out.println("Error buscando modulo con ese ID\n" + ex);
             }
         }
-        session.getTransaction().commit();
-        session.close();
-        if (modulos.size() > 0) {
-            System.out.println("\nSe ha dado de alta a:");
-            for (Modulo modu : modulos) {
-                System.out.println("ID:" + modu.getId() + "\t" + modu.getNombre());
-            }
-        }
+        System.out.println("Volviendo...");
         return 0;
+
     }
 
-    @Override
     public int darDeBaja() {
-        boolean seguir = true;
-        ArrayList<Modulo> modulos = new ArrayList<>();
         Lector sc = new Lector(System.in);
+        boolean seguir = true;
         System.out.println("\n-Dar de baja módulo-  (volver con [0])");
 
-        Session session = new ORM().conexion().getSessionFactory().openSession();
-        session.beginTransaction();
         while (seguir) {
             System.out.print("Introduzca ID del módulo: ");
-            int id = sc.leerEntero(0, 15);
-
-            if (id == 0) {
+            String id = sc.leer();
+            if (id.equals("0")) {
                 seguir = false;
             } else {
-                Query query2 = session.createQuery("FROM Modulo WHERE id = :id");
-                query2.setParameter("id", id);
-                Modulo deBaja = (Modulo) query2.uniqueResult();
+                try {
+                    ResultSet queryMod = conect.createStatement().executeQuery(ORM.buscarModuloID(id));
 
-                if (deBaja != null) {
-                    Query queryMatri = session.createQuery("FROM Matricula  WHERE  modulo = :modu").setParameter("modu",
-                            deBaja);
-                    List<Matricula> matriculaExistente = queryMatri.getResultList();
+                    if (!queryMod.next()) {
+                        System.out.println("-No existe un módulo con ese ID");
+                    } else {
+                        try {
+                            String nombre = queryMod.getString("modulo_nombre");
+                            ResultSet queryMat = conect.createStatement()
+                                    .executeQuery(ORM.buscarMatriculaModID(id));
 
-                    for (Matricula matricula : matriculaExistente) {
-                        session.delete(matricula);
+                            while (queryMat.next()) {
+                                String idMatri = queryMat.getString("matricula_id");
+                                String idNotas = queryMat.getString("notas_id");
+                                try {
+                                    conect.createStatement().execute(ORM.borrarNotas(idNotas));
+                                    conect.createStatement().execute(ORM.borrarNotas(idMatri));
+                                } catch (SQLException ex) {
+                                    System.out.println("Error borrando notas/matricula del modulo. (id_Matricula:"
+                                            + idMatri + ")\n" + ex);
+                                }
+                            }
+                            queryMat.close();
+                            queryMod.close();
+                            System.out.println("\tID: " + id + " " + nombre + " dado de baja.");
+                        } catch (SQLException ex) {
+                            System.out.println("Error buscando las notas/matricula en la base.\n" + ex);
+                        }
                     }
-
-                    session.delete(deBaja);
-                    modulos.add(deBaja);
-                    System.out.println("\t" + deBaja.getNombre() + " añadido a la lista de espera.");
-                } else {
-                    System.out.println("--No existe modulo con ese ID");
+                } catch (SQLException ex) {
+                    System.out.println("Error buscando el módulo en la base.\n" + ex);
                 }
-            }
-        }
-        session.getTransaction().commit();
-        session.close();
-        if (modulos.size() > 0) {
-            System.out.println("\nSe ha dado de baja a:");
-            for (Modulo modu : modulos) {
-                System.out.println("ID:" + modu.getId() + "\t" + modu.getNombre());
             }
         }
         return 0;
@@ -118,90 +115,70 @@ public class Modulos implements BDDAlumnosModulos {
         Lector sc = new Lector(System.in);
         System.out.println("\n-Matricular alumno-  (volver con [0])");
 
-        Session session = new ORM().conexion().getSessionFactory().openSession();
         while (seguir) {
-            System.out.print("Introduzca ID del alumno: ");
-            int nia = sc.leerEntero(0, 999);
+            System.out.print("Introduzca NIA del alumno: ");
+            String nia = sc.leer();
 
-            if (nia == 0) {
+            if (nia.equals("0")) {
                 seguir = false;
             } else {
-                Query query = session.createQuery("FROM Alumno WHERE id = :nia").setParameter("nia", nia);
-                Alumno aMatricular = (Alumno) query.uniqueResult();
+                try {
+                    ResultSet alumno = conect.createStatement().executeQuery(ORM.buscarAlumnoID(nia));
 
-                if (aMatricular != null) {
-                    System.out.print("Introduzca ID del modulo: ");
-                    int id = sc.leerEntero(0, 999);
+                    if (alumno.next()) {
+                        String nombreAlu = alumno.getString("alumno_nombre");
+                        String id = "";
+                        System.out.print("Introduzca ID del módulo: ");
+                        id = sc.leer();
 
-                    if (id == 0) {
-                        seguir = false;
-                    } else {
-                        Query query2 = session.createQuery("FROM Modulo WHERE id = :id").setParameter("id", id);
-                        Modulo moduloMatri = (Modulo) query2.uniqueResult();
-
-                        Query queryId = session.createQuery("FROM Matricula", Matricula.class);
-                        List<Matricula> lista = queryId.getResultList();
-                        int idMatri;
-                        if (!lista.isEmpty()) {
-                            idMatri = lista.get(lista.size() - 1).getId() + 1;
+                        if (id.equals("0")) {
+                            seguir = false;
                         } else {
-                            idMatri = 1;
-                        }
+                            try {
+                                ResultSet modulo = conect.createStatement()
+                                        .executeQuery(ORM.buscarModuloID(id));
 
-                        Query queryId2 = session.createQuery("FROM Notas", Notas.class);
-                        List<Notas> lista2 = queryId2.getResultList();
-                        int idNotas;
-                        if (!lista2.isEmpty()) {
-                            idNotas = lista2.get(lista2.size() - 1).getId() + 1;
-                        } else {
-                            idNotas = 0;
-                        }
+                                if (modulo.next()) {
+                                    String moduloNombre = modulo.getString("modulo_nombre");
+                                    String calificacion = "Sin calificar";
 
-                        if (moduloMatri != null) {
-                            // quey para comprobar que no exista una matricula de este alumno y modulo
-                            Query queryMatri = session
-                                    .createQuery("FROM Matricula m WHERE m.alumno = :alu AND m.modulo = :modu")
-                                    .setParameter("alu", aMatricular).setParameter("modu", moduloMatri);
-                            List<Matricula> matriculaExistente = queryMatri.getResultList();
+                                    int matriNum = 0;
+                                    int notasNum = 0;
+                                    ResultSet matricula = conect.createStatement().executeQuery(ORM.todoMatricula);
+                                    ResultSet notas = conect.createStatement() .executeQuery(ORM.todoNotas);
 
-                            if (matriculaExistente.isEmpty()) {
-                                session.beginTransaction();
-                                // notas
-                                Notas notas = new Notas();
-                                notas.instanciarNotas();
-                                notas.setId(idNotas);
-                                session.save(notas);
+                                    while (matricula.next()) matriNum++;
+                                    while (notas.next()) notasNum++;
 
-                                // matricula
-                                Matricula matricula = new Matricula();
-                                matricula.setId(idMatri);
-                                matricula.setNotas(notas);
-                                matricula.setAlumno(aMatricular);
-                                matricula.setModulo(moduloMatri);
+                                    conect.createStatement().execute(ORM.insertarNotas(Integer.toString(notasNum+1), 0, 0, 0));
+                                    conect.createStatement().execute(ORM.insertarMatricula(Integer.toString(matriNum+1), nia, id, Integer.toString(notasNum+1), calificacion));
 
-                                session.save(matricula);
-                                session.getTransaction().commit();
-                                System.out.println("Se creado matricula de " + aMatricular.getNombre()
-                                        + " en el módulo " + moduloMatri.getNombre());
-                            } else {
-                                System.out.println("Ya existe una Matricula de este modulo para el alumno.");
+                                    System.out.println("Se creado matricula de " + nombreAlu + " en el módulo " + moduloNombre);
+
+                                    matricula.close();
+                                    notas.close();
+                                } else {
+                                    System.out.println("-No existe un Modulo con este ID.");
+                                }
+                                modulo.close();
+                            } catch (SQLException ex) {
+                                System.out.println("Error buscando matriculas.\n" + ex);
                             }
-                        } else {
-                            System.out.println("--No existe Modulo con ese ID");
                         }
+                    } else {
+                        System.out.println("-El alumno no existe.");
                     }
-                } else {
-                    System.out.println("--El alumno no existe");
+                    alumno.close();
+                } catch (SQLException ex) {
+                    System.out.println("Error buscando alumno.\n" + ex);
                 }
             }
         }
-        session.close();
-        System.out.println("\n+Se han guardado las matriculas creadas.");
         return 0;
+
     }
 
     // MENU
-    @Override
     public int menu() {
         Lector sc = new Lector(System.in);
         System.out.println("");
@@ -219,21 +196,51 @@ public class Modulos implements BDDAlumnosModulos {
 
     // IMPRIMIR
     public void listar() {
-        System.out.println("\n-Listar modulos-");
-        Session session = new ORM().conexion().getSessionFactory().openSession();
-        session.beginTransaction();
+        System.out.println("\n-Listar Modulos-");
+        try {
+            ResultSet modulos = conect.createStatement().executeQuery(ORM.todoModulo);
 
-        Query query = session.createQuery("FROM Modulo", Modulo.class);
-        List<Modulo> modulos = query.getResultList();
-
-        if (!modulos.isEmpty()) {
-            for (Modulo x : modulos) {
-                x.imprimir();
+            if (modulos.next()) {
+                modulos = conect.createStatement().executeQuery(ORM.todoModulo);
+                while (modulos.next()) {
+                    int numMatri = 0;
+                    String id = modulos.getString("modulo_id");
+                    String nombre = modulos.getString("modulo_nombre");
+                    try {
+                        ResultSet matriculas = conect.createStatement()
+                                .executeQuery(ORM.buscarMatriculaModID(id));
+                        while (matriculas.next()) {
+                            numMatri++;
+                        }
+                        matriculas.close();
+                    } catch (Exception ex) {
+                        System.out.println(
+                                "Error de SQL al buscar las matriculas del modulo ." + nombre + " ID: " + id + "\n"
+                                        + ex);
+                    }
+                    System.out.printf("\nID:%-10s %-30s ", id, nombre);
+                    if (numMatri > 0) {
+                        System.out.print("Matriculas: " + numMatri);
+                    } else {
+                        System.out.print("-Sin Matriculas-");
+                    }
+                }
+                System.out.println("\n--Fin de la lista--");
+                modulos.close();
+            } else {
+                System.out.println("\nLista de modulos vacio");
             }
-            System.out.println("--Fin de la lista--");
-        } else {
-            System.out.println("Lista de modulos vacio");
+        } catch (Exception ex) {
+            System.out.println("Error de SQL al retirar todos los modulos\n" + ex);
         }
-        session.close();
+    }
+
+    public void cerrarConex(){
+        try{
+            conect.close();
+        } catch (SQLException ex){
+            System.out.println("Error cerrando el conector de Modulos.");
+            System.out.println(ex);
+        }
     }
 }
