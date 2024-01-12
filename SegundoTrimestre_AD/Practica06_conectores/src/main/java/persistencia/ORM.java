@@ -176,9 +176,9 @@ public class ORM {
             ResultSet queryMatri = connection.createStatement().executeQuery(todoMatricula);
             while (queryMatri.next()) {
                 String id = queryMatri.getString("matricula_id");
-                int alumno = queryMatri.getInt("alumno_nia");
-                int modulo = queryMatri.getInt("modulo_id");
-                int nota = queryMatri.getInt("notas_id");
+                String alumno = queryMatri.getString("alumno_nia");
+                String modulo = queryMatri.getString("modulo_id");
+                String nota = queryMatri.getString("notas_id");
                 String calificacion = queryMatri.getString("calificacion");
                 writer.write(
                         "Matricula::" + id + "::" + alumno + "::" + modulo + "::" + nota + "::" + calificacion + "\n");
@@ -212,105 +212,109 @@ public class ORM {
             String line;
             int lineNum = 0;
 
-            while ((line = reader.readLine()) != null) {
-                lineNum++;
-                String[] datos = line.split("::");
+            if (!importFile.exists()) {
+                System.out.println("Fichero de importe no existe. Cancelando...");
+            } else {
+                while ((line = reader.readLine()) != null) {
+                    lineNum++;
+                    String[] datos = line.split("::");
 
-                switch (datos[0]) {
-                    case "Alumno":
-                        System.out.println("Importando ALUMNO NIA: " + datos[1] + " " + datos[2]);
-                        ResultSet rsAlu = conect.createStatement().executeQuery(buscarAlumnoID(datos[1]));
-                        if (rsAlu.next()) {
-                            System.out.println("Existe un alumno con ese NIA");
-                            switch (menuImport()) {
-                                case 1:
-                                    conect.createStatement().execute(insertarAlumno(datos[1], datos[2]));
-                                    break;
-                                case 2:
-                                    System.out.println("\tNo se importará");
-                                    break;
+                    switch (datos[0]) {
+                        case "Alumno":
+                            System.out.println("Importando ALUMNO NIA: " + datos[1] + " " + datos[2]);
+                            ResultSet rsAlu = conect.createStatement().executeQuery(buscarAlumnoID(datos[1]));
+                            if (rsAlu.next()) {
+                                System.out.println("Existe un alumno con ese NIA");
+                                switch (menuImport()) {
+                                    case 1:
+                                        conect.createStatement().execute(insertarAlumno(datos[1], datos[2]));
+                                        break;
+                                    case 2:
+                                        System.out.println("\tNo se importará");
+                                        break;
+                                }
+                            } else {
+                                conect.createStatement().execute(insertarAlumno(datos[1], datos[2]));
                             }
-                        }else{
-                            conect.createStatement().execute(insertarAlumno(datos[1], datos[2]));
-                        }
-                        rsAlu.close();
-                        break;
-                    case "Modulo":
-                        System.out.println("Importando MODULO ID: " + datos[1] + " " + datos[2]);
-                        ResultSet rsMod = conect.createStatement().executeQuery(buscarModuloID(datos[1]));
-                        if (rsMod.next()) {
-                            System.out.println("Existe un módulo con ese ID");
-                            switch (menuImport()) {
-                                case 1:
-                                    conect.createStatement().execute(insertarModulo(datos[1], datos[2]));
-                                    break;
-                                case 2:
-                                    System.out.println("\tNo se importará");
-                                    break;
+                            rsAlu.close();
+                            break;
+                        case "Modulo":
+                            System.out.println("Importando MODULO ID: " + datos[1] + " " + datos[2]);
+                            ResultSet rsMod = conect.createStatement().executeQuery(buscarModuloID(datos[1]));
+                            if (rsMod.next()) {
+                                System.out.println("Existe un módulo con ese ID");
+                                switch (menuImport()) {
+                                    case 1:
+                                        conect.createStatement().execute(insertarModulo(datos[1], datos[2]));
+                                        break;
+                                    case 2:
+                                        System.out.println("\tNo se importará");
+                                        break;
+                                }
+                            } else {
+                                conect.createStatement().execute(insertarModulo(datos[1], datos[2]));
                             }
-                        }else{
-                            conect.createStatement().execute(insertarModulo(datos[1], datos[2]));
-                        }
-                        rsMod.close();
-                        break;
-                    case "Notas":
-                        System.out.println("Importando NOTAS ID: " + datos[1]);
-                        ResultSet rsNot = conect.createStatement().executeQuery(buscaNotaID(datos[1]));
-                        if (rsNot.next()) {
-                            System.out.println("Existe unas notas con ese ID");
-                            switch (menuImport()) {
-                                case 1:
-                                    conect.createStatement()
-                                            .execute(insertarNotas(datos[1], Integer.parseInt(datos[2]),
-                                                    Integer.parseInt(datos[3]), Integer.parseInt(datos[4])));
-                                    break;
-                                case 2:
-                                    System.out.println("\tNo se importará");
-                                    break;
+                            rsMod.close();
+                            break;
+                        case "Notas":
+                            System.out.println("Importando NOTAS ID: " + datos[1]);
+                            ResultSet rsNot = conect.createStatement().executeQuery(buscaNotaID(datos[1]));
+                            if (rsNot.next()) {
+                                System.out.println("Existe unas notas con ese ID");
+                                switch (menuImport()) {
+                                    case 1:
+                                        conect.createStatement()
+                                                .execute(insertarNotas(datos[1], Integer.parseInt(datos[2]),
+                                                        Integer.parseInt(datos[3]), Integer.parseInt(datos[4])));
+                                        break;
+                                    case 2:
+                                        System.out.println("\tNo se importará");
+                                        break;
+                                }
+                            } else {
+                                conect.createStatement()
+                                        .execute(insertarNotas(datos[1], Integer.parseInt(datos[2]),
+                                                Integer.parseInt(datos[3]), Integer.parseInt(datos[4])));
                             }
-                        }else{
-                            conect.createStatement()
-                                            .execute(insertarNotas(datos[1], Integer.parseInt(datos[2]),
-                                                    Integer.parseInt(datos[3]), Integer.parseInt(datos[4])));
-                        }
-                        rsNot.close();
-                        break;
-                    case "Matricula":
-                        System.out.println("Importando MATRICULA ID: " + datos[1] + " Alu: "
-                                + Integer.parseInt(datos[2])
-                                + " Modu: " + Integer.parseInt(datos[3])
-                                + " Notas: " + Integer.parseInt(datos[4]));
-                        ResultSet rsMat = conect.createStatement().executeQuery(buscarMatriculaID(datos[1]));
-                        if (rsMat.next()) {
-                            System.out.println("Existe una matricula con ese ID");
-                            switch (menuImport()) {
-                                case 1:
-                                    conect.createStatement().execute(insertarMatricula(
-                                            datos[1],
-                                            datos[2],
-                                            datos[3],
-                                            datos[4],
-                                            datos[5]));
-                                    break;
-                                case 2:
-                                    System.out.println("\tNo se importará");
-                                    break;
+                            rsNot.close();
+                            break;
+                        case "Matricula":
+                            System.out.println("Importando MATRICULA ID: " + datos[1] + " Alu: "
+                                    + Integer.parseInt(datos[2])
+                                    + " Modu: " + Integer.parseInt(datos[3])
+                                    + " Notas: " + Integer.parseInt(datos[4]));
+                            ResultSet rsMat = conect.createStatement().executeQuery(buscarMatriculaID(datos[1]));
+                            if (rsMat.next()) {
+                                System.out.println("Existe una matricula con ese ID");
+                                switch (menuImport()) {
+                                    case 1:
+                                        conect.createStatement().execute(insertarMatricula(
+                                                datos[1],
+                                                datos[2],
+                                                datos[3],
+                                                datos[4],
+                                                datos[5]));
+                                        break;
+                                    case 2:
+                                        System.out.println("\tNo se importará");
+                                        break;
+                                }
+                            } else {
+                                conect.createStatement().execute(insertarMatricula(
+                                        datos[1],
+                                        datos[2],
+                                        datos[3],
+                                        datos[4],
+                                        datos[5]));
                             }
-                        }else{
-                            conect.createStatement().execute(insertarMatricula(
-                                            datos[1],
-                                            datos[2],
-                                            datos[3],
-                                            datos[4],
-                                            datos[5]));
-                        }
-                        rsMat.close();
-                        break;
-                    default:
-                        System.out.println("Formato de línea no admitida en la línea " + lineNum);
+                            rsMat.close();
+                            break;
+                        default:
+                            System.out.println("Formato de línea no admitida en la línea " + lineNum);
+                    }
                 }
+                System.out.println("Se han importado los datos.");
             }
-            System.out.println("Se han importado los datos.");
             reader.close();
             conect.close();
         } catch (IOException ex) {
@@ -435,7 +439,7 @@ public class ORM {
         String resultado;
 
         try {
-            //connection = new Conexion().getConnection();
+            // connection = new Conexion().getConnection();
 
             resultado = connection.getMetaData().getDatabaseProductVersion();
             System.out.println("La versión que estás usando es: " + resultado);
