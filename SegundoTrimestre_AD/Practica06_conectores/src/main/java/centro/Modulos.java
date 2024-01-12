@@ -87,13 +87,14 @@ public class Modulos {
                                 String idMatri = queryMat.getString("matricula_id");
                                 String idNotas = queryMat.getString("notas_id");
                                 try {
+                                    conect.createStatement().execute(ORM.borrarMatricula(idMatri));
                                     conect.createStatement().execute(ORM.borrarNotas(idNotas));
-                                    conect.createStatement().execute(ORM.borrarNotas(idMatri));
                                 } catch (SQLException ex) {
                                     System.out.println("Error borrando notas/matricula del modulo. (id_Matricula:"
                                             + idMatri + ")\n" + ex);
                                 }
                             }
+                            conect.createStatement().execute(ORM.borrarModulo(id));
                             queryMat.close();
                             queryMod.close();
                             System.out.println("\tID: " + id + " " + nombre + " dado de baja.");

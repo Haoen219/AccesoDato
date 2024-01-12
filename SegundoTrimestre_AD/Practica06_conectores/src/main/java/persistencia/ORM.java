@@ -74,19 +74,19 @@ public class ORM {
 
     // BORRAR
     public static String borrarAlumno(String id) {
-        return "DELETE FROM `alumno` WHERE alumno_nia = '" + id + "'";
+        return "DELETE FROM alumno WHERE alumno_nia = '" + id + "'";
     }
 
     public static String borrarModulo(String id) {
-        return "DELETE FROM `modulo` WHERE modulo_id = '" + id + "'";
+        return "DELETE FROM modulo WHERE modulo_id = '" + id + "'";
     }
 
     public static String borrarNotas(String id) {
-        return "DELETE FROM `notas` WHERE notas_id = '" + id + "'";
+        return "DELETE FROM notas WHERE notas_id = '" + id + "'";
     }
 
     public static String borrarMatricula(String id) {
-        return "DELETE FROM `matricula` WHERE matricula_id = '" + id + "'";
+        return "DELETE FROM matricula WHERE matricula_id = '" + id + "'";
     }
 
     // ACTUALIZAR

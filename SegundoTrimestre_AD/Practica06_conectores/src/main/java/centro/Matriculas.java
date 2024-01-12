@@ -72,6 +72,12 @@ public class Matriculas {
                                         if (matricula.next()) {
                                             String notasId = matricula.getString("notas_id");
 
+                                            ResultSet notas = conect.createStatement()
+                                                .executeQuery(ORM.buscaNotaID(notasId));
+
+                                            notas.next();
+
+
                                             Lector sc = new Lector(System.in);
                                             int nota1 = 0;
                                             int nota2 = 0;
@@ -80,17 +86,19 @@ public class Matriculas {
                                             System.out.println("Introduzca las notas por orden: ");
                                             System.out.print("Nota 1: ");
                                             nota1 = sc.leerEntero(0, 10);
-                                            if(nota1 < 0 || nota1 >10) nota1 = 0;
+                                            if(nota1 < 0 || nota1 >10) nota1 = notas.getInt("nota1");
                                             System.out.print("Nota 2: ");
                                             nota2 = sc.leerEntero(0, 10);
-                                            if(nota2 < 0 || nota2 >10) nota2 = 0;
+                                            if(nota2 < 0 || nota2 >10) nota2 = notas.getInt("nota2");
                                             System.out.print("Nota 3: ");
                                             nota3 = sc.leerEntero(0, 10);
-                                            if(nota3 < 0 || nota3 >10) nota3 = 0;
+                                            if(nota3 < 0 || nota3 >10) nota3 = notas.getInt("nota3");
 
                                             conect.createStatement()
                                                     .execute(ORM.actualizarNota(notasId, nota1, nota2, nota3));
                                             System.out.println("Modificaciones añadido a la espera.");
+
+                                            notas.close();
                                         } else {
                                             System.out.println("-No existe matricula con este modulo.");
                                         }
@@ -164,10 +172,9 @@ public class Matriculas {
                                     try {
                                         ResultSet matricula = conect.createStatement()
                                                 .executeQuery(ORM.buscarMatriculaDobleID(nia, id));
-                                        matricula.next();
-                                        String matriculaId = matricula.getString("matricula_id");
 
                                         if (matricula.next()) {
+                                            String matriculaId = matricula.getString("matricula_id");
                                             String calificacion = "";
                                             switch (menuCalificar()) {
                                                 case 1 ->

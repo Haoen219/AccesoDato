@@ -93,13 +93,13 @@ public class Alumnos {
                                 String idMatri = queryMat.getString("matricula_id");
                                 String idNotas = queryMat.getString("notas_id");
                                 try {
-                                    conect.createStatement().executeQuery(ORM.borrarNotas(idNotas));
-                                    conect.createStatement().executeQuery(ORM.borrarNotas(idMatri));
+                                    conect.createStatement().execute(ORM.borrarMatricula(idMatri));
+                                    conect.createStatement().execute(ORM.borrarNotas(idNotas));
                                 } catch (SQLException ex) {
                                     System.out.println("Error borrando notas/matricula del alumno.\n" + ex);
                                 }
-
                             }
+                            conect.createStatement().execute(ORM.borrarAlumno(nia));
                             queryMat.close();
                             queryAlu.close();
                             System.out.println("\tNIA: " + nia + " " + nombre + " dado de baja.");
