@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.InputMismatchException;
 
 import centro.Alumnos;
@@ -338,8 +337,6 @@ public class ORM {
     }
 
     private void realizarOpcion(int choice) {
-        Lector sc = new Lector(System.in);
-        String opcion = "";
         switch (choice) {
             case 0:
                 alumnos.cerrarConex();
@@ -434,22 +431,12 @@ public class ORM {
     }
 
     public void haz() {
-        try {
-            connection = new Conexion().getConnection();
-        } catch (IllegalStateException ex) {
-            System.out.println(
-                    "Fallo al conectarse con el servidor, comprueba que esté activo o que el driver sea correcto.\n"
-                            + ex);
-            return;
-        } catch (Exception ex) {
-            System.out.println("Error inesperado.\n" + ex);
-            return;
-        }
-
         int opcion;
-
         String resultado;
+
         try {
+            //connection = new Conexion().getConnection();
+
             resultado = connection.getMetaData().getDatabaseProductVersion();
             System.out.println("La versión que estás usando es: " + resultado);
 

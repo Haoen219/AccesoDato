@@ -38,7 +38,6 @@ public class App {
     private static void haz(int choice) {
         switch (choice) {
             case 0:
-            System.out.println("¡Hasta luego!");
                 break;
             case 1:
                 opcionDeConexion = 1;
@@ -63,10 +62,8 @@ public class App {
 
     public static void main(String[] args) {
         int opcion = -1;
-
-        do {
-            opcion = menu();
-            haz(opcion);
-        } while (opcion != 0);
+        opcion = menu();
+        haz(opcion);
+        System.out.println("¡Hasta luego!");
     }
 }
