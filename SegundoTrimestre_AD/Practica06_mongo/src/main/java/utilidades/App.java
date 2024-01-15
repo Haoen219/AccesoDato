@@ -27,10 +27,9 @@ public class App {
         System.out.println("|0|-Salir del programa     |");
         System.out.println("|1|-Conx. MySQL            |");
         System.out.println("|2|-Conx. PostgreSQL       |");
-        System.out.println("|3|-MongoDB                |");
         System.out.println("|" + "-".repeat(26) + "|");
         System.out.print("OPCIÓN: ");
-        option = in.leerEntero(0, 3);
+        option = in.leerEntero(0, 2);
         in = null;
         System.gc();
         return option;
@@ -46,10 +45,6 @@ public class App {
                 break;
             case 2:
                 opcionDeConexion = 2;
-                orm();
-                break;
-            case 3:
-                opcionDeConexion = 3;
                 orm();
                 break;
             default:
