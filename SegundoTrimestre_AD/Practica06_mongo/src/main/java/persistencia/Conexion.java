@@ -6,6 +6,10 @@ import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoDatabase;
+
 import utilidades.App;
 
 public class Conexion {
@@ -19,10 +23,12 @@ public class Conexion {
     final static String postgresSQL_USER = "postgres";
     final static String postgresSQL_PASS = "user";
 
+    final static String mongoDB_URL = "mongodb://127.0.0.1:27017/";
+    final static String mongoDB_BDD = "Haoen";
+    final static String mongoDB_USER = "";
+    final static String mongoDB_PASS = "";
+
     // SQL
-    //final private String borrarTablas = "DROP TABLE IF EXISTS alumno, modulo, notas, matricula;";
-    // final private String borrarFk = "ALTER TABLE IF EXISTS matricula DROP
-    // CONSTRAINT alumno_nia, DROP CONSTRAINT modulo_id, DROP CONSTRAINT notas_id;";
     final private String crearTabAlu = "CREATE TABLE IF NOT EXISTS alumno (alumno_nia VARCHAR(20) PRIMARY KEY, alumno_nombre VARCHAR(75))";
     final private String crearTabMod = "CREATE TABLE IF NOT EXISTS modulo (modulo_id VARCHAR(20) PRIMARY KEY, modulo_nombre VARCHAR(50))";
     final private String crearTabNot = "CREATE TABLE IF NOT EXISTS notas (notas_id VARCHAR(20) PRIMARY KEY, nota1 INT, nota2 INT, nota3 INT)";
@@ -37,6 +43,8 @@ public class Conexion {
             "FOREIGN KEY (notas_id) REFERENCES notas(notas_id))";
 
     private Connection conection;
+    private MongoClient mongoClient;
+    MongoDatabase database;
 
     public Conexion() {
         try {
@@ -50,17 +58,23 @@ public class Conexion {
                     conection = DriverManager.getConnection(postgresSQL_URL + postgreSQL_BDD, postgresSQL_USER,
                             postgresSQL_PASS);
                     break;
+                case 3:
+                    mongoClient = MongoClients.create(mongoDB_URL);
+                    database = mongoClient.getDatabase(mongoDB_BDD);
+                    break;
             }
 
-            Statement statement = conection.createStatement();
+            if (App.getOpcion() < 3) {
+                Statement statement = conection.createStatement();
+                statement.execute(crearTabAlu);
+                statement.execute(crearTabMod);
+                statement.execute(crearTabNot);
+                statement.execute(crearTabMat);
+                statement.close();
+            } else if (App.getOpcion() == 3) {
+                mongoClient.listDatabaseNames().forEach(System.out::println);
+            }
 
-            //statement.execute(borrarTablas);
-            statement.execute(crearTabAlu);
-            statement.execute(crearTabMod);
-            statement.execute(crearTabNot);
-            statement.execute(crearTabMat);
-
-            statement.close();
         } catch (SQLIntegrityConstraintViolationException e) {
             System.out.println("Error en foreignkey");
             System.out.println(e);
@@ -70,6 +84,11 @@ public class Conexion {
             e.printStackTrace();
         }
     }
+
+    public MongoDatabase getMongoDatabase() {
+        return this.database;
+    }
+
     public Connection getConnection() {
         return this.conection;
     }

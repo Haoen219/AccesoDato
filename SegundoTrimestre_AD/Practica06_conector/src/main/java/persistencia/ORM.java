@@ -11,9 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.InputMismatchException;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoDatabase;
-
 import centro.Alumnos;
 import centro.Matriculas;
 import centro.Modulos;
@@ -106,19 +103,8 @@ public class ORM {
     private static Modulos modulos = new Modulos();
     private static Matriculas matriculas = new Matriculas();
     public static final File importFile = new File("import.txt");
-    
-    private Connection connection;
-    private MongoDatabase mongoDatabase;
 
-    public ORM (){
-        if (App.getOpcion() == 3) {
-            mongoDatabase = new Conexion().getMongoDatabase();
-        } else{
-            connection = new Conexion().getConnection();
-        }
-    }
-
-    
+    private Connection connection = new Conexion().getConnection();
 
     public Connection getConnection() {
         return connection;
