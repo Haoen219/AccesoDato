@@ -23,7 +23,9 @@ public class Conexion {
     final static String postgresSQL_USER = "postgres";
     final static String postgresSQL_PASS = "user";
 
-    final static String mongoDB_URL = "mongodb://127.0.0.1:27017/";
+    private static String mongoDB_URL (String user, String password){
+        return "mongodb://"+user+":"+password+"127.0.0.1:27017/";
+    }
     final static String mongoDB_BDD = "Haoen";
     final static String mongoDB_USER = "";
     final static String mongoDB_PASS = "";
@@ -44,7 +46,6 @@ public class Conexion {
 
     private Connection conection;
     private MongoClient mongoClient;
-    MongoDatabase database;
 
     public Conexion() {
         try {
@@ -59,8 +60,7 @@ public class Conexion {
                             postgresSQL_PASS);
                     break;
                 case 3:
-                    mongoClient = MongoClients.create(mongoDB_URL);
-                    database = mongoClient.getDatabase(mongoDB_BDD);
+                    mongoClient = MongoClients.create(mongoDB_URL(mongoDB_USER, mongoDB_PASS));
                     break;
             }
 
@@ -73,6 +73,7 @@ public class Conexion {
                 statement.close();
             } else if (App.getOpcion() == 3) {
                 mongoClient.listDatabaseNames().forEach(System.out::println);
+                //CREAR TABLAS
             }
 
         } catch (SQLIntegrityConstraintViolationException e) {
@@ -86,7 +87,7 @@ public class Conexion {
     }
 
     public MongoDatabase getMongoDatabase() {
-        return this.database;
+        return mongoClient.getDatabase(mongoDB_BDD);
     }
 
     public Connection getConnection() {

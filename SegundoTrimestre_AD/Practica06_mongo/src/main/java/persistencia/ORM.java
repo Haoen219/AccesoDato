@@ -19,95 +19,17 @@ import centro.Modulos;
 
 import utilidades.App;
 import utilidades.Lector;
+import utilidades.SQL;
 
 public class ORM {
-    // BUSCAR
-    public static String todoAlumno = "SELECT * FROM alumno";
-    public static String todoModulo = "SELECT * FROM modulo";
-    public static String todoMatricula = "SELECT * FROM matricula";
-    public static String todoNotas = "SELECT * FROM notas";
-
-    public static String buscarAlumnoID(String id) {
-        return "SELECT * FROM alumno WHERE alumno_nia = '" + id + "'";
-    }
-
-    public static String buscarModuloID(String id) {
-        return "SELECT * FROM modulo WHERE modulo_id = '" + id + "'";
-    }
-
-    public static String buscarMatriculaID(String id) {
-        return "SELECT * FROM matricula WHERE matricula_id = '" + id + "'";
-    }
-
-    public static String buscaNotaID(String id) {
-        return "SELECT * FROM notas WHERE notas_id = '" + id + "'";
-    }
-
-    public static String buscarMatriculaAluID(String id) {
-        return "SELECT * FROM matricula WHERE alumno_nia = '" + id + "'";
-    }
-
-    public static String buscarMatriculaModID(String id) {
-        return "SELECT * FROM matricula WHERE modulo_id = '" + id + "'";
-    }
-
-    public static String buscarMatriculaDobleID(String nia, String id) {
-        return "SELECT * FROM matricula WHERE modulo_id = '" + id + "' AND alumno_nia = '" + nia + "'";
-    }
-
-    // INSERTAR
-    public static String insertarAlumno(String id, String nombre) {
-        return "INSERT INTO alumno (alumno_nia, alumno_nombre) VALUES ('" + id + "', '" + nombre + "')";
-    }
-
-    public static String insertarModulo(String id, String nombre) {
-        return "INSERT INTO modulo (modulo_id, modulo_nombre) VALUES ('" + id + "', '" + nombre + "')";
-    }
-
-    public static String insertarNotas(String id, int nota1, int nota2, int nota3) {
-        return "INSERT INTO notas (notas_id, nota1, nota2, nota3) VALUES ('" + id + "', " + nota1 + ", " + nota2
-                + ", " + nota3 + ")";
-    }
-
-    public static String insertarMatricula(String id, String alumno, String modulo, String nota, String calificacion) {
-        return "INSERT INTO matricula (matricula_id, alumno_nia, modulo_id, notas_id, calificacion) VALUES ('"
-                + id + "', '" + alumno + "', '" + modulo + "', '" + nota + "', '" + calificacion + "')";
-    }
-
-    // BORRAR
-    public static String borrarAlumno(String id) {
-        return "DELETE FROM alumno WHERE alumno_nia = '" + id + "'";
-    }
-
-    public static String borrarModulo(String id) {
-        return "DELETE FROM modulo WHERE modulo_id = '" + id + "'";
-    }
-
-    public static String borrarNotas(String id) {
-        return "DELETE FROM notas WHERE notas_id = '" + id + "'";
-    }
-
-    public static String borrarMatricula(String id) {
-        return "DELETE FROM matricula WHERE matricula_id = '" + id + "'";
-    }
-
-    // ACTUALIZAR
-    public static String actualizarNota(String id, int nota1, int nota2, int nota3) {
-        return "UPDATE notas SET nota1 = " + nota1 + ", nota2 = " + nota2 + ", nota3 =" + nota3 + " WHERE notas_id = '"
-                + id + "'";
-    }
-
-    public static String actualizarMatricula(String id, String calificacion) {
-        return "UPDATE matricula SET calificacion = '" + calificacion + "' WHERE matricula_id = '" + id + "'";
-    }
 
     private static Alumnos alumnos = new Alumnos();
     private static Modulos modulos = new Modulos();
     private static Matriculas matriculas = new Matriculas();
     public static final File importFile = new File("import.txt");
     
-    private Connection connection;
-    private MongoDatabase mongoDatabase;
+    private static Connection connection;
+    private static MongoDatabase mongoDatabase;
 
     public ORM (){
         if (App.getOpcion() == 3) {
@@ -117,10 +39,11 @@ public class ORM {
         }
     }
 
-    
-
-    public Connection getConnection() {
+    public static Connection getConnection() {
         return connection;
+    }
+    public static MongoDatabase getMongoDatabase() {
+        return mongoDatabase;
     }
 
     // MENU DE PROGRAMA
@@ -160,9 +83,6 @@ public class ORM {
     private void realizarOpcion(int choice) {
         switch (choice) {
             case 0:
-                alumnos.cerrarConex();
-                modulos.cerrarConex();
-                matriculas.cerrarConex();
                 break;
             case 1:
                 menuAlumnos();
@@ -274,6 +194,16 @@ public class ORM {
         }
     }
 
+
+
+
+
+
+
+
+
+    //Hay que adaptar los id de las clases y los _id de mongo
+
     private void exportarDatos() {
         System.out.println("\nEXPORTANDO...");
 
@@ -284,7 +214,7 @@ public class ORM {
             BufferedWriter writer = new BufferedWriter(new FileWriter(ORM.importFile));
 
             // ALUMNO
-            ResultSet queryAlu = connection.createStatement().executeQuery(todoAlumno);
+            ResultSet queryAlu = connection.createStatement().executeQuery(SQL.todoAlumno);
             while (queryAlu.next()) {
                 String id = queryAlu.getString("alumno_nia");
                 String nombre = queryAlu.getString("alumno_nombre");
@@ -294,7 +224,7 @@ public class ORM {
             queryAlu.close();
 
             // MODULO
-            ResultSet queryModu = connection.createStatement().executeQuery(todoModulo);
+            ResultSet queryModu = connection.createStatement().executeQuery(SQL.todoModulo);
             while (queryModu.next()) {
                 String id = queryModu.getString("modulo_id");
                 String nombre = queryModu.getString("modulo_nombre");
@@ -304,7 +234,7 @@ public class ORM {
             queryModu.close();
 
             // NOTAS
-            ResultSet queryNota = connection.createStatement().executeQuery(todoNotas);
+            ResultSet queryNota = connection.createStatement().executeQuery(SQL.todoNotas);
             while (queryNota.next()) {
                 String id = queryNota.getString("notas_id");
                 int nota1 = queryNota.getInt("nota1");
@@ -316,7 +246,7 @@ public class ORM {
             queryNota.close();
 
             // MATRICULA
-            ResultSet queryMatri = connection.createStatement().executeQuery(todoMatricula);
+            ResultSet queryMatri = connection.createStatement().executeQuery(SQL.todoMatricula);
             while (queryMatri.next()) {
                 String id = queryMatri.getString("matricula_id");
                 String alumno = queryMatri.getString("alumno_nia");
@@ -365,49 +295,49 @@ public class ORM {
                     switch (datos[0]) {
                         case "Alumno":
                             System.out.println("Importando ALUMNO NIA: " + datos[1] + " " + datos[2]);
-                            ResultSet rsAlu = conect.createStatement().executeQuery(buscarAlumnoID(datos[1]));
+                            ResultSet rsAlu = conect.createStatement().executeQuery(SQL.buscarAlumnoID(datos[1]));
                             if (rsAlu.next()) {
                                 System.out.println("Existe un alumno con ese NIA");
                                 switch (menuImport()) {
                                     case 1:
-                                        conect.createStatement().execute(insertarAlumno(datos[1], datos[2]));
+                                        conect.createStatement().execute(SQL.insertarAlumno(datos[1], datos[2]));
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");
                                         break;
                                 }
                             } else {
-                                conect.createStatement().execute(insertarAlumno(datos[1], datos[2]));
+                                conect.createStatement().execute(SQL.insertarAlumno(datos[1], datos[2]));
                             }
                             rsAlu.close();
                             break;
                         case "Modulo":
                             System.out.println("Importando MODULO ID: " + datos[1] + " " + datos[2]);
-                            ResultSet rsMod = conect.createStatement().executeQuery(buscarModuloID(datos[1]));
+                            ResultSet rsMod = conect.createStatement().executeQuery(SQL.buscarModuloID(datos[1]));
                             if (rsMod.next()) {
                                 System.out.println("Existe un módulo con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        conect.createStatement().execute(insertarModulo(datos[1], datos[2]));
+                                        conect.createStatement().execute(SQL.insertarModulo(datos[1], datos[2]));
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");
                                         break;
                                 }
                             } else {
-                                conect.createStatement().execute(insertarModulo(datos[1], datos[2]));
+                                conect.createStatement().execute(SQL.insertarModulo(datos[1], datos[2]));
                             }
                             rsMod.close();
                             break;
                         case "Notas":
                             System.out.println("Importando NOTAS ID: " + datos[1]);
-                            ResultSet rsNot = conect.createStatement().executeQuery(buscaNotaID(datos[1]));
+                            ResultSet rsNot = conect.createStatement().executeQuery(SQL.buscaNotaID(datos[1]));
                             if (rsNot.next()) {
                                 System.out.println("Existe unas notas con ese ID");
                                 switch (menuImport()) {
                                     case 1:
                                         conect.createStatement()
-                                                .execute(insertarNotas(datos[1], Integer.parseInt(datos[2]),
+                                                .execute(SQL.insertarNotas(datos[1], Integer.parseInt(datos[2]),
                                                         Integer.parseInt(datos[3]), Integer.parseInt(datos[4])));
                                         break;
                                     case 2:
@@ -416,7 +346,7 @@ public class ORM {
                                 }
                             } else {
                                 conect.createStatement()
-                                        .execute(insertarNotas(datos[1], Integer.parseInt(datos[2]),
+                                        .execute(SQL.insertarNotas(datos[1], Integer.parseInt(datos[2]),
                                                 Integer.parseInt(datos[3]), Integer.parseInt(datos[4])));
                             }
                             rsNot.close();
@@ -426,12 +356,12 @@ public class ORM {
                                     + Integer.parseInt(datos[2])
                                     + " Modu: " + Integer.parseInt(datos[3])
                                     + " Notas: " + Integer.parseInt(datos[4]));
-                            ResultSet rsMat = conect.createStatement().executeQuery(buscarMatriculaID(datos[1]));
+                            ResultSet rsMat = conect.createStatement().executeQuery(SQL.buscarMatriculaID(datos[1]));
                             if (rsMat.next()) {
                                 System.out.println("Existe una matricula con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        conect.createStatement().execute(insertarMatricula(
+                                        conect.createStatement().execute(SQL.insertarMatricula(
                                                 datos[1],
                                                 datos[2],
                                                 datos[3],
@@ -443,7 +373,7 @@ public class ORM {
                                         break;
                                 }
                             } else {
-                                conect.createStatement().execute(insertarMatricula(
+                                conect.createStatement().execute(SQL.insertarMatricula(
                                         datos[1],
                                         datos[2],
                                         datos[3],
@@ -469,6 +399,16 @@ public class ORM {
             System.out.println("Error inesperado.\n" + ex);
         }
     }
+
+
+
+
+
+
+
+
+
+
 
     private void exportarDatosMongo() {
         System.out.println("\nEXPORTANDO...");
