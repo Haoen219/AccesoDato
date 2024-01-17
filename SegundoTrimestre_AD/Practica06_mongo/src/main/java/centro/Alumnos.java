@@ -168,8 +168,8 @@ public class Alumnos {
                 System.out.println("\nLista de alumno vacio");
             }
             alumnos.close();
-        } catch (Exception ex) {
-            System.out.println("Error de SQL al retirar todos los alumnos\n" + ex);
+        } catch (SQLException ex) {
+            System.out.println("Error cerrando ResultSet alumnos\n" + ex);
         }
     }
 
