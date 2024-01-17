@@ -52,10 +52,8 @@ public class Alumnos {
             System.out.print("Introduzca el NIA del alumno: ");
             String nia = sc.leer();
 
-            ResultSet queryAlu = null;
+            ResultSet queryAlu = SQL.buscarAlumnoID(nia);
             try {
-                queryAlu = ORM.getConnection().createStatement().executeQuery(SQL.buscarAlumnoID(nia));
-
                 if (nia.equals("0")) {
                     seguir = false;
                 } else if (queryAlu.next()) {
@@ -67,20 +65,17 @@ public class Alumnos {
                     if (nombre.equalsIgnoreCase("0")) {
                         seguir = false;
                     } else {
-                        try {
-                            ORM.getConnection().createStatement().execute(SQL.insertarAlumno(nia, nombre));
+                        if (SQL.insertarAlumno(nia, nombre)){
                             System.out.println("\tNIA:" + nia + " " + nombre + " dado de alta.\n");
-                        } catch (SQLException ex) {
-                            System.out.println("Error insertando el alumno\n" + ex);
+                        } else{
+                            System.out.println("\tNo se ha podido dar de alta.\n");
                         }
                     }
                 }
-
                 queryAlu.close();
             } catch (SQLException ex) {
-                System.out.println("Error buscando alumno con ese NIA\n" + ex);
+                System.out.println("Error cerrando ResultSet.\n" + ex);
             }
-
         }
 
         System.out.println("Volviendo...");
@@ -98,37 +93,39 @@ public class Alumnos {
             if (nia.equals("0")) {
                 seguir = false;
             } else {
-                try {
-                    ResultSet queryAlu = ORM.getConnection().createStatement().executeQuery(SQL.buscarAlumnoID(nia));
+                ResultSet queryAlu = SQL.buscarAlumnoID(nia);
 
+                try {
                     if (!queryAlu.next()) {
                         System.out.println("-No existe un alumno con ese NIA");
                     } else {
                         try {
                             String nombre = queryAlu.getString(SQL.alumno_nombre);
-                            ResultSet queryMat = ORM.getConnection().createStatement()
-                                    .executeQuery(SQL.buscarMatriculaAluID(nia));
+                            ResultSet queryMat = SQL.buscarMatriculaAluID(nia);
 
                             while (queryMat.next()) {
                                 String idMatri = queryMat.getString(SQL.matricula_id);
                                 String idNotas = queryMat.getString(SQL.notas_id);
-                                try {
-                                    ORM.getConnection().createStatement().execute(SQL.borrarMatricula(idMatri));
-                                    ORM.getConnection().createStatement().execute(SQL.borrarNotas(idNotas));
-                                } catch (SQLException ex) {
-                                    System.out.println("Error borrando notas/matricula del alumno.\n" + ex);
+                                if (!SQL.borrarMatricula(idMatri)){
+                                    System.out.println("\nError borrando matricula ID:"+idMatri);
+                                }
+                                if (!SQL.borrarNotas(idNotas)){
+                                    System.out.println("\nError borrando notas ID:"+idNotas);
                                 }
                             }
-                            ORM.getConnection().createStatement().execute(SQL.borrarAlumno(nia));
+                            if (SQL.borrarAlumno(nia)){
+                                System.out.println("\tNIA: " + nia + " " + nombre + " dado de baja.");
+                            }else{
+                                System.out.println("\tError borrando el alumno.");
+                            }
                             queryMat.close();
-                            queryAlu.close();
-                            System.out.println("\tNIA: " + nia + " " + nombre + " dado de baja.");
                         } catch (SQLException ex) {
-                            System.out.println("Error buscando las notas/matricula en la base.\n" + ex);
+                            System.out.println("Error cerrando ResultSet matriculas.\n" + ex);
                         }
                     }
+                    queryAlu.close();
                 } catch (SQLException ex) {
-                    System.out.println("Error buscando el alumno en la base.\n" + ex);
+                    System.out.println("Error cerrando ResultSet alumno.\n" + ex);
                 }
             }
         }
@@ -245,12 +242,14 @@ public class Alumnos {
                         try {
                             String nombre = alumno.getString(SQL.alumno_nombre);
 
-                            MongoCollection<Document> matriculas = ORM.getMongoDatabase().getCollection(SQL.matricula_tabla);
-                            FindIterable<Document> matriAlumno = matriculas.find(new Document(SQL.matricula_alumno_id, new Document("$eq", nia)));
+                            MongoCollection<Document> matriculas = ORM.getMongoDatabase()
+                                    .getCollection(SQL.matricula_tabla);
+                            FindIterable<Document> matriAlumno = matriculas
+                                    .find(new Document(SQL.matricula_alumno_id, new Document("$eq", nia)));
                             MongoCursor<Document> matricula = matriAlumno.iterator();
 
                             MongoCollection<Document> notas = ORM.getMongoDatabase().getCollection(SQL.notas_tabla);
-                            //Borrar notas de cada matricula
+                            // Borrar notas de cada matricula
                             while (matricula.hasNext()) {
                                 Document matri = matricula.next();
                                 String idMatri = matri.getString(SQL.matricula_id);
