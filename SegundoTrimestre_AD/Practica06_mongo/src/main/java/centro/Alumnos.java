@@ -65,9 +65,9 @@ public class Alumnos {
                     if (nombre.equalsIgnoreCase("0")) {
                         seguir = false;
                     } else {
-                        if (SQL.insertarAlumno(nia, nombre)){
+                        if (SQL.insertarAlumno(nia, nombre)) {
                             System.out.println("\tNIA:" + nia + " " + nombre + " dado de alta.\n");
-                        } else{
+                        } else {
                             System.out.println("\tNo se ha podido dar de alta.\n");
                         }
                     }
@@ -106,16 +106,16 @@ public class Alumnos {
                             while (queryMat.next()) {
                                 String idMatri = queryMat.getString(SQL.matricula_id);
                                 String idNotas = queryMat.getString(SQL.notas_id);
-                                if (!SQL.borrarMatricula(idMatri)){
-                                    System.out.println("\nError borrando matricula ID:"+idMatri);
+                                if (!SQL.borrarMatricula(idMatri)) {
+                                    System.out.println("\nError borrando matricula ID:" + idMatri);
                                 }
-                                if (!SQL.borrarNotas(idNotas)){
-                                    System.out.println("\nError borrando notas ID:"+idNotas);
+                                if (!SQL.borrarNotas(idNotas)) {
+                                    System.out.println("\nError borrando notas ID:" + idNotas);
                                 }
                             }
-                            if (SQL.borrarAlumno(nia)){
+                            if (SQL.borrarAlumno(nia)) {
                                 System.out.println("\tNIA: " + nia + " " + nombre + " dado de baja.");
-                            }else{
+                            } else {
                                 System.out.println("\tError borrando el alumno.");
                             }
                             queryMat.close();
@@ -136,25 +136,22 @@ public class Alumnos {
     public void listar() {
         System.out.print("\n-Listar Alumnos-");
         try {
-            ResultSet alumnos = ORM.getConnection().createStatement().executeQuery(SQL.todoAlumno);
+            ResultSet alumnos = SQL.todoAlumno();
 
             if (alumnos.next()) {
-                alumnos = ORM.getConnection().createStatement().executeQuery(SQL.todoAlumno);
+                alumnos = SQL.todoAlumno();
                 while (alumnos.next()) {
                     int numMatri = 0;
                     String nia = alumnos.getString(SQL.alumno_id);
                     String nombre = alumnos.getString(SQL.alumno_nombre);
                     try {
-                        ResultSet matriculas = ORM.getConnection().createStatement()
-                                .executeQuery(SQL.buscarMatriculaAluID(nia));
+                        ResultSet matriculas = SQL.buscarMatriculaAluID(nia);
                         while (matriculas.next()) {
                             numMatri++;
                         }
                         matriculas.close();
-                    } catch (Exception ex) {
-                        System.out.println(
-                                "Error de SQL al buscar las matriculas del alumno ." + nombre + " NIA: " + nia + "\n"
-                                        + ex);
+                    } catch (SQLException ex) {
+                        System.out.println("Error cerrando ResultSet matriculas del alumno ID:"+nia+"\n" + ex);
                     }
                     System.out.printf("\nNIA:%-10s %-30s ", nia, nombre);
                     if (numMatri > 0) {
@@ -172,6 +169,17 @@ public class Alumnos {
             System.out.println("Error cerrando ResultSet alumnos\n" + ex);
         }
     }
+
+
+
+
+
+
+
+
+
+
+    
 
     public int darDeAltaMongo() {
         Lector sc = new Lector(System.in);
