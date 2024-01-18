@@ -6,19 +6,12 @@ package centro;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.bson.Document;
-import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
 
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.result.DeleteResult;
 
-import persistencia.ORM;
 import utilidades.Lector;
 import utilidades.SQL;
 
@@ -106,17 +99,13 @@ public class Alumnos {
                             while (queryMat.next()) {
                                 String idMatri = queryMat.getString(SQL.matricula_id);
                                 String idNotas = queryMat.getString(SQL.notas_id);
-                                if (!SQL.borrarMatricula(idMatri)) {
-                                    System.out.println("\nError borrando matricula ID:" + idMatri);
-                                }
-                                if (!SQL.borrarNotas(idNotas)) {
-                                    System.out.println("\nError borrando notas ID:" + idNotas);
-                                }
+                                if (!SQL.borrarMatricula(idMatri)) System.out.println("\nNo se pudó borrar matricula ID:" + idMatri);
+                                if (!SQL.borrarNotas(idNotas)) System.out.println("\nNo se pudó borrar notas ID:" + idNotas);
                             }
                             if (SQL.borrarAlumno(nia)) {
                                 System.out.println("\tNIA: " + nia + " " + nombre + " dado de baja.");
                             } else {
-                                System.out.println("\tError borrando el alumno.");
+                                System.out.println("\tNo se pudó borrar el alumno.");
                             }
                             queryMat.close();
                         } catch (SQLException ex) {
@@ -190,39 +179,25 @@ public class Alumnos {
             System.out.print("Introduzca el NIA del alumno: ");
             String nia = sc.leer();
 
-            MongoCollection<Document> alumnos = null;
-            try {
-                alumnos = ORM.getMongoDatabase().getCollection(SQL.alumno_tabla);
-                Document alumno = alumnos.find(new Document(SQL.alumno_id, nia)).first();
+            Document alumno = SQL.buscarAlumnoIDMongo(nia);
 
-                if (nia.equals("0")) {
+            if (nia.equals("0")) {
+                seguir = false;
+            } else if (alumno != null) {
+                System.out.println("-Ya existe un alumno con ese NIA");
+            } else {
+                System.out.print("Introduzca el nombre del alumno: ");
+                String nombre = sc.leer();
+
+                if (nombre.equalsIgnoreCase("0")) {
                     seguir = false;
-                } else if (alumno != null) {
-                    System.out.println("-Ya existe un alumno con ese NIA");
                 } else {
-                    System.out.print("Introduzca el nombre del alumno: ");
-                    String nombre = sc.leer();
-
-                    if (nombre.equalsIgnoreCase("0")) {
-                        seguir = false;
+                    if (SQL.insertarAlumnoMongo(nia, nombre)){
+                        System.out.println("\tNIA:" + nia + " " + nombre + " dado de alta\n");
                     } else {
-                        try {
-
-                            Document alumnoNuevo = new Document("_id", new ObjectId());
-                            alumnoNuevo.append(SQL.alumno_id, nia)
-                                    .append(SQL.alumno_nombre, nombre);
-
-                            alumnos.insertOne(alumnoNuevo);
-
-                            System.out.println("\tNIA:" + nia + " " + nombre + " dado de alta.\n");
-
-                        } catch (Exception ex) {
-                            System.out.println("Error insertando el alumno\n" + ex);
-                        }
+                        System.out.println("No se ha podido insertar el alumno");
                     }
                 }
-            } catch (Exception ex) {
-                System.out.println("Error buscando alumno con ese NIA\n" + ex);
             }
         }
         System.out.println("Volviendo...");
@@ -240,9 +215,7 @@ public class Alumnos {
             if (nia.equals("0")) {
                 seguir = false;
             } else {
-                try {
-                    MongoCollection<Document> alumnos = ORM.getMongoDatabase().getCollection(SQL.alumno_tabla);
-                    Document alumno = alumnos.find(new Document(SQL.alumno_id, nia)).first();
+                    Document alumno = SQL.buscarAlumnoIDMongo(nia);
 
                     if (alumno == null) {
                         System.out.println("-No existe un alumno con ese NIA");
@@ -250,44 +223,22 @@ public class Alumnos {
                         try {
                             String nombre = alumno.getString(SQL.alumno_nombre);
 
-                            MongoCollection<Document> matriculas = ORM.getMongoDatabase()
-                                    .getCollection(SQL.matricula_tabla);
-                            FindIterable<Document> matriAlumno = matriculas
-                                    .find(new Document(SQL.matricula_alumno_id, new Document("$eq", nia)));
-                            MongoCursor<Document> matricula = matriAlumno.iterator();
-
-                            MongoCollection<Document> notas = ORM.getMongoDatabase().getCollection(SQL.notas_tabla);
+                            MongoCursor<Document> matricula = SQL.buscarMatriculaAluIDMongo(nia);
                             // Borrar notas de cada matricula
                             while (matricula.hasNext()) {
                                 Document matri = matricula.next();
                                 String idMatri = matri.getString(SQL.matricula_id);
                                 String idNotas = matri.getString(SQL.notas_id);
-                                try {
-                                    Bson filterNotas = new Document(SQL.matricula_notas_id,
-                                            new Document("$eq", idNotas));
-                                    notas.deleteOne(filterNotas);
-                                } catch (Exception ex) {
-                                    System.out.println("Error borrando notas de la matricula, ID_Matricula: "
-                                            + idMatri + "\n" + ex);
-                                }
+                                
+                                if (!SQL.borrarNotasMongo(idNotas)) System.out.println("No se pudo borrar Notas ID:"+idNotas);
+                                if (!SQL.borrarMatriculaMongo(idMatri)) System.out.println("No se pudo borrar Matricula ID:"+idMatri);
                             }
-                            // Borrar todas las matriculas con alumno_id que coincidan
-                            try {
-                                Bson filterMatri = new Document(SQL.matricula_alumno_id, new Document("$eq", nia));
-                                notas.deleteMany(filterMatri);
-                            } catch (Exception ex) {
-                                System.out.println("Error borrando las matriculas.\n" + ex);
-                            }
-
                             matricula.close();
                             System.out.println("\tNIA: " + nia + " " + nombre + " dado de baja.");
                         } catch (Exception ex) {
                             System.out.println("Error buscando las notas/matricula en la base.\n" + ex);
                         }
                     }
-                } catch (Exception ex) {
-                    System.out.println("Error buscando el alumno en la base.\n" + ex);
-                }
             }
         }
         return 0;
@@ -297,25 +248,25 @@ public class Alumnos {
     public void listarMongo() {
         System.out.print("\n-Listar Alumnos-");
         try {
-            ResultSet alumnos = ORM.getConnection().createStatement().executeQuery(ORM.todoAlumno);
+            MongoCollection<Document> listaAlumnos = SQL.todoAlumnoMongo();
+            MongoCursor<Document> alumnos = listaAlumnos.find().iterator();
 
-            if (alumnos.next()) {
-                alumnos = ORM.getConnection().createStatement().executeQuery(ORM.todoAlumno);
-                while (alumnos.next()) {
+            if (alumnos.hasNext()) {
+                while (alumnos.hasNext()) {
+                    Document alumno = alumnos.next();
+
                     int numMatri = 0;
-                    String nia = alumnos.getString("alumno_nia");
-                    String nombre = alumnos.getString("alumno_nombre");
+                    String nia = alumno.getString(SQL.alumno_id);
+                    String nombre = alumno.getString(SQL.alumno_nombre);
                     try {
-                        ResultSet matriculas = ORM.getConnection().createStatement()
-                                .executeQuery(ORM.buscarMatriculaAluID(nia));
-                        while (matriculas.next()) {
+                        MongoCursor<Document> matriculas = SQL.buscarMatriculaAluIDMongo(nia);
+                        while (matriculas.hasNext()) {
+                            matriculas.next();
                             numMatri++;
                         }
                         matriculas.close();
                     } catch (Exception ex) {
-                        System.out.println(
-                                "Error de SQL al buscar las matriculas del alumno ." + nombre + " NIA: " + nia + "\n"
-                                        + ex);
+                        System.out.println("Error intentando cerrar cursor de matriculas del alumno ." + nombre + " NIA: " + nia + "\n" + ex);
                     }
                     System.out.printf("\nNIA:%-10s %-30s ", nia, nombre);
                     if (numMatri > 0) {

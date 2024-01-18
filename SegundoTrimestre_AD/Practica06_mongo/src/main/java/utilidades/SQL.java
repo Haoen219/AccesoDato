@@ -8,6 +8,7 @@ import org.bson.types.ObjectId;
 
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 
 import persistencia.ORM;
 
@@ -193,7 +194,7 @@ public class SQL {
                             + " WHERE notas_id = '"
                             + id + "'");
         } catch (SQLException ex) {
-            System.out.println("Error buscando alumno con ese NIA\n" + ex);
+            System.out.println("Error actualizando notas\n" + ex);
         }
         return false;
     }
@@ -203,7 +204,7 @@ public class SQL {
             ORM.getConnection().createStatement().execute(
                     "UPDATE matricula SET calificacion = '" + calificacion + "' WHERE matricula_id = '" + id + "'");
         } catch (SQLException ex) {
-            System.out.println("Error buscando alumno con ese NIA\n" + ex);
+            System.out.println("Error actualizando matricula\n" + ex);
         }
         return false;
     }
@@ -213,7 +214,7 @@ public class SQL {
         try {
             return ORM.getConnection().createStatement().execute("DELETE FROM alumno WHERE alumno_nia = '" + id + "'");
         } catch (SQLException ex) {
-            System.out.println("Error buscando alumno con ese NIA\n" + ex);
+            System.out.println("Error borrando alumno NIA:"+id+"\n" + ex);
         }
         return false;
     }
@@ -222,7 +223,7 @@ public class SQL {
         try {
             return ORM.getConnection().createStatement().execute("DELETE FROM modulo WHERE modulo_id = '" + id + "'");
         } catch (SQLException ex) {
-            System.out.println("Error buscando alumno con ese NIA\n" + ex);
+            System.out.println("Error borrando modulo ID:"+id+"\n" + ex);
         }
         return false;
     }
@@ -231,7 +232,7 @@ public class SQL {
         try {
             return ORM.getConnection().createStatement().execute("DELETE FROM notas WHERE notas_id = '" + id + "'");
         } catch (SQLException ex) {
-            System.out.println("Error buscando alumno con ese NIA\n" + ex);
+            System.out.println("Error borrando notas ID:"+id+"\n" + ex);
         }
         return false;
     }
@@ -241,7 +242,7 @@ public class SQL {
             return ORM.getConnection().createStatement()
                     .execute("DELETE FROM matricula WHERE matricula_id = '" + id + "'");
         } catch (SQLException ex) {
-            System.out.println("Error buscando alumno con ese NIA\n" + ex);
+            System.out.println("Error borrando matricula ID:"+id+"\n" + ex);
         }
         return false;
     }
@@ -311,7 +312,7 @@ public class SQL {
         try {
             return ORM.getMongoDatabase().getCollection(alumno_tabla);
         } catch (MongoException ex) {
-            System.out.println("Error recuperando lista de alumnos Mongo\n" + ex);
+            System.out.println("Error recuperando lista de alumnos\n" + ex);
         }
         return null;
     }
@@ -320,7 +321,7 @@ public class SQL {
         try {
             return ORM.getMongoDatabase().getCollection(modulo_tabla);
         } catch (MongoException ex) {
-            System.out.println("Error recuperando lista de modulos Mongo\n" + ex);
+            System.out.println("Error recuperando lista de modulos\n" + ex);
         }
         return null;
     }
@@ -329,7 +330,7 @@ public class SQL {
         try {
             return ORM.getMongoDatabase().getCollection(notas_tabla);
         } catch (MongoException ex) {
-            System.out.println("Error recuperando lista de notas Mongo\n" + ex);
+            System.out.println("Error recuperando lista de notas\n" + ex);
         }
         return null;
     }
@@ -338,7 +339,7 @@ public class SQL {
         try {
             return ORM.getMongoDatabase().getCollection(matricula_tabla);
         } catch (MongoException ex) {
-            System.out.println("Error recuperando lista de matriculas Mongo\n" + ex);
+            System.out.println("Error recuperando lista de matriculas\n" + ex);
         }
         return null;
     }
@@ -347,7 +348,7 @@ public class SQL {
         try {
             return todoAlumnoMongo().find(new Document(alumno_id, nia)).first();
         } catch (MongoException ex) {
-            System.out.println("Error recuperando alumno con ese ID Mongo\n" + ex);
+            System.out.println("Error recuperando alumno con ese ID\n" + ex);
         }
         return null;
     }
@@ -356,7 +357,7 @@ public class SQL {
         try {
             return todoModuloMongo().find(new Document(modulo_id, id)).first();
         } catch (MongoException ex) {
-            System.out.println("Error recuperando modulo con ese ID Mongo\n" + ex);
+            System.out.println("Error recuperando modulo con ese ID\n" + ex);
         }
         return null;
     }
@@ -365,7 +366,7 @@ public class SQL {
         try {
             return todoNotasMongo().find(new Document(notas_id, id)).first();
         } catch (MongoException ex) {
-            System.out.println("Error recuperando notas con ese ID Mongo\n" + ex);
+            System.out.println("Error recuperando notas con ese ID\n" + ex);
         }
         return null;
     }
@@ -374,35 +375,34 @@ public class SQL {
         try {
             return todoMatriculaMongo().find(new Document(matricula_id, id)).first();
         } catch (MongoException ex) {
-            System.out.println("Error recuperando matricula con ese ID Mongo\n" + ex);
+            System.out.println("Error recuperando matricula con ese ID\n" + ex);
         }
         return null;
     }
 
-    public static Document buscarMatriculaAluIDMongo(String nia) {
+    public static MongoCursor<Document> buscarMatriculaAluIDMongo(String nia) {
         try {
-            return todoMatriculaMongo().find(new Document(matricula_alumno_id, nia)).first();
+            return todoMatriculaMongo().find(new Document(matricula_alumno_id, nia)).iterator();
         } catch (MongoException ex) {
-            System.out.println("Error buscando alumno con ese NIA\n" + ex);
+            System.out.println("Error buscando alumno con NIA:"+nia+"\n" + ex);
         }
         return null;
     }
 
-    public static Document buscarMatriculaModIDMongo(String id) {
+    public static MongoCursor<Document> buscarMatriculaModIDMongo(String id) {
         try {
-            return todoMatriculaMongo().find(new Document(matricula_modulo_id, id)).first();
+            return todoMatriculaMongo().find(new Document(matricula_modulo_id, id)).iterator();
         } catch (MongoException ex) {
-            System.out.println("Error buscando alumno con ese NIA\n" + ex);
+            System.out.println("Error buscando matricula con ID_modulo:"+id+"\n" + ex);
         }
         return null;
     }
 
-    public static Document buscarMatriculaDobleIDMongo(String nia, String id) {
+    public static MongoCursor<Document> buscarMatriculaDobleIDMongo(String nia, String id) {
         try {
-            return todoMatriculaMongo().find(new Document(matricula_alumno_id, nia).append(matricula_modulo_id, id))
-                    .first();
+            return todoMatriculaMongo().find(new Document(matricula_alumno_id, nia).append(matricula_modulo_id, id)).iterator();
         } catch (MongoException ex) {
-            System.out.println("Error buscando alumno con ese NIA\n" + ex);
+            System.out.println("Error buscando matricula con NIA_alumno:"+nia+" y ID_modulo:"+id+"\n" + ex);
         }
         return null;
     }
@@ -417,7 +417,7 @@ public class SQL {
                     .append(notas_nota3, nota3);
             return todoNotasMongo().updateOne(buscarNotasIDMongo(id), notas).wasAcknowledged();
         } catch (MongoException ex) {
-            System.out.println("Error actualizando Notas\n" + ex);
+            System.out.println("Error actualizando Notas ID:"+id+"\n" + ex);
         }
         return false;
     }
@@ -429,7 +429,7 @@ public class SQL {
                     .append(matricula_calificacion, calificacion);
             return todoMatriculaMongo().updateOne(buscarMatriculaIDMongo(id), matricula).wasAcknowledged();
         } catch (MongoException ex) {
-            System.out.println("Error actualizando Matricula\n" + ex);
+            System.out.println("Error actualizando Matricula Id:"+id+"\n" + ex);
         }
         return false;
     }
@@ -439,7 +439,7 @@ public class SQL {
         try {
             return todoAlumnoMongo().deleteOne(new Document(alumno_id, id)).wasAcknowledged();
         } catch (MongoException ex) {
-            System.out.println("Error buscando alumno con ese NIA\n" + ex);
+            System.out.println("Error borrando alumno NIA:"+id+"\n" + ex);
         }
         return false;
     }
@@ -448,7 +448,7 @@ public class SQL {
         try {
             return todoModuloMongo().deleteOne(new Document(modulo_id, id)).wasAcknowledged();
         } catch (MongoException ex) {
-            System.out.println("Error buscando alumno con ese NIA\n" + ex);
+            System.out.println("Error borrando modulo ID:"+id+"\n" + ex);
         }
         return false;
     }
@@ -457,7 +457,7 @@ public class SQL {
         try {
             return todoNotasMongo().deleteOne(new Document(notas_id, id)).wasAcknowledged();
         } catch (MongoException ex) {
-            System.out.println("Error buscando alumno con ese NIA\n" + ex);
+            System.out.println("Error borrando notas ID:"+id+"\n" + ex);
         }
         return false;
     }
@@ -466,7 +466,7 @@ public class SQL {
         try {
             return todoMatriculaMongo().deleteOne(new Document(matricula_id, id)).wasAcknowledged();
         } catch (MongoException ex) {
-            System.out.println("Error buscando alumno con ese NIA\n" + ex);
+            System.out.println("Error borrando matricula ID:"+id+"\n" + ex);
         }
         return false;
     }

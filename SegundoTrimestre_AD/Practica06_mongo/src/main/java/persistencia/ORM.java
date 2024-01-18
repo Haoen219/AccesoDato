@@ -99,10 +99,18 @@ public class ORM {
                 menuMatriculas();
                 break;
             case 4:
-                exportarDatos();
+                if(App.getOpcion()==3){
+                    exportarDatosMongo();
+                }else{
+                    exportarDatos();
+                }
                 break;
             case 5:
-                importarDatos();
+                if(App.getOpcion()==3){
+                    importarDatosMongo();
+                }else{
+                    importarDatos();
+                }
                 break;
             default:
                 System.out.println(App.ANSI_CYAN + "Hay que elegit una de las opciones (numero entre parentesis)"
@@ -116,11 +124,26 @@ public class ORM {
             try {
                 opcion = alumnos.menu();
                 switch (opcion) {
-                    case 0 -> System.out.println("Volviendo al menu previo...\n");
-                    case 1 -> alumnos.darDeAlta();
-                    case 2 -> alumnos.darDeBaja();
-                    case 3 -> alumnos.listar();
-                    default -> System.out.println("--Opción no valida");
+                    case 0: System.out.println("Volviendo al menu previo...\n"); break;
+                    case 1: if (App.getOpcion()==3){
+                                alumnos.darDeAltaMongo();
+                            } else {
+                                alumnos.darDeAlta();
+                            }
+                            break;
+                    case 2: if (App.getOpcion()==3){
+                                alumnos.darDeBajaMongo();
+                            } else {
+                                alumnos.darDeBaja();
+                            }
+                            break;
+                    case 3: if (App.getOpcion()==3){
+                                alumnos.listarMongo();
+                            } else {
+                                alumnos.listar();
+                            }
+                            break;
+                    default : System.out.println("--Opción no valida");
                 }
             } catch (InputMismatchException ex) {
                 System.out.println("\n###ERROR: ha introducido un valor que no es entero.");
@@ -138,12 +161,32 @@ public class ORM {
             try {
                 opcion = modulos.menu();
                 switch (opcion) {
-                    case 0 -> System.out.println("Volviendo al menu previo...\n");
-                    case 1 -> modulos.darDeAlta();
-                    case 2 -> modulos.darDeBaja();
-                    case 3 -> modulos.listar();
-                    case 4 -> modulos.matricularAlumno();
-                    default -> System.out.println("--Opción no valida");
+                    case 0: System.out.println("Volviendo al menu previo...\n"); break;
+                    case 1: if (App.getOpcion()==3){
+                                modulos.darDeAltaMongo();
+                            } else {
+                                modulos.darDeAlta();
+                            }
+                            break;
+                    case 2: if (App.getOpcion()==3){
+                                modulos.darDeBajaMongo();
+                            } else {
+                                modulos.darDeBaja();
+                            }
+                            break;
+                    case 3: if (App.getOpcion()==3){
+                                modulos.listarMongo();
+                            } else {
+                                modulos.listar();
+                            }
+                            break;
+                    case 4: if (App.getOpcion()==3){
+                                modulos.matricularAlumnoMongo();
+                            } else {
+                                modulos.matricularAlumno();
+                            }
+                            break;
+                    default: System.out.println("--Opción no valida");
                 }
             } catch (InputMismatchException ex) {
                 System.out.println("\n###ERROR: ha introducido un valor que no es entero.");
@@ -161,11 +204,26 @@ public class ORM {
             try {
                 opcion = matriculas.menu();
                 switch (opcion) {
-                    case 0 -> System.out.println("Volviendo al menu previo...\n");
-                    case 1 -> matriculas.modificarNotas();
-                    case 2 -> matriculas.evaluarModulo();
-                    case 3 -> matriculas.mostrar();
-                    default -> System.out.println("--Opción no valida");
+                    case 0: System.out.println("Volviendo al menu previo...\n"); break;
+                    case 1: if (App.getOpcion()==3){
+                                matriculas.modificarNotasMongo();
+                            } else {
+                                matriculas.modificarNotas();
+                            }
+                            break;
+                    case 2: if (App.getOpcion()==3){
+                                matriculas.evaluarModuloMongo();
+                            } else {
+                                matriculas.evaluarModulo();
+                            }
+                            break;
+                    case 3: if (App.getOpcion()==3){
+                                matriculas.mostrarMongo();
+                            } else {
+                                matriculas.mostrar();;
+                            }
+                            break;
+                    default: System.out.println("--Opción no valida");
                 }
             } catch (InputMismatchException ex) {
                 System.out.println("\n###ERROR: ha introducido un valor que no es entero.");
@@ -182,7 +240,7 @@ public class ORM {
 
         try {
             if (App.getOpcion() == 3) {
-                System.out.println("Conectando con MongoDB");
+                System.out.println("Conectado con MongoDB");
             } else {
                 resultado = connection.getMetaData().getDatabaseProductVersion();
                 System.out.println("La versión que estás usando es: " + resultado);
@@ -508,74 +566,69 @@ public class ORM {
 
                         case "Modulo":
                             System.out.println("Importando MODULO ID: " + datos[1] + " " + datos[2]);
-                            ResultSet rsMod = conect.createStatement().executeQuery(buscarModuloID(datos[1]));
-                            if (rsMod.next()) {
+                            Document modulo = SQL.buscarModuloIDMongo(datos[1]);
+                            if ( modulo != null ) {
                                 System.out.println("Existe un módulo con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        conect.createStatement().execute(insertarModulo(datos[1], datos[2]));
+                                        SQL.insertarModuloMongo(datos[1], datos[2]);
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");
                                         break;
                                 }
                             } else {
-                                conect.createStatement().execute(insertarModulo(datos[1], datos[2]));
+                                SQL.insertarModuloMongo(datos[1], datos[2]);
                             }
-                            rsMod.close();
                             break;
+
                         case "Notas":
                             System.out.println("Importando NOTAS ID: " + datos[1]);
-                            ResultSet rsNot = conect.createStatement().executeQuery(buscaNotaID(datos[1]));
-                            if (rsNot.next()) {
+                            Document notas = SQL.buscarNotasIDMongo(datos[1]);
+                            if ( notas != null ) {
                                 System.out.println("Existe unas notas con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        conect.createStatement()
-                                                .execute(insertarNotas(datos[1], Integer.parseInt(datos[2]),
-                                                        Integer.parseInt(datos[3]), Integer.parseInt(datos[4])));
+                                        SQL.insertarNotasMongo(datos[1], Integer.parseInt(datos[2]),Integer.parseInt(datos[3]), Integer.parseInt(datos[4]));
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");
                                         break;
                                 }
                             } else {
-                                conect.createStatement()
-                                        .execute(insertarNotas(datos[1], Integer.parseInt(datos[2]),
-                                                Integer.parseInt(datos[3]), Integer.parseInt(datos[4])));
+                                SQL.insertarNotasMongo(datos[1], Integer.parseInt(datos[2]),Integer.parseInt(datos[3]), Integer.parseInt(datos[4]));
                             }
-                            rsNot.close();
                             break;
+
                         case "Matricula":
                             System.out.println("Importando MATRICULA ID: " + datos[1] + " Alu: "
                                     + Integer.parseInt(datos[2])
                                     + " Modu: " + Integer.parseInt(datos[3])
                                     + " Notas: " + Integer.parseInt(datos[4]));
-                            ResultSet rsMat = conect.createStatement().executeQuery(buscarMatriculaID(datos[1]));
-                            if (rsMat.next()) {
+                            Document matricula = SQL.buscarNotasIDMongo(datos[1]);
+                            if (matricula != null ) {
                                 System.out.println("Existe una matricula con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        conect.createStatement().execute(insertarMatricula(
+                                        SQL.insertarMatriculaMongo(
                                                 datos[1],
                                                 datos[2],
                                                 datos[3],
                                                 datos[4],
-                                                datos[5]));
+                                                datos[5]);
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");
                                         break;
                                 }
                             } else {
-                                conect.createStatement().execute(insertarMatricula(
+                                SQL.insertarMatriculaMongo(
                                         datos[1],
                                         datos[2],
                                         datos[3],
                                         datos[4],
-                                        datos[5]));
+                                        datos[5]);
                             }
-                            rsMat.close();
                             break;
                         default:
                             System.out.println("Formato de línea no admitida en la línea " + lineNum);

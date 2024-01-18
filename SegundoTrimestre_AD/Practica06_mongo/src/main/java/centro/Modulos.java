@@ -7,6 +7,12 @@ package centro;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.bson.Document;
+
+import com.mongodb.MongoException;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+
 import persistencia.ORM;
 import utilidades.Lector;
 import utilidades.SQL;
@@ -41,13 +47,12 @@ public class Modulos {
 
         while (seguir) {
             try {
-                ResultSet queryMod = ORM.getConnection().createStatement().executeQuery(SQL.todoModulo);
-                int id = 0;
+                ResultSet queryMod = SQL.todoModulo();
+                String id = "";
                 try {
-                    while (queryMod.next()) {
-                        id++;
-                    }
-                    id++;
+                    //HAY QUE COMPROBAR FUNCIONAMIENTO
+                    queryMod.last();
+                    id = queryMod.getString(SQL.modulo_id)+1;
                 } catch (SQLException ex) {
                     System.out.println("Error retirando lista de modulos para asignar último ID\n" + ex);
                 }
@@ -59,15 +64,14 @@ public class Modulos {
                 if (nombre.equalsIgnoreCase("0")) {
                     seguir = false;
                 } else {
-                    try {
-                        ORM.getConnection().createStatement().execute(SQL.insertarModulo(Integer.toString(id), nombre));
+                    if (SQL.insertarModulo(id, nombre)){
                         System.out.println("\tID:" + id + " " + nombre + " dado de alta.");
-                    } catch (SQLException ex) {
-                        System.out.println("Error insertando el modulo\n" + ex);
-                    }
+                    }else{
+                        System.out.println("\tNo se ha podido dar de alta.\n");
+                    } 
                 }
             } catch (SQLException ex) {
-                System.out.println("Error buscando modulo con ese ID\n" + ex);
+                System.out.println("Error cerrando ResultSet\n" + ex);
             }
         }
         System.out.println("Volviendo...");
@@ -87,37 +91,34 @@ public class Modulos {
                 seguir = false;
             } else {
                 try {
-                    ResultSet queryMod = ORM.getConnection().createStatement().executeQuery(SQL.buscarModuloID(id));
+                    ResultSet queryMod = SQL.buscarModuloID(id);
 
                     if (!queryMod.next()) {
                         System.out.println("-No existe un módulo con ese ID");
                     } else {
                         try {
                             String nombre = queryMod.getString(SQL.modulo_nombre);
-                            ResultSet queryMat = ORM.getConnection().createStatement()
-                                    .executeQuery(SQL.buscarMatriculaModID(id));
+                            ResultSet queryMat = SQL.buscarMatriculaModID(id);
 
                             while (queryMat.next()) {
                                 String idMatri = queryMat.getString(SQL.matricula_id);
                                 String idNotas = queryMat.getString(SQL.notas_id);
-                                try {
-                                    ORM.getConnection().createStatement().execute(SQL.borrarMatricula(idMatri));
-                                    ORM.getConnection().createStatement().execute(SQL.borrarNotas(idNotas));
-                                } catch (SQLException ex) {
-                                    System.out.println("Error borrando notas/matricula del modulo. (id_Matricula:"
-                                            + idMatri + ")\n" + ex);
-                                }
+                                if (!SQL.borrarMatricula(idMatri)) System.out.println("No se ha borrar matricula ID:"+idMatri);
+                                if (SQL.borrarNotas(idNotas)) System.out.println("No se ha borrar notas ID:"+idNotas);
                             }
-                            ORM.getConnection().createStatement().execute(SQL.borrarModulo(id));
+                            if (SQL.borrarModulo(id)){
+                                System.out.println("\tID: " + id + " " + nombre + " dado de baja.");
+                            }else{
+                                System.out.println("\tNo se pudó borrar el modulo.");
+                            }
                             queryMat.close();
-                            queryMod.close();
-                            System.out.println("\tID: " + id + " " + nombre + " dado de baja.");
                         } catch (SQLException ex) {
-                            System.out.println("Error buscando las notas/matricula en la base.\n" + ex);
+                            System.out.println("Error cerrando ResultSet matriculas.\n" + ex);
                         }
                     }
+                    queryMod.close();
                 } catch (SQLException ex) {
-                    System.out.println("Error buscando el módulo en la base.\n" + ex);
+                    System.out.println("Error cerrando ResultSet modulo.\n" + ex);
                 }
             }
         }
@@ -138,7 +139,7 @@ public class Modulos {
                 seguir = false;
             } else {
                 try {
-                    ResultSet alumno = ORM.getConnection().createStatement().executeQuery(SQL.buscarAlumnoID(nia));
+                    ResultSet alumno = SQL.buscarAlumnoID(nia);
 
                     if (alumno.next()) {
                         String nombreAlu = alumno.getString("alumno_nombre");
@@ -150,8 +151,7 @@ public class Modulos {
                             seguir = false;
                         } else {
                             try {
-                                ResultSet modulo = ORM.getConnection().createStatement()
-                                        .executeQuery(SQL.buscarModuloID(id));
+                                ResultSet modulo = SQL.buscarModuloID(id);
 
                                 if (modulo.next()) {
                                     String moduloNombre = modulo.getString(SQL.modulo_nombre);
@@ -159,14 +159,16 @@ public class Modulos {
 
                                     int matriNum = 0;
                                     int notasNum = 0;
-                                    ResultSet matricula = ORM.getConnection().createStatement().executeQuery(SQL.todoMatricula);
-                                    ResultSet notas = ORM.getConnection().createStatement() .executeQuery(SQL.todoNotas);
+                                    ResultSet matricula = SQL.todoMatricula();
+                                    ResultSet notas = SQL.todoNotas();
 
-                                    while (matricula.next()) matriNum++;
-                                    while (notas.next()) notasNum++;
+                                    matricula.last();
+                                    notas.last();
+                                    matriNum = matricula.getInt(SQL.matricula_id);
+                                    notasNum = notas.getInt(SQL.notas_id);
 
-                                    ORM.getConnection().createStatement().execute(SQL.insertarNotas(Integer.toString(notasNum+1), 0, 0, 0));
-                                    ORM.getConnection().createStatement().execute(SQL.insertarMatricula(Integer.toString(matriNum+1), nia, id, Integer.toString(notasNum+1), calificacion));
+                                    SQL.insertarNotas(Integer.toString(notasNum+1), 0, 0, 0);
+                                    SQL.insertarMatricula(Integer.toString(matriNum+1), nia, id, Integer.toString(notasNum+1), calificacion);
 
                                     System.out.println("Se creado matricula de " + nombreAlu + " en el módulo " + moduloNombre);
 
@@ -177,7 +179,7 @@ public class Modulos {
                                 }
                                 modulo.close();
                             } catch (SQLException ex) {
-                                System.out.println("Error buscando matriculas.\n" + ex);
+                                System.out.println("Error cerrando ResultSet.\n" + ex);
                             }
                         }
                     } else {
@@ -185,7 +187,7 @@ public class Modulos {
                     }
                     alumno.close();
                 } catch (SQLException ex) {
-                    System.out.println("Error buscando alumno.\n" + ex);
+                    System.out.println("Error cerrando ResultSet alumno.\n" + ex);
                 }
             }
         }
@@ -197,25 +199,23 @@ public class Modulos {
     public void listar() {
         System.out.println("\n-Listar Modulos-");
         try {
-            ResultSet modulos = ORM.getConnection().createStatement().executeQuery(SQL.todoModulo);
+            ResultSet modulos = SQL.todoModulo();
 
             if (modulos.next()) {
-                modulos = ORM.getConnection().createStatement().executeQuery(SQL.todoModulo);
+                modulos = SQL.todoModulo();
                 while (modulos.next()) {
                     int numMatri = 0;
                     String id = modulos.getString("modulo_id");
                     String nombre = modulos.getString("modulo_nombre");
                     try {
-                        ResultSet matriculas = ORM.getConnection().createStatement()
-                                .executeQuery(SQL.buscarMatriculaModID(id));
+                        ResultSet matriculas = SQL.buscarMatriculaModID(id);
                         while (matriculas.next()) {
                             numMatri++;
                         }
                         matriculas.close();
                     } catch (Exception ex) {
                         System.out.println(
-                                "Error de SQL al buscar las matriculas del modulo ." + nombre + " ID: " + id + "\n"
-                                        + ex);
+                                "Error cerrando el ResultSet de matriculas"+ex);
                     }
                     System.out.printf("\nID:%-10s %-30s ", id, nombre);
                     if (numMatri > 0) {
@@ -230,7 +230,7 @@ public class Modulos {
                 System.out.println("\nLista de modulos vacio");
             }
         } catch (Exception ex) {
-            System.out.println("Error de SQL al retirar todos los modulos\n" + ex);
+            System.out.println("Error cerrando ResultSet de modulos\n" + ex);
         }
     }
 
@@ -248,18 +248,14 @@ public class Modulos {
         System.out.println("\n-Dar de alta módulo-  (volver con [0])");
 
         while (seguir) {
+            MongoCursor<Document> modulos = SQL.todoAlumnoMongo().find().sort(new Document(SQL.modulo_id, 1)).iterator();
+
+            String id = "";
+            Document modulo = new Document();
             try {
-                ResultSet queryMod = ORM.getConnection().createStatement().executeQuery(ORM.todoModulo);
-                int id = 0;
-                try {
-                    while (queryMod.next()) {
-                        id++;
-                    }
-                    id++;
-                } catch (SQLException ex) {
-                    System.out.println("Error retirando lista de modulos para asignar último ID\n" + ex);
-                }
-                queryMod.close();
+                while (modulos.hasNext()) modulo = modulos.next();
+                id = modulo.getString(SQL.modulo_id);
+                modulos.close();
 
                 System.out.print("Introduzca el nombre del modulo: ");
                 String nombre = sc.leer();
@@ -267,16 +263,15 @@ public class Modulos {
                 if (nombre.equalsIgnoreCase("0")) {
                     seguir = false;
                 } else {
-                    try {
-                        ORM.getConnection().createStatement().execute(ORM.insertarModulo(Integer.toString(id), nombre));
-                        System.out.println("\tID:" + id + " " + nombre + " dado de alta.");
-                    } catch (SQLException ex) {
-                        System.out.println("Error insertando el modulo\n" + ex);
-                    }
+                        if (!SQL.insertarModuloMongo(id, nombre)){
+                            System.out.println("\tID:" + id + " " + nombre + " dado de alta.");
+                        } else{
+                            System.out.println("No se pudo dar de alta.");
+                        }
                 }
-            } catch (SQLException ex) {
-                System.out.println("Error buscando modulo con ese ID\n" + ex);
-            }
+            } catch (MongoException ex) {
+                System.out.println("Error cerrando MongoCursor de modulos\n" + ex);
+            }  
         }
         System.out.println("Volviendo...");
         return 0;
@@ -294,10 +289,9 @@ public class Modulos {
             if (id.equals("0")) {
                 seguir = false;
             } else {
-                try {
-                    ResultSet queryMod = ORM.getConnection().createStatement().executeQuery(ORM.buscarModuloID(id));
+                    Document modulo = SQL.buscarModuloIDMongo(id);
 
-                    if (!queryMod.next()) {
+                    if ( modulo == null ) {
                         System.out.println("-No existe un módulo con ese ID");
                     } else {
                         try {
@@ -324,9 +318,6 @@ public class Modulos {
                             System.out.println("Error buscando las notas/matricula en la base.\n" + ex);
                         }
                     }
-                } catch (SQLException ex) {
-                    System.out.println("Error buscando el módulo en la base.\n" + ex);
-                }
             }
         }
         return 0;
