@@ -82,7 +82,7 @@ public class SQL {
     // READ
     public static ResultSet todoAlumno() {
         try {
-            return ORM.getConnection().createStatement().executeQuery("SELECT * FROM alumno");
+            return ORM.getConnection().createStatement().executeQuery("SELECT * FROM alumno ORDER BY "+alumno_id);
         } catch (SQLException ex) {
             System.out.println("Error recuperando lista de alumno\n" + ex);
         }
@@ -91,7 +91,7 @@ public class SQL {
 
     public static ResultSet todoModulo() {
         try {
-            return ORM.getConnection().createStatement().executeQuery("SELECT * FROM modulo");
+            return ORM.getConnection().createStatement().executeQuery("SELECT * FROM modulo ORDER BY "+modulo_id);
         } catch (SQLException ex) {
             System.out.println("Error recuperando lista de modulo\n" + ex);
         }
@@ -100,7 +100,7 @@ public class SQL {
 
     public static ResultSet todoMatricula() {
         try {
-            return ORM.getConnection().createStatement().executeQuery("SELECT * FROM matricula");
+            return ORM.getConnection().createStatement().executeQuery("SELECT * FROM matricula ORDER BY "+matricula_id);
         } catch (SQLException ex) {
             System.out.println("Error recuperando lista de matricula\n" + ex);
         }
@@ -109,7 +109,7 @@ public class SQL {
 
     public static ResultSet todoNotas() {
         try {
-            return ORM.getConnection().createStatement().executeQuery("SELECT * FROM notas");
+            return ORM.getConnection().createStatement().executeQuery("SELECT * FROM notas ORDER BY "+notas_id);
         } catch (SQLException ex) {
             System.out.println("Error recuperando lista de notas\n" + ex);
         }

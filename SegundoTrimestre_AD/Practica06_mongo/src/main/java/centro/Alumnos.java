@@ -222,7 +222,6 @@ public class Alumnos {
                     } else {
                         try {
                             String nombre = alumno.getString(SQL.alumno_nombre);
-
                             MongoCursor<Document> matricula = SQL.buscarMatriculaAluIDMongo(nia);
                             // Borrar notas de cada matricula
                             while (matricula.hasNext()) {
@@ -236,7 +235,7 @@ public class Alumnos {
                             matricula.close();
                             System.out.println("\tNIA: " + nia + " " + nombre + " dado de baja.");
                         } catch (Exception ex) {
-                            System.out.println("Error buscando las notas/matricula en la base.\n" + ex);
+                            System.out.println("Error cerrando MongoCursor de las matriculas.\n" + ex);
                         }
                     }
             }
