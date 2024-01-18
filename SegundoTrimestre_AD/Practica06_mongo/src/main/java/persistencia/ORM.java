@@ -11,6 +11,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.InputMismatchException;
 
+import org.bson.Document;
+
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
 import centro.Alumnos;
@@ -27,14 +31,14 @@ public class ORM {
     private static Modulos modulos = new Modulos();
     private static Matriculas matriculas = new Matriculas();
     public static final File importFile = new File("import.txt");
-    
+
     private static Connection connection;
     private static MongoDatabase mongoDatabase;
 
-    public ORM (){
+    public ORM() {
         if (App.getOpcion() == 3) {
             mongoDatabase = new Conexion().getMongoDatabase();
-        } else{
+        } else {
             connection = new Conexion().getConnection();
         }
     }
@@ -42,6 +46,7 @@ public class ORM {
     public static Connection getConnection() {
         return connection;
     }
+
     public static MongoDatabase getMongoDatabase() {
         return mongoDatabase;
     }
@@ -176,15 +181,17 @@ public class ORM {
         String resultado;
 
         try {
-            // connection = new Conexion().getConnection();
-
-            resultado = connection.getMetaData().getDatabaseProductVersion();
-            System.out.println("La versión que estás usando es: " + resultado);
+            if (App.getOpcion() == 3) {
+                System.out.println("Conectando con MongoDB");
+            } else {
+                resultado = connection.getMetaData().getDatabaseProductVersion();
+                System.out.println("La versión que estás usando es: " + resultado);
+            }
 
             do {
                 opcion = menu();
                 realizarOpcion(opcion);
-                if (opcion == 0) {
+                if (opcion == 0 && App.getOpcion() < 3) {
                     connection.close();
                 }
             } while (opcion != 0);
@@ -194,15 +201,7 @@ public class ORM {
         }
     }
 
-
-
-
-
-
-
-
-
-    //Hay que adaptar los id de las clases y los _id de mongo
+    // Hay que adaptar los id de las clases y los _id de mongo
 
     private void exportarDatos() {
         System.out.println("\nEXPORTANDO...");
@@ -211,10 +210,10 @@ public class ORM {
             if (!importFile.exists()) {
                 System.out.println("Creando archivo de importe...");
             }
-            BufferedWriter writer = new BufferedWriter(new FileWriter(ORM.importFile));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(importFile));
 
             // ALUMNO
-            ResultSet queryAlu = connection.createStatement().executeQuery(SQL.todoAlumno);
+            ResultSet queryAlu = SQL.todoAlumno();
             while (queryAlu.next()) {
                 String id = queryAlu.getString("alumno_nia");
                 String nombre = queryAlu.getString("alumno_nombre");
@@ -224,7 +223,7 @@ public class ORM {
             queryAlu.close();
 
             // MODULO
-            ResultSet queryModu = connection.createStatement().executeQuery(SQL.todoModulo);
+            ResultSet queryModu = SQL.todoModulo();
             while (queryModu.next()) {
                 String id = queryModu.getString("modulo_id");
                 String nombre = queryModu.getString("modulo_nombre");
@@ -234,7 +233,7 @@ public class ORM {
             queryModu.close();
 
             // NOTAS
-            ResultSet queryNota = connection.createStatement().executeQuery(SQL.todoNotas);
+            ResultSet queryNota = SQL.todoNotas();
             while (queryNota.next()) {
                 String id = queryNota.getString("notas_id");
                 int nota1 = queryNota.getInt("nota1");
@@ -246,7 +245,7 @@ public class ORM {
             queryNota.close();
 
             // MATRICULA
-            ResultSet queryMatri = connection.createStatement().executeQuery(SQL.todoMatricula);
+            ResultSet queryMatri = SQL.todoMatricula();
             while (queryMatri.next()) {
                 String id = queryMatri.getString("matricula_id");
                 String alumno = queryMatri.getString("alumno_nia");
@@ -265,7 +264,7 @@ public class ORM {
         } catch (SQLException ex) {
             System.out.println("Error de SQL.\n" + ex);
         } catch (Exception ex) {
-            System.out.println("Error inesperado.\n" + ex);
+            System.out.println("Error inesperado exportando.\n" + ex);
         }
         System.out.println("Se han exportado los datos.");
     }
@@ -280,7 +279,6 @@ public class ORM {
         System.out.println("\nIMPORTANDO...");
         try {
             BufferedReader reader = new BufferedReader(new FileReader(importFile));
-            Connection conect = new ORM().getConnection();
 
             String line;
             int lineNum = 0;
@@ -295,59 +293,57 @@ public class ORM {
                     switch (datos[0]) {
                         case "Alumno":
                             System.out.println("Importando ALUMNO NIA: " + datos[1] + " " + datos[2]);
-                            ResultSet rsAlu = conect.createStatement().executeQuery(SQL.buscarAlumnoID(datos[1]));
+                            ResultSet rsAlu = SQL.buscarAlumnoID(datos[1]);
                             if (rsAlu.next()) {
                                 System.out.println("Existe un alumno con ese NIA");
                                 switch (menuImport()) {
                                     case 1:
-                                        conect.createStatement().execute(SQL.insertarAlumno(datos[1], datos[2]));
+                                        SQL.insertarAlumno(datos[1], datos[2]);
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");
                                         break;
                                 }
                             } else {
-                                conect.createStatement().execute(SQL.insertarAlumno(datos[1], datos[2]));
+                                SQL.insertarAlumno(datos[1], datos[2]);
                             }
                             rsAlu.close();
                             break;
                         case "Modulo":
                             System.out.println("Importando MODULO ID: " + datos[1] + " " + datos[2]);
-                            ResultSet rsMod = conect.createStatement().executeQuery(SQL.buscarModuloID(datos[1]));
+                            ResultSet rsMod = SQL.buscarModuloID(datos[1]);
                             if (rsMod.next()) {
                                 System.out.println("Existe un módulo con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        conect.createStatement().execute(SQL.insertarModulo(datos[1], datos[2]));
+                                        SQL.insertarModulo(datos[1], datos[2]);
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");
                                         break;
                                 }
                             } else {
-                                conect.createStatement().execute(SQL.insertarModulo(datos[1], datos[2]));
+                                SQL.insertarModulo(datos[1], datos[2]);
                             }
                             rsMod.close();
                             break;
                         case "Notas":
                             System.out.println("Importando NOTAS ID: " + datos[1]);
-                            ResultSet rsNot = conect.createStatement().executeQuery(SQL.buscaNotaID(datos[1]));
+                            ResultSet rsNot = SQL.buscaNotaID(datos[1]);
                             if (rsNot.next()) {
                                 System.out.println("Existe unas notas con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        conect.createStatement()
-                                                .execute(SQL.insertarNotas(datos[1], Integer.parseInt(datos[2]),
-                                                        Integer.parseInt(datos[3]), Integer.parseInt(datos[4])));
+                                        SQL.insertarNotas(datos[1], Integer.parseInt(datos[2]),
+                                                Integer.parseInt(datos[3]), Integer.parseInt(datos[4]));
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");
                                         break;
                                 }
                             } else {
-                                conect.createStatement()
-                                        .execute(SQL.insertarNotas(datos[1], Integer.parseInt(datos[2]),
-                                                Integer.parseInt(datos[3]), Integer.parseInt(datos[4])));
+                                SQL.insertarNotas(datos[1], Integer.parseInt(datos[2]),
+                                        Integer.parseInt(datos[3]), Integer.parseInt(datos[4]));
                             }
                             rsNot.close();
                             break;
@@ -356,29 +352,29 @@ public class ORM {
                                     + Integer.parseInt(datos[2])
                                     + " Modu: " + Integer.parseInt(datos[3])
                                     + " Notas: " + Integer.parseInt(datos[4]));
-                            ResultSet rsMat = conect.createStatement().executeQuery(SQL.buscarMatriculaID(datos[1]));
+                            ResultSet rsMat = SQL.buscarMatriculaID(datos[1]);
                             if (rsMat.next()) {
                                 System.out.println("Existe una matricula con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        conect.createStatement().execute(SQL.insertarMatricula(
+                                        SQL.insertarMatricula(
                                                 datos[1],
                                                 datos[2],
                                                 datos[3],
                                                 datos[4],
-                                                datos[5]));
+                                                datos[5]);
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");
                                         break;
                                 }
                             } else {
-                                conect.createStatement().execute(SQL.insertarMatricula(
+                                SQL.insertarMatricula(
                                         datos[1],
                                         datos[2],
                                         datos[3],
                                         datos[4],
-                                        datos[5]));
+                                        datos[5]);
                             }
                             rsMat.close();
                             break;
@@ -389,89 +385,83 @@ public class ORM {
                 System.out.println("Se han importado los datos.");
             }
             reader.close();
-            conect.close();
         } catch (IOException ex) {
             System.out.println(
                     "Error de tipo IOException. Error al acceder al fichero o al leer.\nPuede que el fichero no exista.\n"
                             + ex);
             return;
         } catch (Exception ex) {
-            System.out.println("Error inesperado.\n" + ex);
+            System.out.println("Error inesperado importando.\n" + ex);
         }
     }
 
-
-
-
-
-
-
-
-
-
-
     private void exportarDatosMongo() {
         System.out.println("\nEXPORTANDO...");
-
         try {
             if (!importFile.exists()) {
                 System.out.println("Creando archivo de importe...");
             }
-            BufferedWriter writer = new BufferedWriter(new FileWriter(ORM.importFile));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(importFile));
 
             // ALUMNO
-            ResultSet queryAlu = connection.createStatement().executeQuery(todoAlumno);
-            while (queryAlu.next()) {
-                String id = queryAlu.getString("alumno_nia");
-                String nombre = queryAlu.getString("alumno_nombre");
-                writer.write("Alumno::" + id + "::" + nombre + "\n");
-                System.out.println("Exportando ALUMNO NIA: " + id + " " + nombre);
+            MongoCollection<Document> listaAlumnos = SQL.todoAlumnoMongo();
+            MongoCursor<Document> alumnos = listaAlumnos.find().iterator();
+            while (alumnos.hasNext()) {
+                Document alumno = alumnos.next();
+                String nia = alumno.getString(SQL.alumno_id);
+                String nombre = alumno.getString(SQL.alumno_nombre);
+                writer.write("Alumno::" + nia + "::" + nombre + "\n");
+                System.out.println("Exportando ALUMNO NIA: " + nia + " " + nombre);
             }
-            queryAlu.close();
+            alumnos.close();
 
             // MODULO
-            ResultSet queryModu = connection.createStatement().executeQuery(todoModulo);
-            while (queryModu.next()) {
-                String id = queryModu.getString("modulo_id");
-                String nombre = queryModu.getString("modulo_nombre");
+            MongoCollection<Document> listaModulos = SQL.todoModuloMongo();
+            MongoCursor<Document> modulos = listaModulos.find().iterator();
+            while (modulos.hasNext()) {
+                Document modulo = modulos.next();
+                String id = modulo.getString(SQL.modulo_id);
+                String nombre = modulo.getString(SQL.modulo_nombre);
                 writer.write("Modulo::" + id + "::" + nombre + "\n");
                 System.out.println("Exportando MODULO ID: " + id + " " + nombre);
             }
-            queryModu.close();
+            modulos.close();
 
             // NOTAS
-            ResultSet queryNota = connection.createStatement().executeQuery(todoNotas);
-            while (queryNota.next()) {
-                String id = queryNota.getString("notas_id");
-                int nota1 = queryNota.getInt("nota1");
-                int nota2 = queryNota.getInt("nota2");
-                int nota3 = queryNota.getInt("nota3");
+            MongoCollection<Document> listaNotas = SQL.todoNotasMongo();
+            MongoCursor<Document> notas = listaNotas.find().iterator();
+            while (notas.hasNext()) {
+                Document nota = notas.next();
+                String id = nota.getString(SQL.notas_id);
+                String nota1 = nota.getString(SQL.notas_nota1);
+                String nota2 = nota.getString(SQL.notas_nota2);
+                String nota3 = nota.getString(SQL.notas_nota3);
                 writer.write("Notas::" + id + "::" + nota1 + "::" + nota2 + "::" + nota3 + "\n");
                 System.out.println("Exportando NOTAS ID: " + id);
             }
-            queryNota.close();
+            notas.close();
 
             // MATRICULA
-            ResultSet queryMatri = connection.createStatement().executeQuery(todoMatricula);
-            while (queryMatri.next()) {
-                String id = queryMatri.getString("matricula_id");
-                String alumno = queryMatri.getString("alumno_nia");
-                String modulo = queryMatri.getString("modulo_id");
-                String nota = queryMatri.getString("notas_id");
-                String calificacion = queryMatri.getString("calificacion");
+            MongoCollection<Document> listaMatriculas = SQL.todoMatriculaMongo();
+            MongoCursor<Document> matriculas = listaMatriculas.find().iterator();
+            while (matriculas.hasNext()) {
+                Document matricula = matriculas.next();
+                String id = matricula.getString(SQL.matricula_id);
+                String alumno = matricula.getString(SQL.matricula_alumno_id);
+                String modulo = matricula.getString(SQL.matricula_modulo_id);
+                String nota = matricula.getString(SQL.matricula_notas_id);
+                String calificacion = matricula.getString(SQL.matricula_calificacion);
                 writer.write(
                         "Matricula::" + id + "::" + alumno + "::" + modulo + "::" + nota + "::" + calificacion + "\n");
                 System.out.println("Exportando MATRICULAS ID: " + id);
             }
-            queryMatri.close();
+            matriculas.close();
 
             writer.close();
         } catch (IOException ex) {
             System.out.println("Error de tipo IOException. Error al acceder al fichero o al excribir.\n" + ex);
-        } catch (SQLException ex) {
-            System.out.println("Error de SQL.\n" + ex);
         } catch (Exception ex) {
-            System.out.println("Error inesperado.\n" + ex);
+            System.out.println("Error inesperado exportando.\n" + ex);
         }
         System.out.println("Se han exportado los datos.");
     }
@@ -486,7 +476,6 @@ public class ORM {
         System.out.println("\nIMPORTANDO...");
         try {
             BufferedReader reader = new BufferedReader(new FileReader(importFile));
-            Connection conect = new ORM().getConnection();
 
             String line;
             int lineNum = 0;
@@ -501,22 +490,22 @@ public class ORM {
                     switch (datos[0]) {
                         case "Alumno":
                             System.out.println("Importando ALUMNO NIA: " + datos[1] + " " + datos[2]);
-                            ResultSet rsAlu = conect.createStatement().executeQuery(buscarAlumnoID(datos[1]));
-                            if (rsAlu.next()) {
+                            Document alumno = SQL.buscarAlumnoIDMongo(datos[1]);
+                            if ( alumno != null ) {
                                 System.out.println("Existe un alumno con ese NIA");
                                 switch (menuImport()) {
                                     case 1:
-                                        conect.createStatement().execute(insertarAlumno(datos[1], datos[2]));
+                                        SQL.insertarAlumnoMongo(datos[1], datos[2]);
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");
                                         break;
                                 }
                             } else {
-                                conect.createStatement().execute(insertarAlumno(datos[1], datos[2]));
+                                SQL.insertarAlumnoMongo(datos[1], datos[2]);
                             }
-                            rsAlu.close();
                             break;
+
                         case "Modulo":
                             System.out.println("Importando MODULO ID: " + datos[1] + " " + datos[2]);
                             ResultSet rsMod = conect.createStatement().executeQuery(buscarModuloID(datos[1]));
@@ -594,15 +583,15 @@ public class ORM {
                 }
                 System.out.println("Se han importado los datos.");
             }
+
             reader.close();
-            conect.close();
         } catch (IOException ex) {
             System.out.println(
                     "Error de tipo IOException. Error al acceder al fichero o al leer.\nPuede que el fichero no exista.\n"
                             + ex);
             return;
         } catch (Exception ex) {
-            System.out.println("Error inesperado.\n" + ex);
+            System.out.println("Error inesperado importando.\n" + ex);
         }
     }
 }
