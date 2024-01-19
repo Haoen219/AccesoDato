@@ -188,6 +188,28 @@ public class SQL {
     }
 
     // UPDATE
+    public static boolean actualizarAlumno(String id, String nombre) {
+        try {
+            ORM.getConnection().createStatement()
+                    .execute("UPDATE alumno SET alumno_nombre = " + nombre + " WHERE alumno_nia = '"
+                            + id + "'");
+        } catch (SQLException ex) {
+            System.out.println("Error actualizando alumno\n" + ex);
+        }
+        return false;
+    }
+
+    public static boolean actualizarModulo(String id, String nombre) {
+        try {
+            ORM.getConnection().createStatement()
+                    .execute("UPDATE modulo SET modulo_nombre = " + nombre + " WHERE modulo_id = '"
+                            + id + "'");
+        } catch (SQLException ex) {
+            System.out.println("Error actualizando modulo\n" + ex);
+        }
+        return false;
+    }
+
     public static boolean actualizarNota(String id, int nota1, int nota2, int nota3) {
         try {
             ORM.getConnection().createStatement()

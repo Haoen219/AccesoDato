@@ -24,7 +24,7 @@ public class Conexion {
     final static String postgresSQL_PASS = "user";
 
     private static String mongoDB_URL (String user, String password){
-        return "mongodb://"+user+":"+password+"127.0.0.1:27017/";
+        return "mongodb://"+user+":"+password+"@127.0.0.1:27017/";
     }
     final static String mongoDB_URL = "mongodb://127.0.0.1:27017/";
     final static String mongoDB_BDD = "Haoen";
