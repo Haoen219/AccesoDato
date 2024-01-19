@@ -75,7 +75,6 @@ public class ORM {
     private int menuImport() {
         Lector sc = new Lector(System.in);
         int opcion = -1;
-        System.out.println("");
         System.out.println("Opciones:");
         System.out.println("1- Sustituir");
         System.out.println("2- No importar");
@@ -550,7 +549,7 @@ public class ORM {
                             System.out.println("Importando ALUMNO NIA: " + datos[1] + " " + datos[2]);
                             Document alumno = SQL.buscarAlumnoIDMongo(datos[1]);
                             if ( alumno != null ) {
-                                System.out.println("Existe un alumno con ese NIA");
+                                System.out.println("\nExiste un alumno con ese NIA");
                                 switch (menuImport()) {
                                     case 1:
                                         SQL.actualizarAlumnoMongo(datos[1], datos[2]);
@@ -568,7 +567,7 @@ public class ORM {
                             System.out.println("Importando MODULO ID: " + datos[1] + " " + datos[2]);
                             Document modulo = SQL.buscarModuloIDMongo(datos[1]);
                             if ( modulo != null ) {
-                                System.out.println("Existe un módulo con ese ID");
+                                System.out.println("\nExiste un módulo con ese ID");
                                 switch (menuImport()) {
                                     case 1:
                                         SQL.actualizarModuloMongo(datos[1], datos[2]);
@@ -586,7 +585,7 @@ public class ORM {
                             System.out.println("Importando NOTAS ID: " + datos[1]);
                             Document notas = SQL.buscarNotasIDMongo(datos[1]);
                             if ( notas != null ) {
-                                System.out.println("Existe unas notas con ese ID");
+                                System.out.println("\nExiste unas notas con ese ID");
                                 switch (menuImport()) {
                                     case 1:
                                         SQL.actualizarNotaMongo(datos[1], Integer.parseInt(datos[2]),Integer.parseInt(datos[3]), Integer.parseInt(datos[4]));
@@ -607,7 +606,7 @@ public class ORM {
                                     + " Notas: " + Integer.parseInt(datos[4]));
                             Document matricula = SQL.buscarMatriculaIDMongo(datos[1]);
                             if (matricula != null ) {
-                                System.out.println("Existe una matricula con ese ID");
+                                System.out.println("\nExiste una matricula con ese ID");
                                 switch (menuImport()) {
                                     case 1:
                                         SQL.actualizarMatriculaMongo(

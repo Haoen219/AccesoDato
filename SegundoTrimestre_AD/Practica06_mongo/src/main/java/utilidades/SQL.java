@@ -444,10 +444,10 @@ public class SQL {
     public static boolean actualizarAlumnoMongo(String id, String nombre) {
         try {
             Document alumno = new Document();
-            alumno.append("$set", new Document(alumno_id, id).append(alumno_nombre, alumno));
+            alumno.append("$set", new Document(alumno_id, id).append(alumno_nombre, nombre));
             return todoAlumnoMongo().updateOne(buscarAlumnoIDMongo(id), alumno).wasAcknowledged();
         } catch (MongoException ex) {
-            System.out.println("Error actualizando Notas ID:" + id + "\n" + ex);
+            System.out.println("Error actualizando alumno nia:" + id + "\n" + ex);
         }
         return false;
     }
@@ -458,7 +458,7 @@ public class SQL {
             modulo.append("$set", new Document(modulo_id, id).append(modulo_nombre, nombre));
             return todoMatriculaMongo().updateOne(buscarModuloIDMongo(id), modulo).wasAcknowledged();
         } catch (MongoException ex) {
-            System.out.println("Error actualizando Notas ID:" + id + "\n" + ex);
+            System.out.println("Error actualizando modulo ID:" + id + "\n" + ex);
         }
         return false;
     }
