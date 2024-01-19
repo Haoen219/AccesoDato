@@ -232,6 +232,19 @@ public class SQL {
         return false;
     }
 
+    public static boolean actualizarMatricula(String id, String alu_id, String modu_id, String nota_id,
+            String calificacion) {
+        try {
+            ORM.getConnection().createStatement().execute(
+                    "UPDATE matricula SET calificacion = '" + calificacion + "', alumno_id = '" + alu_id
+                            + "', modulo_id = '" + modu_id + "', notas_id = '" + notas_id + "'  WHERE matricula_id = '"
+                            + id + "'");
+        } catch (SQLException ex) {
+            System.out.println("Error actualizando matricula\n" + ex);
+        }
+        return false;
+    }
+
     // DELETE
     public static boolean borrarAlumno(String id) {
         try {
@@ -441,7 +454,7 @@ public class SQL {
         }
         return false;
     }
-    
+
     public static boolean actualizarAlumnoMongo(String id, String nombre) {
         try {
             Document alumno = new Document();
@@ -474,14 +487,16 @@ public class SQL {
         }
         return false;
     }
-    public static boolean actualizarMatriculaMongo(String id, String alu_id, String modu_id, String nota_id, String calificacion) {
+
+    public static boolean actualizarMatriculaMongo(String id, String alu_id, String modu_id, String nota_id,
+            String calificacion) {
         try {
             Document matricula = new Document();
             matricula.append("$set", new Document(matricula_id, id)
-            .append(matricula_alumno_id, alu_id)
-            .append(matricula_modulo_id, modu_id)
-            .append(matricula_notas_id, nota_id)
-            .append(matricula_calificacion, calificacion));
+                    .append(matricula_alumno_id, alu_id)
+                    .append(matricula_modulo_id, modu_id)
+                    .append(matricula_notas_id, nota_id)
+                    .append(matricula_calificacion, calificacion));
             return todoMatriculaMongo().updateOne(buscarMatriculaIDMongo(id), matricula).wasAcknowledged();
         } catch (MongoException ex) {
             System.out.println("Error actualizando Matricula Id:" + id + "\n" + ex);

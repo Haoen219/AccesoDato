@@ -356,7 +356,7 @@ public class ORM {
                                 System.out.println("Existe un alumno con ese NIA");
                                 switch (menuImport()) {
                                     case 1:
-                                        SQL.insertarAlumno(datos[1], datos[2]);
+                                        SQL.actualizarAlumno(datos[1], datos[2]);
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");
@@ -374,7 +374,7 @@ public class ORM {
                                 System.out.println("Existe un módulo con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        SQL.insertarModulo(datos[1], datos[2]);
+                                        SQL.actualizarModulo(datos[1], datos[2]);
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");
@@ -392,7 +392,7 @@ public class ORM {
                                 System.out.println("Existe unas notas con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        SQL.insertarNotas(datos[1], Integer.parseInt(datos[2]),
+                                        SQL.actualizarNota(datos[1], Integer.parseInt(datos[2]),
                                                 Integer.parseInt(datos[3]), Integer.parseInt(datos[4]));
                                         break;
                                     case 2:
@@ -415,7 +415,7 @@ public class ORM {
                                 System.out.println("Existe una matricula con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        SQL.insertarMatricula(
+                                        SQL.actualizarMatricula(
                                                 datos[1],
                                                 datos[2],
                                                 datos[3],
