@@ -491,9 +491,9 @@ public class ORM {
             while (notas.hasNext()) {
                 Document nota = notas.next();
                 String id = nota.getString(SQL.notas_id);
-                String nota1 = nota.getString(SQL.notas_nota1);
-                String nota2 = nota.getString(SQL.notas_nota2);
-                String nota3 = nota.getString(SQL.notas_nota3);
+                int nota1 = nota.getInteger(SQL.notas_nota1);
+                int nota2 = nota.getInteger(SQL.notas_nota2);
+                int nota3 = nota.getInteger(SQL.notas_nota3);
                 writer.write("Notas::" + id + "::" + nota1 + "::" + nota2 + "::" + nota3 + "\n");
                 System.out.println("Exportando NOTAS ID: " + id);
             }
@@ -605,7 +605,7 @@ public class ORM {
                                     + Integer.parseInt(datos[2])
                                     + " Modu: " + Integer.parseInt(datos[3])
                                     + " Notas: " + Integer.parseInt(datos[4]));
-                            Document matricula = SQL.buscarNotasIDMongo(datos[1]);
+                            Document matricula = SQL.buscarMatriculaIDMongo(datos[1]);
                             if (matricula != null ) {
                                 System.out.println("Existe una matricula con ese ID");
                                 switch (menuImport()) {

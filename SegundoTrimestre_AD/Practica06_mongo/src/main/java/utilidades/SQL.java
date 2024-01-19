@@ -82,7 +82,7 @@ public class SQL {
     // READ
     public static ResultSet todoAlumno() {
         try {
-            return ORM.getConnection().createStatement().executeQuery("SELECT * FROM alumno ORDER BY "+alumno_id);
+            return ORM.getConnection().createStatement().executeQuery("SELECT * FROM alumno ORDER BY " + alumno_id);
         } catch (SQLException ex) {
             System.out.println("Error recuperando lista de alumno\n" + ex);
         }
@@ -91,7 +91,7 @@ public class SQL {
 
     public static ResultSet todoModulo() {
         try {
-            return ORM.getConnection().createStatement().executeQuery("SELECT * FROM modulo ORDER BY "+modulo_id);
+            return ORM.getConnection().createStatement().executeQuery("SELECT * FROM modulo ORDER BY " + modulo_id);
         } catch (SQLException ex) {
             System.out.println("Error recuperando lista de modulo\n" + ex);
         }
@@ -100,7 +100,8 @@ public class SQL {
 
     public static ResultSet todoMatricula() {
         try {
-            return ORM.getConnection().createStatement().executeQuery("SELECT * FROM matricula ORDER BY "+matricula_id);
+            return ORM.getConnection().createStatement()
+                    .executeQuery("SELECT * FROM matricula ORDER BY " + matricula_id);
         } catch (SQLException ex) {
             System.out.println("Error recuperando lista de matricula\n" + ex);
         }
@@ -109,7 +110,7 @@ public class SQL {
 
     public static ResultSet todoNotas() {
         try {
-            return ORM.getConnection().createStatement().executeQuery("SELECT * FROM notas ORDER BY "+notas_id);
+            return ORM.getConnection().createStatement().executeQuery("SELECT * FROM notas ORDER BY " + notas_id);
         } catch (SQLException ex) {
             System.out.println("Error recuperando lista de notas\n" + ex);
         }
@@ -214,7 +215,7 @@ public class SQL {
         try {
             return ORM.getConnection().createStatement().execute("DELETE FROM alumno WHERE alumno_nia = '" + id + "'");
         } catch (SQLException ex) {
-            System.out.println("Error borrando alumno NIA:"+id+"\n" + ex);
+            System.out.println("Error borrando alumno NIA:" + id + "\n" + ex);
         }
         return false;
     }
@@ -223,7 +224,7 @@ public class SQL {
         try {
             return ORM.getConnection().createStatement().execute("DELETE FROM modulo WHERE modulo_id = '" + id + "'");
         } catch (SQLException ex) {
-            System.out.println("Error borrando modulo ID:"+id+"\n" + ex);
+            System.out.println("Error borrando modulo ID:" + id + "\n" + ex);
         }
         return false;
     }
@@ -232,7 +233,7 @@ public class SQL {
         try {
             return ORM.getConnection().createStatement().execute("DELETE FROM notas WHERE notas_id = '" + id + "'");
         } catch (SQLException ex) {
-            System.out.println("Error borrando notas ID:"+id+"\n" + ex);
+            System.out.println("Error borrando notas ID:" + id + "\n" + ex);
         }
         return false;
     }
@@ -242,15 +243,10 @@ public class SQL {
             return ORM.getConnection().createStatement()
                     .execute("DELETE FROM matricula WHERE matricula_id = '" + id + "'");
         } catch (SQLException ex) {
-            System.out.println("Error borrando matricula ID:"+id+"\n" + ex);
+            System.out.println("Error borrando matricula ID:" + id + "\n" + ex);
         }
         return false;
     }
-
-
-
-
-
 
     // MONGO
     // CREATE
@@ -292,7 +288,8 @@ public class SQL {
         return false;
     }
 
-    public static boolean insertarMatriculaMongo(String id, String alumno, String modulo, String nota, String calificacion) {
+    public static boolean insertarMatriculaMongo(String id, String alumno, String modulo, String nota,
+            String calificacion) {
         try {
             Document matricula = new Document("_id", new ObjectId());
             matricula.append(matricula_id, id)
@@ -384,7 +381,7 @@ public class SQL {
         try {
             return todoMatriculaMongo().find(new Document(matricula_alumno_id, nia)).iterator();
         } catch (MongoException ex) {
-            System.out.println("Error buscando alumno con NIA:"+nia+"\n" + ex);
+            System.out.println("Error buscando alumno con NIA:" + nia + "\n" + ex);
         }
         return null;
     }
@@ -393,16 +390,17 @@ public class SQL {
         try {
             return todoMatriculaMongo().find(new Document(matricula_modulo_id, id)).iterator();
         } catch (MongoException ex) {
-            System.out.println("Error buscando matricula con ID_modulo:"+id+"\n" + ex);
+            System.out.println("Error buscando matricula con ID_modulo:" + id + "\n" + ex);
         }
         return null;
     }
 
     public static Document buscarMatriculaDobleIDMongo(String nia, String id) {
         try {
-            return todoMatriculaMongo().find(new Document(matricula_alumno_id, nia).append(matricula_modulo_id, id)).first();
+            return todoMatriculaMongo().find(new Document(matricula_alumno_id, nia).append(matricula_modulo_id, id))
+                    .first();
         } catch (MongoException ex) {
-            System.out.println("Error buscando matricula con NIA_alumno:"+nia+" y ID_modulo:"+id+"\n" + ex);
+            System.out.println("Error buscando matricula con NIA_alumno:" + nia + " y ID_modulo:" + id + "\n" + ex);
         }
         return null;
     }
@@ -411,13 +409,13 @@ public class SQL {
     public static boolean actualizarNotaMongo(String id, int nota1, int nota2, int nota3) {
         try {
             Document notas = new Document();
-            notas.append("$set", new Document(SQL.notas_id, id))
+            notas.append("$set", new Document(notas_id, id)
                     .append(notas_nota1, nota1)
                     .append(notas_nota2, nota2)
-                    .append(notas_nota3, nota3);
+                    .append(notas_nota3, nota3));
             return todoNotasMongo().updateOne(buscarNotasIDMongo(id), notas).wasAcknowledged();
         } catch (MongoException ex) {
-            System.out.println("Error actualizando Notas ID:"+id+"\n" + ex);
+            System.out.println("Error actualizando Notas ID:" + id + "\n" + ex);
         }
         return false;
     }
@@ -425,11 +423,10 @@ public class SQL {
     public static boolean actualizarMatriculaMongo(String id, String calificacion) {
         try {
             Document matricula = new Document();
-            matricula.append("$set", new Document(matricula_id, id))
-                    .append(matricula_calificacion, calificacion);
+            matricula.append("$set", new Document(matricula_id, id).append(matricula_calificacion, calificacion));
             return todoMatriculaMongo().updateOne(buscarMatriculaIDMongo(id), matricula).wasAcknowledged();
         } catch (MongoException ex) {
-            System.out.println("Error actualizando Matricula Id:"+id+"\n" + ex);
+            System.out.println("Error actualizando Matricula Id:" + id + "\n" + ex);
         }
         return false;
     }
@@ -439,7 +436,7 @@ public class SQL {
         try {
             return todoAlumnoMongo().deleteOne(new Document(alumno_id, id)).wasAcknowledged();
         } catch (MongoException ex) {
-            System.out.println("Error borrando alumno NIA:"+id+"\n" + ex);
+            System.out.println("Error borrando alumno NIA:" + id + "\n" + ex);
         }
         return false;
     }
@@ -448,7 +445,7 @@ public class SQL {
         try {
             return todoModuloMongo().deleteOne(new Document(modulo_id, id)).wasAcknowledged();
         } catch (MongoException ex) {
-            System.out.println("Error borrando modulo ID:"+id+"\n" + ex);
+            System.out.println("Error borrando modulo ID:" + id + "\n" + ex);
         }
         return false;
     }
@@ -457,7 +454,7 @@ public class SQL {
         try {
             return todoNotasMongo().deleteOne(new Document(notas_id, id)).wasAcknowledged();
         } catch (MongoException ex) {
-            System.out.println("Error borrando notas ID:"+id+"\n" + ex);
+            System.out.println("Error borrando notas ID:" + id + "\n" + ex);
         }
         return false;
     }
@@ -466,7 +463,7 @@ public class SQL {
         try {
             return todoMatriculaMongo().deleteOne(new Document(matricula_id, id)).wasAcknowledged();
         } catch (MongoException ex) {
-            System.out.println("Error borrando matricula ID:"+id+"\n" + ex);
+            System.out.println("Error borrando matricula ID:" + id + "\n" + ex);
         }
         return false;
     }

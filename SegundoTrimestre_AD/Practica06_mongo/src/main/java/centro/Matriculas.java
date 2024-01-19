@@ -109,7 +109,6 @@ public class Matriculas {
                                             System.out.println("Introduzca las notas por orden: ");
                                             System.out.print("Nota 1: ");
                                             nota1 = sc.leerEntero(0, 10);
-                                            System.out.println(nota1);
                                             if (nota1 < 0 || nota1 > 10)
                                                 nota1 = notas.getInt(SQL.notas_nota1);
                                             System.out.print("Nota 2: ");
@@ -361,15 +360,15 @@ public class Matriculas {
                                     System.out.print("Nota 1: ");
                                     nota1 = sc.leerEntero(0, 10);
                                     if (nota1 < 0 || nota1 > 10)
-                                        nota1 = Integer.parseInt(notas.getString(SQL.notas_nota1));
+                                        nota1 = notas.getInteger(SQL.notas_nota1);
                                     System.out.print("Nota 2: ");
                                     nota2 = sc.leerEntero(0, 10);
                                     if (nota2 < 0 || nota2 > 10)
-                                        nota2 = Integer.parseInt(notas.getString(SQL.notas_nota2));
+                                        nota2 = notas.getInteger(SQL.notas_nota2);
                                     System.out.print("Nota 3: ");
                                     nota3 = sc.leerEntero(0, 10);
                                     if (nota3 < 0 || nota3 > 10)
-                                        nota3 = Integer.parseInt(notas.getString(SQL.notas_nota3));
+                                        nota3 = notas.getInteger(SQL.notas_nota3);
 
                                     if (SQL.actualizarNotaMongo(notasId, nota1, nota2, nota3)) {
                                         System.out.println("Modificaciones realizadas");
