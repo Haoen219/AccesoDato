@@ -1,0 +1,10 @@
+Alumno::1::DEKARENJA
+Alumno::2::Jose
+Alumno::3::Pedro
+Alumno::4::Pablo
+Modulo::1::DAM
+Modulo::2::DAW
+Notas::3::0::0::0
+Notas::4::0::0::0
+Matricula::3::2::1::3::No calificada
+Matricula::4::3::2::4::No calificada

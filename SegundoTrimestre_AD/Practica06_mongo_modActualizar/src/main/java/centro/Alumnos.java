@@ -75,6 +75,68 @@ public class Alumnos {
         return 0;
     }
 
+    public int actualizar() {
+        Lector sc = new Lector(System.in);
+        boolean seguir = true;
+        System.out.println("\n-Actualizar alumno-  (volver con [0])");
+
+        while (seguir) {
+            System.out.print("Introduzca el NIA del alumno: ");
+            String nia = sc.leer();
+
+            ResultSet queryAlu = SQL.buscarAlumnoID(nia);
+            try {
+                if (nia.equals("0")) {
+                    seguir = false;
+                } else if (queryAlu.next()) {
+                    System.out.print("Introduzca el nuevo NIA del alumno: (volver con [0])");
+                    String newNIA = sc.leer();
+
+                    if (!newNIA.equals("0")) {
+                        try {
+                            ResultSet alumnoNew = SQL.buscarAlumnoID(newNIA);
+
+                            if (alumnoNew.next()) {
+                                System.out.println("Ya existe un alumno con ese NIA");
+                            } else {
+                                System.out.print("Introduzca el nuevo nombre del alumno: (volver con [0])");
+                                String nombre = sc.leer();
+
+                                if (!nombre.equals("0")) {
+                                    if (nombre.equalsIgnoreCase("0")) {
+                                        seguir = false;
+                                    } else {
+                                        if (SQL.actualizarAlumno(nia, nombre)) {
+                                            System.out.println("\tNIA:" + nia + " " + nombre + " actualizado.\n");
+
+                                            ResultSet queryMat = SQL.buscarMatriculaAluID(nia);
+
+
+                                        } else {
+                                            System.out.println("\tNo se ha podido actualizar.\n");
+                                        }
+                                    }
+                                }
+                            }
+                            alumnoNew.close();
+                        } catch (SQLException ex) {
+                            System.out.println("Error cerrando ResultSet.\n" + ex);
+                        }
+
+                    }
+                } else {
+                    System.out.println("-No existe un alumno con ese NIA");
+                }
+                queryAlu.close();
+            } catch (SQLException ex) {
+                System.out.println("Error cerrando ResultSet.\n" + ex);
+            }
+        }
+
+        System.out.println("Volviendo...");
+        return 0;
+    }
+
     public int darDeBaja() {
         Lector sc = new Lector(System.in);
         boolean seguir = true;
@@ -191,6 +253,46 @@ public class Alumnos {
                         System.out.println("No se ha podido insertar el alumno");
                     }
                 }
+            }
+        }
+        System.out.println("Volviendo...");
+        return 0;
+    }
+
+    public int actulizarMongo() {
+        Lector sc = new Lector(System.in);
+        boolean seguir = true;
+        System.out.println("\n-Actualizar alumno-  (volver con [0])");
+
+        while (seguir) {
+            System.out.print("Introduzca el NIA del alumno: ");
+            String nia = sc.leer();
+
+            Document alumno = SQL.buscarAlumnoIDMongo(nia);
+
+            if (nia.equals("0")) {
+                seguir = false;
+            } else if (alumno != null) {
+                System.out.print("Introduzca el nombre del alumno: ");
+                String nombre = sc.leer();
+
+                System.out.print("Introduzca el nuevo nombre del alumno: ");
+                String nombre = sc.leer();
+
+                if (nombre.equalsIgnoreCase("0")) {
+                    seguir = false;
+                } else {
+                    if (SQL.insertarAlumnoMongo(nia, nombre)) {
+                        System.out.println("\tNIA:" + nia + " " + nombre + " dado de alta\n");
+                    } else {
+                        System.out.println("No se ha podido insertar el alumno");
+                    }
+                }
+
+
+                System.out.println("-Ya existe un alumno con ese NIA");
+            } else {
+                System.out.println("No existe un alumno con ese NIA");
             }
         }
         System.out.println("Volviendo...");
