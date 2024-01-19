@@ -99,8 +99,10 @@ public class Alumnos {
                             while (queryMat.next()) {
                                 String idMatri = queryMat.getString(SQL.matricula_id);
                                 String idNotas = queryMat.getString(SQL.notas_id);
-                                if (!SQL.borrarMatricula(idMatri)) System.out.println("\nNo se pudó borrar matricula ID:" + idMatri);
-                                if (!SQL.borrarNotas(idNotas)) System.out.println("\nNo se pudó borrar notas ID:" + idNotas);
+                                if (!SQL.borrarMatricula(idMatri))
+                                    System.out.println("\nNo se pudó borrar matricula ID:" + idMatri);
+                                if (!SQL.borrarNotas(idNotas))
+                                    System.out.println("\nNo se pudó borrar notas ID:" + idNotas);
                             }
                             if (SQL.borrarAlumno(nia)) {
                                 System.out.println("\tNIA: " + nia + " " + nombre + " dado de baja.");
@@ -140,7 +142,7 @@ public class Alumnos {
                         }
                         matriculas.close();
                     } catch (SQLException ex) {
-                        System.out.println("Error cerrando ResultSet matriculas del alumno ID:"+nia+"\n" + ex);
+                        System.out.println("Error cerrando ResultSet matriculas del alumno ID:" + nia + "\n" + ex);
                     }
                     System.out.printf("\nNIA:%-10s %-30s ", nia, nombre);
                     if (numMatri > 0) {
@@ -158,17 +160,6 @@ public class Alumnos {
             System.out.println("Error cerrando ResultSet alumnos\n" + ex);
         }
     }
-
-
-
-
-
-
-
-
-
-
-    
 
     public int darDeAltaMongo() {
         Lector sc = new Lector(System.in);
@@ -192,7 +183,7 @@ public class Alumnos {
                 if (nombre.equalsIgnoreCase("0")) {
                     seguir = false;
                 } else {
-                    if (SQL.insertarAlumnoMongo(nia, nombre)){
+                    if (SQL.insertarAlumnoMongo(nia, nombre)) {
                         System.out.println("\tNIA:" + nia + " " + nombre + " dado de alta\n");
                     } else {
                         System.out.println("No se ha podido insertar el alumno");
@@ -215,29 +206,35 @@ public class Alumnos {
             if (nia.equals("0")) {
                 seguir = false;
             } else {
-                    Document alumno = SQL.buscarAlumnoIDMongo(nia);
+                Document alumno = SQL.buscarAlumnoIDMongo(nia);
 
-                    if (alumno == null) {
-                        System.out.println("-No existe un alumno con ese NIA");
-                    } else {
-                        try {
-                            String nombre = alumno.getString(SQL.alumno_nombre);
-                            MongoCursor<Document> matricula = SQL.buscarMatriculaAluIDMongo(nia);
-                            // Borrar notas de cada matricula
-                            while (matricula.hasNext()) {
-                                Document matri = matricula.next();
-                                String idMatri = matri.getString(SQL.matricula_id);
-                                String idNotas = matri.getString(SQL.notas_id);
-                                
-                                if (!SQL.borrarNotasMongo(idNotas)) System.out.println("No se pudo borrar Notas ID:"+idNotas);
-                                if (!SQL.borrarMatriculaMongo(idMatri)) System.out.println("No se pudo borrar Matricula ID:"+idMatri);
-                            }
-                            matricula.close();
-                            System.out.println("\tNIA: " + nia + " " + nombre + " dado de baja.");
-                        } catch (Exception ex) {
-                            System.out.println("Error cerrando MongoCursor de las matriculas.\n" + ex);
+                if (alumno == null) {
+                    System.out.println("-No existe un alumno con ese NIA");
+                } else {
+                    try {
+                        String nombre = alumno.getString(SQL.alumno_nombre);
+                        MongoCursor<Document> matricula = SQL.buscarMatriculaAluIDMongo(nia);
+                        // Borrar notas de cada matricula
+                        while (matricula.hasNext()) {
+                            Document matri = matricula.next();
+                            String idMatri = matri.getString(SQL.matricula_id);
+                            String idNotas = matri.getString(SQL.notas_id);
+
+                            if (!SQL.borrarNotasMongo(idNotas))
+                                System.out.println("No se pudo borrar Notas ID:" + idNotas);
+                            if (!SQL.borrarMatriculaMongo(idMatri))
+                                System.out.println("No se pudo borrar Matricula ID:" + idMatri);
                         }
+                        matricula.close();
+                        if (SQL.borrarAlumnoMongo(nia)) {
+                            System.out.println("\tNIA: " + nia + " " + nombre + " dado de baja.");
+                        }else{
+                            System.out.println("NO se pudo borrar el alumno");
+                        }
+                    } catch (Exception ex) {
+                        System.out.println("Error cerrando MongoCursor de las matriculas.\n" + ex);
                     }
+                }
             }
         }
         return 0;
@@ -245,7 +242,7 @@ public class Alumnos {
 
     // IMPRIMIR
     public void listarMongo() {
-        System.out.print("\n-Listar Alumnos-");
+        System.out.println("\n-Listar Alumnos-");
         try {
             MongoCollection<Document> listaAlumnos = SQL.todoAlumnoMongo();
             MongoCursor<Document> alumnos = listaAlumnos.find().iterator();
@@ -254,29 +251,20 @@ public class Alumnos {
                 while (alumnos.hasNext()) {
                     Document alumno = alumnos.next();
 
-                    int numMatri = 0;
                     String nia = alumno.getString(SQL.alumno_id);
                     String nombre = alumno.getString(SQL.alumno_nombre);
-                    try {
-                        MongoCursor<Document> matriculas = SQL.buscarMatriculaAluIDMongo(nia);
-                        while (matriculas.hasNext()) {
-                            matriculas.next();
-                            numMatri++;
-                        }
-                        matriculas.close();
-                    } catch (Exception ex) {
-                        System.out.println("Error intentando cerrar cursor de matriculas del alumno ." + nombre + " NIA: " + nia + "\n" + ex);
-                    }
-                    System.out.printf("\nNIA:%-10s %-30s ", nia, nombre);
+                    Long numMatri = SQL.todoMatriculaMongo().countDocuments(new Document(SQL.matricula_alumno_id, nia));
+
+                    System.out.printf("NIA:%-10s %-30s ", nia, nombre);
                     if (numMatri > 0) {
-                        System.out.print("Matriculas: " + numMatri);
+                        System.out.println("Matriculas: " + numMatri);
                     } else {
-                        System.out.print("-Sin Matriculas-");
+                        System.out.println("-Sin Matriculas-");
                     }
                 }
-                System.out.println("\n--Fin de la lista--");
+                System.out.println("--Fin de la lista--");
             } else {
-                System.out.println("\nLista de alumno vacio");
+                System.out.println("Lista de alumno vacio");
             }
             alumnos.close();
         } catch (Exception ex) {

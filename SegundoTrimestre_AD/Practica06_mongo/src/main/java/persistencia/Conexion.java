@@ -26,6 +26,7 @@ public class Conexion {
     private static String mongoDB_URL (String user, String password){
         return "mongodb://"+user+":"+password+"127.0.0.1:27017/";
     }
+    final static String mongoDB_URL = "mongodb://127.0.0.1:27017/";
     final static String mongoDB_BDD = "Haoen";
     final static String mongoDB_USER = "";
     final static String mongoDB_PASS = "";
@@ -60,7 +61,9 @@ public class Conexion {
                             postgresSQL_PASS);
                     break;
                 case 3:
-                    mongoClient = MongoClients.create(mongoDB_URL(mongoDB_USER, mongoDB_PASS));
+                //DESCOMENTAR SEGUN SI TIENE CONTRASEÑA O NO
+                    //mongoClient = MongoClients.create(mongoDB_URL(mongoDB_USER, mongoDB_PASS));   //Con Contraseña
+                    mongoClient = MongoClients.create(mongoDB_URL);     //Sin contraseña
                     break;
             }
 
@@ -71,9 +74,6 @@ public class Conexion {
                 statement.execute(crearTabNot);
                 statement.execute(crearTabMat);
                 statement.close();
-            } else if (App.getOpcion() == 3) {
-                mongoClient.listDatabaseNames().forEach(System.out::println);
-                //CREAR TABLAS
             }
 
         } catch (SQLIntegrityConstraintViolationException e) {

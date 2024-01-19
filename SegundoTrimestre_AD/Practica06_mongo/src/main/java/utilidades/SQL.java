@@ -398,9 +398,9 @@ public class SQL {
         return null;
     }
 
-    public static MongoCursor<Document> buscarMatriculaDobleIDMongo(String nia, String id) {
+    public static Document buscarMatriculaDobleIDMongo(String nia, String id) {
         try {
-            return todoMatriculaMongo().find(new Document(matricula_alumno_id, nia).append(matricula_modulo_id, id)).iterator();
+            return todoMatriculaMongo().find(new Document(matricula_alumno_id, nia).append(matricula_modulo_id, id)).first();
         } catch (MongoException ex) {
             System.out.println("Error buscando matricula con NIA_alumno:"+nia+" y ID_modulo:"+id+"\n" + ex);
         }
@@ -411,7 +411,7 @@ public class SQL {
     public static boolean actualizarNotaMongo(String id, int nota1, int nota2, int nota3) {
         try {
             Document notas = new Document();
-            notas.append(SQL.notas_id, id)
+            notas.append("$set", new Document(SQL.notas_id, id))
                     .append(notas_nota1, nota1)
                     .append(notas_nota2, nota2)
                     .append(notas_nota3, nota3);
@@ -425,7 +425,7 @@ public class SQL {
     public static boolean actualizarMatriculaMongo(String id, String calificacion) {
         try {
             Document matricula = new Document();
-            matricula.append(matricula_id, id)
+            matricula.append("$set", new Document(matricula_id, id))
                     .append(matricula_calificacion, calificacion);
             return todoMatriculaMongo().updateOne(buscarMatriculaIDMongo(id), matricula).wasAcknowledged();
         } catch (MongoException ex) {

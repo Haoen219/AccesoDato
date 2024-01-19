@@ -10,10 +10,8 @@ import java.sql.SQLException;
 import org.bson.Document;
 
 import com.mongodb.MongoException;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 
-import persistencia.ORM;
 import utilidades.Lector;
 import utilidades.SQL;
 
@@ -48,13 +46,13 @@ public class Modulos {
         while (seguir) {
             try {
                 ResultSet queryMod = SQL.todoModulo();
-                String id = "";
-                try {
-                    // HAY QUE COMPROBAR FUNCIONAMIENTO
-                    queryMod.last();
-                    id = queryMod.getString(SQL.modulo_id) + 1;
-                } catch (SQLException ex) {
-                    System.out.println("Error retirando lista de modulos para asignar último ID\n" + ex);
+                int id = 0;
+                if (queryMod.last()) {
+                    try {
+                        id = Integer.parseInt(queryMod.getString(SQL.modulo_id));
+                    } catch (SQLException ex) {
+                        System.out.println("Error retirando lista de modulos para asignar último ID\n" + ex);
+                    }
                 }
                 queryMod.close();
 
@@ -64,8 +62,8 @@ public class Modulos {
                 if (nombre.equalsIgnoreCase("0")) {
                     seguir = false;
                 } else {
-                    if (SQL.insertarModulo(id, nombre)) {
-                        System.out.println("\tID:" + id + " " + nombre + " dado de alta.");
+                    if (SQL.insertarModulo(Integer.toString(id + 1), nombre)) {
+                        System.out.println("\tID:" + Integer.toString(id + 1) + " " + nombre + " dado de alta.");
                     } else {
                         System.out.println("\tNo se ha podido dar de alta.\n");
                     }
@@ -76,7 +74,6 @@ public class Modulos {
         }
         System.out.println("Volviendo...");
         return 0;
-
     }
 
     public int darDeBaja() {
@@ -164,10 +161,12 @@ public class Modulos {
                                     ResultSet matricula = SQL.todoMatricula();
                                     ResultSet notas = SQL.todoNotas();
 
-                                    matricula.last();
-                                    notas.last();
-                                    matriID = matricula.getInt(SQL.matricula_id);
-                                    notasID = notas.getInt(SQL.notas_id);
+                                    if (matricula.last()){
+                                        matriID = matricula.getInt(SQL.matricula_id);
+                                    }
+                                    if (notas.last()) {
+                                        notasID = notas.getInt(SQL.notas_id);
+                                    }
 
                                     if (SQL.insertarNotas(Integer.toString(notasID + 1), 0, 0, 0)) {
                                         if (SQL.insertarMatricula(Integer.toString(matriID + 1), nia, id,
@@ -246,22 +245,24 @@ public class Modulos {
         }
     }
 
+
+
+
+    //MONGO
     public int darDeAltaMongo() {
         Lector sc = new Lector(System.in);
         boolean seguir = true;
         System.out.println("\n-Dar de alta módulo-  (volver con [0])");
 
         while (seguir) {
-            MongoCursor<Document> modulos = SQL.todoAlumnoMongo().find().sort(new Document(SQL.modulo_id, 1))
+            MongoCursor<Document> modulos = SQL.todoModuloMongo().find().sort(new Document(SQL.modulo_id, 1))
                     .iterator();
-
-            int id = 1;
-            Document modulo = new Document();
+            int id = 0;
             try {
                 while (modulos.hasNext()) {
-                    modulo = modulos.next();
+                    Document modulo = modulos.next();
+                    id = Integer.parseInt(modulo.getString(SQL.modulo_id));
                 }
-                id = Integer.parseInt(modulo.getString(SQL.modulo_id)) + 1;
                 modulos.close();
 
                 System.out.print("Introduzca el nombre del modulo: ");
@@ -270,8 +271,8 @@ public class Modulos {
                 if (nombre.equalsIgnoreCase("0")) {
                     seguir = false;
                 } else {
-                    if (!SQL.insertarModuloMongo(Integer.toString(id), nombre)) {
-                        System.out.println("\tID:" + id + " " + nombre + " dado de alta.");
+                    if (SQL.insertarModuloMongo(Integer.toString(id+1), nombre)) {
+                        System.out.println("\tID:" + Integer.toString(id+1) + " " + nombre + " dado de alta.");
                     } else {
                         System.out.println("No se pudo dar de alta.");
                     }
@@ -316,7 +317,12 @@ public class Modulos {
                                 System.out.println("No se pudo borrar Matricula ID:" + idMatri);
                         }
                         matricula.close();
-                        System.out.println("\tID: " + id + " " + nombre + " dado de baja.");
+
+                        if (SQL.borrarModuloMongo(id)){
+                            System.out.println("\tID: " + id + " " + nombre + " dado de baja.");
+                        }else{
+                            System.out.println("No se pudo borrar el modulo");
+                        }
                     } catch (Exception ex) {
                         System.out.println("Error cerrando MongoCursor de las matriculas.\n" + ex);
                     }
@@ -404,37 +410,27 @@ public class Modulos {
     public void listarMongo() {
         System.out.println("\n-Listar Modulos-");
         try {
-            ResultSet modulos = ORM.getConnection().createStatement().executeQuery(ORM.todoModulo);
+            MongoCursor<Document> modulos = SQL.todoModuloMongo().find().sort(new Document(SQL.modulo_id, 1)).iterator();
 
-            if (modulos.next()) {
-                modulos = ORM.getConnection().createStatement().executeQuery(ORM.todoModulo);
-                while (modulos.next()) {
-                    int numMatri = 0;
-                    String id = modulos.getString("modulo_id");
-                    String nombre = modulos.getString("modulo_nombre");
-                    try {
-                        ResultSet matriculas = ORM.getConnection().createStatement()
-                                .executeQuery(ORM.buscarMatriculaModID(id));
-                        while (matriculas.next()) {
-                            numMatri++;
-                        }
-                        matriculas.close();
-                    } catch (Exception ex) {
-                        System.out.println(
-                                "Error de SQL al buscar las matriculas del modulo ." + nombre + " ID: " + id + "\n"
-                                        + ex);
-                    }
-                    System.out.printf("\nID:%-10s %-30s ", id, nombre);
+            if (modulos.hasNext()) {
+                while (modulos.hasNext()) {
+                    Document modulo = modulos.next();
+
+                    String id = modulo.getString(SQL.modulo_id);
+                    String nombre = modulo.getString(SQL.modulo_nombre);
+                    Long numMatri = SQL.todoMatriculaMongo().countDocuments(new Document(SQL.matricula_modulo_id, id));
+
+                    System.out.printf("ID:%-10s %-30s ", id, nombre);
                     if (numMatri > 0) {
-                        System.out.print("Matriculas: " + numMatri);
+                        System.out.println("Matriculas: " + numMatri);
                     } else {
-                        System.out.print("-Sin Matriculas-");
+                        System.out.println("-Sin Matriculas-");
                     }
                 }
-                System.out.println("\n--Fin de la lista--");
+                System.out.println("--Fin de la lista--");
                 modulos.close();
             } else {
-                System.out.println("\nLista de modulos vacio");
+                System.out.println("Lista de modulos vacio");
             }
         } catch (Exception ex) {
             System.out.println("Error de SQL al retirar todos los modulos\n" + ex);
