@@ -1,0 +1,5 @@
+cambiar la conexión en la Clase Conexion.
+
+Hay un URL para SERVIDOR con autenticación y otro para SIN.
+Dependiendo de si hay o no hay que descomentar y comentar dos líneas dentro del BUILDER
+EL nombre de la BDD está en un String aparte.
