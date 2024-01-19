@@ -589,7 +589,7 @@ public class ORM {
                                 System.out.println("Existe unas notas con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        SQL.insertarNotasMongo(datos[1], Integer.parseInt(datos[2]),Integer.parseInt(datos[3]), Integer.parseInt(datos[4]));
+                                        SQL.actualizarNotaMongo(datos[1], Integer.parseInt(datos[2]),Integer.parseInt(datos[3]), Integer.parseInt(datos[4]));
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");
@@ -610,7 +610,7 @@ public class ORM {
                                 System.out.println("Existe una matricula con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        SQL.insertarMatriculaMongo(
+                                        SQL.actualizarMatriculaMongo(
                                                 datos[1],
                                                 datos[2],
                                                 datos[3],

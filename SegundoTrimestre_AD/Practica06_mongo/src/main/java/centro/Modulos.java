@@ -304,7 +304,7 @@ public class Modulos {
                 } else {
                     try {
                         String nombre = modulo.getString(SQL.modulo_nombre);
-                        MongoCursor<Document> matricula = SQL.buscarMatriculaAluIDMongo(id);
+                        MongoCursor<Document> matricula = SQL.buscarMatriculaModIDMongo(id);
 
                         while (matricula.hasNext()) {
                             Document matri = matricula.next();
