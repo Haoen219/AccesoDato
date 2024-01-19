@@ -553,7 +553,7 @@ public class ORM {
                                 System.out.println("Existe un alumno con ese NIA");
                                 switch (menuImport()) {
                                     case 1:
-                                        SQL.insertarAlumnoMongo(datos[1], datos[2]);
+                                        SQL.actualizarAlumnoMongo(datos[1], datos[2]);
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");
@@ -571,7 +571,7 @@ public class ORM {
                                 System.out.println("Existe un módulo con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        SQL.insertarModuloMongo(datos[1], datos[2]);
+                                        SQL.actualizarModuloMongo(datos[1], datos[2]);
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");

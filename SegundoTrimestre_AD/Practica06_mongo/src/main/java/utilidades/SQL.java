@@ -441,20 +441,6 @@ public class SQL {
     }
 
     // UPDATE
-    public static boolean actualizarNotaMongo(String id, int nota1, int nota2, int nota3) {
-        try {
-            Document notas = new Document();
-            notas.append("$set", new Document(notas_id, id)
-                    .append(notas_nota1, nota1)
-                    .append(notas_nota2, nota2)
-                    .append(notas_nota3, nota3));
-            return todoNotasMongo().updateOne(buscarNotasIDMongo(id), notas).wasAcknowledged();
-        } catch (MongoException ex) {
-            System.out.println("Error actualizando Notas ID:" + id + "\n" + ex);
-        }
-        return false;
-    }
-
     public static boolean actualizarAlumnoMongo(String id, String nombre) {
         try {
             Document alumno = new Document();
@@ -471,6 +457,20 @@ public class SQL {
             Document modulo = new Document();
             modulo.append("$set", new Document(modulo_id, id).append(modulo_nombre, nombre));
             return todoMatriculaMongo().updateOne(buscarModuloIDMongo(id), modulo).wasAcknowledged();
+        } catch (MongoException ex) {
+            System.out.println("Error actualizando Notas ID:" + id + "\n" + ex);
+        }
+        return false;
+    }
+    
+    public static boolean actualizarNotaMongo(String id, int nota1, int nota2, int nota3) {
+        try {
+            Document notas = new Document();
+            notas.append("$set", new Document(notas_id, id)
+                    .append(notas_nota1, nota1)
+                    .append(notas_nota2, nota2)
+                    .append(notas_nota3, nota3));
+            return todoNotasMongo().updateOne(buscarNotasIDMongo(id), notas).wasAcknowledged();
         } catch (MongoException ex) {
             System.out.println("Error actualizando Notas ID:" + id + "\n" + ex);
         }
