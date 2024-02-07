@@ -3,6 +3,10 @@ package utilidades;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.xmldb.api.base.Collection;
+import org.xmldb.api.base.XMLDBException;
+import org.xmldb.api.modules.CollectionManagementService;
+
 import persistencia.ORM;
 
 public class CRUD_EXIST {
@@ -127,12 +131,10 @@ public class CRUD_EXIST {
      * nodoRaiz.appendChild(nuevaLinea);
      */
 
-    // HAY que dar capacidad para crear las colecciones
-
     // CREATE
     public static boolean insertarAlumno(String id, String nombre) {
         try {
-            return ORM.getExistCollection().createStatement()
+            return ORM.getConnection().createStatement()
                     .execute("INSERT INTO alumno (alumno_nia, alumno_nombre) VALUES ('" + id + "', '" + nombre + "')");
         } catch (SQLException ex) {
             System.out.println("Error buscando alumno con ese NIA\n" + ex);

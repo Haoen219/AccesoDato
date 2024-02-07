@@ -25,36 +25,25 @@ public class App {
         System.out.println("");
         System.out.println("|------MENÚ  CONEXIÓN------|");
         System.out.println("|0|-Salir del programa     |");
-        System.out.println("|1|-Conx. MySQL            |");
-        System.out.println("|2|-Conx. PostgreSQL       |");
+        System.out.println("|1|-MySQL                  |");
+        System.out.println("|2|-PostgreSQL             |");
         System.out.println("|3|-MongoDB                |");
+        System.out.println("|4|-ExistDB                |");
         System.out.println("|" + "-".repeat(26) + "|");
         System.out.print("OPCIÓN: ");
-        option = in.leerEntero(0, 3);
+        option = in.leerEntero(0, 4);
         in = null;
         System.gc();
         return option;
     }
 
     private static void haz(int choice) {
-        switch (choice) {
-            case 0:
-                break;
-            case 1:
-                opcionDeConexion = 1;
-                orm();
-                break;
-            case 2:
-                opcionDeConexion = 2;
-                orm();
-                break;
-            case 3:
-                opcionDeConexion = 3;
-                orm();
-                break;
-            default:
-                System.out.println(App.ANSI_CYAN + "Hay que elegit una de las opciones (numero entre parentesis)"
-                        + App.ANSI_WHITE);
+        opcionDeConexion = choice;
+
+        if (choice > 0) {
+            orm();
+        } else{
+            System.out.println(App.ANSI_CYAN + "Hay que elegit una de las opciones (numero entre parentesis)" + App.ANSI_WHITE);
         }
     }
 

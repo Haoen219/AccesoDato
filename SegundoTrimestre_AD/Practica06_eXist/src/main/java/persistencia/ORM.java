@@ -248,6 +248,8 @@ public class ORM {
         try {
             if (App.getOpcion() == 3) {
                 System.out.println("Conectado con MongoDB");
+            } else if (App.getOpcion() == 4) {
+                System.out.println("Conectado con ExistDB");
             } else {
                 resultado = connection.getMetaData().getDatabaseProductVersion();
                 System.out.println("La versión que estás usando es: " + resultado);
