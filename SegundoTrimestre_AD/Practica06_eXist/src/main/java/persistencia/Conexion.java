@@ -12,6 +12,7 @@ import org.xmldb.api.base.Collection;
 import org.xmldb.api.base.Database;
 import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.CollectionManagementService;
+import org.xmldb.api.modules.XMLResource;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -19,7 +20,6 @@ import com.mongodb.client.MongoDatabase;
 
 import utilidades.App;
 import utilidades.CRUD;
-import utilidades.CRUD_EXIST;
 
 public class Conexion {
     final static String mySQL_URL = "jdbc:mysql://127.0.0.1:3306/";
@@ -42,8 +42,8 @@ public class Conexion {
     final static String mongoDB_PASS = "";
 
     // ExistDB
-    final private String exist_URL = "xmldb:exist://localhost:8080/exist/xmlrpc/";
-    final private String exist_BDD = "haoen/haoen";         //por alguna razon tengo que poner el nombre de BDD 2 veces
+    final private String exist_URL = "xmldb:exist://localhost:8080/exist/xmlrpc/haoen";
+    final private String exist_BDD = "/haoen"; // por alguna razon tengo que poner el nombre de BDD 2 veces
     final private String exist_USER = "admin";
     final private String exist_PASS = "admin";
 
@@ -71,7 +71,8 @@ public class Conexion {
                     break;
                 case 4:
                     // INSTANCIAR DRIVER
-                    Database database = (Database) Class.forName("org.exist.xmldb.DatabaseImpl").getDeclaredConstructor().newInstance();
+                    Database database = (Database) Class.forName("org.exist.xmldb.DatabaseImpl")
+                            .getDeclaredConstructor().newInstance();
                     DatabaseManager.registerDatabase(database);
                     existCollection = DatabaseManager.getCollection(exist_URL + exist_BDD, exist_USER, exist_PASS);
                     break;
@@ -87,13 +88,12 @@ public class Conexion {
                 statement.close();
             }
 
-            if (App.getOpcion() == 4){
-                for (String name : existCollection.listChildCollections()) System.out.println(name);
-                if (existCollection.getChildCollectionCount() < 4){
-                    crearTabla(CRUD.alumno_tabla);
-                    crearTabla(CRUD.modulo_tabla);
-                    crearTabla(CRUD.matricula_tabla);
-                    crearTabla(CRUD.notas_tabla);
+            if (App.getOpcion() == 4) {
+                if (existCollection.getChildCollectionCount() < 4) {
+                    crearTabla(CRUD.alumno_tabla, "alumnos");
+                    crearTabla(CRUD.modulo_tabla, "modulos");
+                    crearTabla(CRUD.matricula_tabla, "matriculas");
+                    crearTabla(CRUD.notas_tabla, "notas");
                 }
             }
 
@@ -111,7 +111,7 @@ public class Conexion {
             // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (XMLDBException e) {
-            System.out.println("Error con el BDD ExistDB"+e);
+            System.out.println("Error con el BDD ExistDB" + e);
         } catch (IllegalArgumentException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -139,14 +139,18 @@ public class Conexion {
         return conection;
     }
 
-    public boolean crearTabla(String tabla) {
+    public boolean crearTabla(String tabla, String raizBase) {
         try {
             CollectionManagementService mgtService = (CollectionManagementService) existCollection.getService("CollectionManagementService", "1.0");
-            mgtService.createCollection(tabla);
+            XMLResource resource = (XMLResource) existCollection.createResource(tabla + ".xml", "XMLResource");
+            String baseRoot = "<"+raizBase+"></"+raizBase+">";
+            resource.setContent(baseRoot);
+
+            existCollection.storeResource(resource);
             System.out.println("La colección " + tabla + " ha sido creada.");
             return true;
         } catch (XMLDBException e) {
-            System.out.println("No se ha podido crear la colección: "+tabla);
+            System.out.println("No se ha podido crear la colección: " + tabla);
             e.printStackTrace();
         }
         return false;
