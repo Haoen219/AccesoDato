@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import org.bson.Document;
 
 import utilidades.Lector;
-import utilidades.SQL;
+import utilidades.CRUD;
 
 import com.mongodb.client.MongoCursor;
 
@@ -41,7 +41,7 @@ public class Matriculas {
     }
 
     private boolean hayMatriculas() {
-        try (ResultSet matriculas = SQL.todoMatricula()) {
+        try (ResultSet matriculas = CRUD.todoMatricula()) {
             if (matriculas.next()) {
                 matriculas.close();
                 return true;
@@ -71,18 +71,18 @@ public class Matriculas {
                     boolean seguirAlumno = true;
 
                     try {
-                        ResultSet alumno = SQL.buscarAlumnoID(nia);
+                        ResultSet alumno = CRUD.buscarAlumnoID(nia);
 
                         if (alumno.next()) {
-                            String nombreAlu = alumno.getString(SQL.alumno_nombre);
+                            String nombreAlu = alumno.getString(CRUD.alumno_nombre);
                             System.out.println(nombreAlu + ":\n----");
 
-                            ResultSet matriculas = SQL.buscarMatriculaAluID(nia);
+                            ResultSet matriculas = CRUD.buscarMatriculaAluID(nia);
                             if (!matriculas.next()) {
                                 seguirAlumno = false;
                                 System.out.println("Este alumno no tiene matricula aún.");
                             } else {
-                                imprimirAlumno(SQL.buscarMatriculaAluID(nia));
+                                imprimirAlumno(CRUD.buscarMatriculaAluID(nia));
                             }
                             matriculas.close();
 
@@ -95,32 +95,32 @@ public class Matriculas {
                                     seguirAlumno = false;
                                 } else {
                                     try {
-                                        ResultSet matricula = SQL.buscarMatriculaDobleID(nia, id);
+                                        ResultSet matricula = CRUD.buscarMatriculaDobleID(nia, id);
                                         if (matricula.next()) {
-                                            String notasId = matricula.getString(SQL.matricula_notas_id);
+                                            String notasId = matricula.getString(CRUD.matricula_notas_id);
 
-                                            ResultSet notas = SQL.buscaNotaID(notasId);
+                                            ResultSet notas = CRUD.buscaNotaID(notasId);
                                             notas.next();
                                             Lector sc = new Lector(System.in);
-                                            int nota1 = notas.getInt(SQL.notas_nota1);
-                                            int nota2 = notas.getInt(SQL.notas_nota2);
-                                            int nota3 = notas.getInt(SQL.notas_nota3);
+                                            int nota1 = notas.getInt(CRUD.notas_nota1);
+                                            int nota2 = notas.getInt(CRUD.notas_nota2);
+                                            int nota3 = notas.getInt(CRUD.notas_nota3);
 
                                             System.out.println("Introduzca las notas por orden: ");
                                             System.out.print("Nota 1: ");
                                             nota1 = sc.leerEntero(0, 10);
                                             if (nota1 < 0 || nota1 > 10)
-                                                nota1 = notas.getInt(SQL.notas_nota1);
+                                                nota1 = notas.getInt(CRUD.notas_nota1);
                                             System.out.print("Nota 2: ");
                                             nota2 = sc.leerEntero(0, 10);
                                             if (nota2 < 0 || nota2 > 10)
-                                                nota2 = notas.getInt(SQL.notas_nota2);
+                                                nota2 = notas.getInt(CRUD.notas_nota2);
                                             System.out.print("Nota 3: ");
                                             nota3 = sc.leerEntero(0, 10);
                                             if (nota3 < 0 || nota3 > 10)
-                                                nota3 = notas.getInt(SQL.notas_nota3);
+                                                nota3 = notas.getInt(CRUD.notas_nota3);
 
-                                            if (SQL.actualizarNota(notasId, nota1, nota2, nota3)) {
+                                            if (CRUD.actualizarNota(notasId, nota1, nota2, nota3)) {
                                                 System.out.println("Modificaciones realizadas.");
                                             } else {
                                                 System.out.println("No se ha podido modificar.");
@@ -170,16 +170,16 @@ public class Matriculas {
                     boolean seguirAlumno = true;
 
                     try {
-                        ResultSet alumno = SQL.buscarAlumnoID(nia);
+                        ResultSet alumno = CRUD.buscarAlumnoID(nia);
 
                         if (alumno.next()) {
-                            String nombreAlu = alumno.getString(SQL.alumno_nombre);
+                            String nombreAlu = alumno.getString(CRUD.alumno_nombre);
                             System.out.println(nombreAlu + ":");
                             System.out.println("----");
 
-                            ResultSet matriculas = SQL.buscarMatriculaAluID(nia);
+                            ResultSet matriculas = CRUD.buscarMatriculaAluID(nia);
                             if (matriculas.next()) {
-                                imprimirAlumno(SQL.buscarMatriculaAluID(nia));
+                                imprimirAlumno(CRUD.buscarMatriculaAluID(nia));
                             } else {
                                 seguirAlumno = false;
                                 System.out.println("Este alumno no tiene matricula aún.");
@@ -195,10 +195,10 @@ public class Matriculas {
                                     seguirAlumno = false;
                                 } else {
                                     try {
-                                        ResultSet matricula = SQL.buscarMatriculaDobleID(nia, id);
+                                        ResultSet matricula = CRUD.buscarMatriculaDobleID(nia, id);
 
                                         if (matricula.next()) {
-                                            String matriculaId = matricula.getString(SQL.matricula_id);
+                                            String matriculaId = matricula.getString(CRUD.matricula_id);
                                             String calificacion = "";
                                             switch (menuCalificar()) {
                                                 case 1 ->
@@ -211,7 +211,7 @@ public class Matriculas {
                                                     calificacion = "Excelente";
                                             }
 
-                                            if (SQL.actualizarMatricula(matriculaId, calificacion)) {
+                                            if (CRUD.actualizarMatricula(matriculaId, calificacion)) {
                                                 System.out.println("+Se ha modificado la matricula.");
                                             } else {
                                                 System.out.println("No se ha podido modificar.");
@@ -249,15 +249,15 @@ public class Matriculas {
         String nia = sc.leer();
 
         try {
-            ResultSet alumno = SQL.buscarAlumnoID(nia);
+            ResultSet alumno = CRUD.buscarAlumnoID(nia);
             String nombreAlu = "";
             if (alumno.next()) {
                 nombreAlu = alumno.getString("alumno_nombre");
                 System.out.println("\nMatricula de " + nombreAlu + ":");
 
-                ResultSet matriculas = SQL.buscarMatriculaAluID(nia);
+                ResultSet matriculas = CRUD.buscarMatriculaAluID(nia);
                 if (matriculas.next()) {
-                    imprimirAlumno(SQL.buscarMatriculaAluID(nia));
+                    imprimirAlumno(CRUD.buscarMatriculaAluID(nia));
                 } else {
                     System.out.println("Este alumno no tiene matricula aún.");
                 }
@@ -277,8 +277,8 @@ public class Matriculas {
                 String moduloId = matriculas.getString("modulo_id");
                 String notasId = matriculas.getString("notas_id");
                 String calificacion = matriculas.getString("calificacion");
-                ResultSet modulo = SQL.buscarModuloID(moduloId);
-                ResultSet notas = SQL.buscaNotaID(notasId);
+                ResultSet modulo = CRUD.buscarModuloID(moduloId);
+                ResultSet notas = CRUD.buscaNotaID(notasId);
 
                 modulo.next();
                 notas.next();
@@ -303,7 +303,7 @@ public class Matriculas {
     public int modificarNotasMongo() {
         Lector sc2 = new Lector(System.in);
 
-        if (SQL.todoMatriculaMongo().countDocuments() > 0) {
+        if (CRUD.todoMatriculaMongo().countDocuments() > 0) {
             System.out.println("\n-Modificar notas-");
             boolean seguir = true;
 
@@ -318,18 +318,18 @@ public class Matriculas {
                     // Buscar Alumno
                     boolean seguirAlumno = true;
 
-                    Document alumno = SQL.buscarAlumnoIDMongo(nia);
+                    Document alumno = CRUD.buscarAlumnoIDMongo(nia);
 
                     if (alumno != null) {
-                        String nombreAlu = alumno.getString(SQL.alumno_nombre);
+                        String nombreAlu = alumno.getString(CRUD.alumno_nombre);
                         System.out.println(nombreAlu + ":\n----");
 
-                        if (SQL.todoMatriculaMongo()
-                                .countDocuments(new Document(SQL.matricula_alumno_id, nia)) <= 0) {
+                        if (CRUD.todoMatriculaMongo()
+                                .countDocuments(new Document(CRUD.matricula_alumno_id, nia)) <= 0) {
                             seguirAlumno = false;
                             System.out.println("Este alumno no tiene matricula aún.");
                         } else {
-                            imprimirAlumnoMongo(SQL.buscarMatriculaAluIDMongo(nia));
+                            imprimirAlumnoMongo(CRUD.buscarMatriculaAluIDMongo(nia));
                         }
                     } else {
                         seguirAlumno = false;
@@ -345,32 +345,32 @@ public class Matriculas {
                             seguirAlumno = false;
                         } else {
                             try {
-                                Document matricula = SQL.buscarMatriculaDobleIDMongo(nia, id);
+                                Document matricula = CRUD.buscarMatriculaDobleIDMongo(nia, id);
 
                                 if (matricula != null) {
-                                    String notasId = matricula.getString(SQL.matricula_notas_id);
+                                    String notasId = matricula.getString(CRUD.matricula_notas_id);
 
-                                    Document notas = SQL.buscarNotasIDMongo(notasId);
+                                    Document notas = CRUD.buscarNotasIDMongo(notasId);
                                     Lector sc = new Lector(System.in);
-                                    int nota1 = notas.getInteger(SQL.notas_nota1);
-                                    int nota2 = notas.getInteger(SQL.notas_nota2);
-                                    int nota3 = notas.getInteger(SQL.notas_nota3);
+                                    int nota1 = notas.getInteger(CRUD.notas_nota1);
+                                    int nota2 = notas.getInteger(CRUD.notas_nota2);
+                                    int nota3 = notas.getInteger(CRUD.notas_nota3);
 
                                     System.out.println("Introduzca las notas por orden: ");
                                     System.out.print("Nota 1: ");
                                     nota1 = sc.leerEntero(0, 10);
                                     if (nota1 < 0 || nota1 > 10)
-                                        nota1 = notas.getInteger(SQL.notas_nota1);
+                                        nota1 = notas.getInteger(CRUD.notas_nota1);
                                     System.out.print("Nota 2: ");
                                     nota2 = sc.leerEntero(0, 10);
                                     if (nota2 < 0 || nota2 > 10)
-                                        nota2 = notas.getInteger(SQL.notas_nota2);
+                                        nota2 = notas.getInteger(CRUD.notas_nota2);
                                     System.out.print("Nota 3: ");
                                     nota3 = sc.leerEntero(0, 10);
                                     if (nota3 < 0 || nota3 > 10)
-                                        nota3 = notas.getInteger(SQL.notas_nota3);
+                                        nota3 = notas.getInteger(CRUD.notas_nota3);
 
-                                    if (SQL.actualizarNotaMongo(notasId, nota1, nota2, nota3)) {
+                                    if (CRUD.actualizarNotaMongo(notasId, nota1, nota2, nota3)) {
                                         System.out.println("Modificaciones realizadas");
                                     } else {
                                         System.out.println("No se ha podido modificar");
@@ -395,7 +395,7 @@ public class Matriculas {
     public int evaluarModuloMongo() {
         Lector sc2 = new Lector(System.in);
 
-        if (SQL.todoMatriculaMongo().countDocuments() > 0) {
+        if (CRUD.todoMatriculaMongo().countDocuments() > 0) {
             System.out.println("\n-Modificar notas-");
             boolean seguir = true;
 
@@ -410,17 +410,17 @@ public class Matriculas {
                     // Buscar Alumno
                     boolean seguirAlumno = true;
 
-                    Document alumno = SQL.buscarAlumnoIDMongo(nia);
+                    Document alumno = CRUD.buscarAlumnoIDMongo(nia);
 
                     if (alumno != null) {
-                        String nombreAlu = alumno.getString(SQL.alumno_nombre);
+                        String nombreAlu = alumno.getString(CRUD.alumno_nombre);
                         System.out.println(nombreAlu + ":\n----");
-                        if (SQL.todoMatriculaMongo()
-                                .countDocuments(new Document(SQL.matricula_alumno_id, nia)) <= 0) {
+                        if (CRUD.todoMatriculaMongo()
+                                .countDocuments(new Document(CRUD.matricula_alumno_id, nia)) <= 0) {
                             seguirAlumno = false;
                             System.out.println("Este alumno no tiene matricula aún.");
                         } else {
-                            imprimirAlumnoMongo(SQL.buscarMatriculaAluIDMongo(nia));
+                            imprimirAlumnoMongo(CRUD.buscarMatriculaAluIDMongo(nia));
                         }
                     } else {
                         seguirAlumno = false;
@@ -436,10 +436,10 @@ public class Matriculas {
                             seguirAlumno = false;
                         } else {
                             try {
-                                Document matricula = SQL.buscarMatriculaDobleIDMongo(nia, id);
+                                Document matricula = CRUD.buscarMatriculaDobleIDMongo(nia, id);
 
                                 if (matricula != null) {
-                                    String matriculaID = matricula.getString(SQL.matricula_id);
+                                    String matriculaID = matricula.getString(CRUD.matricula_id);
 
                                     String calificacion = "";
                                     switch (menuCalificar()) {
@@ -453,7 +453,7 @@ public class Matriculas {
                                             calificacion = "Excelente";
                                     }
 
-                                    if (SQL.actualizarMatriculaMongo(matriculaID, calificacion)) {
+                                    if (CRUD.actualizarMatriculaMongo(matriculaID, calificacion)) {
                                         System.out.println("Modificaciones realizadas");
                                     } else {
                                         System.out.println("No se ha podido modificar");
@@ -480,17 +480,17 @@ public class Matriculas {
         System.out.print("Introduzca ID del alumno: ");
         String nia = sc.leer();
 
-        Document alumno = SQL.buscarAlumnoIDMongo(nia);
+        Document alumno = CRUD.buscarAlumnoIDMongo(nia);
         if (alumno != null) {
-            String nombreAlu = alumno.getString(SQL.alumno_nombre);
+            String nombreAlu = alumno.getString(CRUD.alumno_nombre);
 
             System.out.println("\nMatricula de " + nombreAlu + ":");
 
-            if (SQL.todoMatriculaMongo()
-                    .countDocuments(new Document(SQL.matricula_alumno_id, nia)) <= 0) {
+            if (CRUD.todoMatriculaMongo()
+                    .countDocuments(new Document(CRUD.matricula_alumno_id, nia)) <= 0) {
                 System.out.println("Este alumno no tiene matricula aún.");
             } else {
-                imprimirAlumnoMongo(SQL.buscarMatriculaAluIDMongo(nia));
+                imprimirAlumnoMongo(CRUD.buscarMatriculaAluIDMongo(nia));
             }
         } else {
             System.out.println("-El alumno no existe.");
@@ -501,16 +501,16 @@ public class Matriculas {
         while (matriculas.hasNext()) {
             Document matricula = matriculas.next();
 
-            String moduloId = matricula.getString(SQL.matricula_modulo_id);
-            String notasId = matricula.getString(SQL.matricula_notas_id);
-            String calificacion = matricula.getString(SQL.matricula_calificacion);
-            Document modulo = SQL.buscarModuloIDMongo(moduloId);
-            Document notas = SQL.buscarNotasIDMongo(notasId);
+            String moduloId = matricula.getString(CRUD.matricula_modulo_id);
+            String notasId = matricula.getString(CRUD.matricula_notas_id);
+            String calificacion = matricula.getString(CRUD.matricula_calificacion);
+            Document modulo = CRUD.buscarModuloIDMongo(moduloId);
+            Document notas = CRUD.buscarNotasIDMongo(notasId);
 
-            String nombreMod = modulo.getString(SQL.modulo_nombre);
-            int nota1 = notas.getInteger(SQL.notas_nota1);
-            int nota2 = notas.getInteger(SQL.notas_nota2);
-            int nota3 = notas.getInteger(SQL.notas_nota3);
+            String nombreMod = modulo.getString(CRUD.modulo_nombre);
+            int nota1 = notas.getInteger(CRUD.notas_nota1);
+            int nota2 = notas.getInteger(CRUD.notas_nota2);
+            int nota3 = notas.getInteger(CRUD.notas_nota3);
 
             System.out.printf("\tID:%-10s %-20s Notas: %-2d|%-2d|%-2d [%s]\n", moduloId, nombreMod, nota1, nota2,
                     nota3, calificacion);

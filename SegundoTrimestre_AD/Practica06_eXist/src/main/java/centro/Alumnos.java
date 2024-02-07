@@ -13,7 +13,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 
 import utilidades.Lector;
-import utilidades.SQL;
+import utilidades.CRUD;
 
 /**
  *
@@ -45,7 +45,7 @@ public class Alumnos {
             System.out.print("Introduzca el NIA del alumno: ");
             String nia = sc.leer();
 
-            ResultSet queryAlu = SQL.buscarAlumnoID(nia);
+            ResultSet queryAlu = CRUD.buscarAlumnoID(nia);
             try {
                 if (nia.equals("0")) {
                     seguir = false;
@@ -58,7 +58,7 @@ public class Alumnos {
                     if (nombre.equalsIgnoreCase("0")) {
                         seguir = false;
                     } else {
-                        if (SQL.insertarAlumno(nia, nombre)) {
+                        if (CRUD.insertarAlumno(nia, nombre)) {
                             System.out.println("\tNIA:" + nia + " " + nombre + " dado de alta.\n");
                         } else {
                             System.out.println("\tNo se ha podido dar de alta.\n");
@@ -86,25 +86,25 @@ public class Alumnos {
             if (nia.equals("0")) {
                 seguir = false;
             } else {
-                ResultSet queryAlu = SQL.buscarAlumnoID(nia);
+                ResultSet queryAlu = CRUD.buscarAlumnoID(nia);
 
                 try {
                     if (!queryAlu.next()) {
                         System.out.println("-No existe un alumno con ese NIA");
                     } else {
                         try {
-                            String nombre = queryAlu.getString(SQL.alumno_nombre);
-                            ResultSet queryMat = SQL.buscarMatriculaAluID(nia);
+                            String nombre = queryAlu.getString(CRUD.alumno_nombre);
+                            ResultSet queryMat = CRUD.buscarMatriculaAluID(nia);
 
                             while (queryMat.next()) {
-                                String idMatri = queryMat.getString(SQL.matricula_id);
-                                String idNotas = queryMat.getString(SQL.notas_id);
-                                if (!SQL.borrarMatricula(idMatri))
+                                String idMatri = queryMat.getString(CRUD.matricula_id);
+                                String idNotas = queryMat.getString(CRUD.notas_id);
+                                if (!CRUD.borrarMatricula(idMatri))
                                     System.out.println("\nNo se pudó borrar matricula ID:" + idMatri);
-                                if (!SQL.borrarNotas(idNotas))
+                                if (!CRUD.borrarNotas(idNotas))
                                     System.out.println("\nNo se pudó borrar notas ID:" + idNotas);
                             }
-                            if (SQL.borrarAlumno(nia)) {
+                            if (CRUD.borrarAlumno(nia)) {
                                 System.out.println("\tNIA: " + nia + " " + nombre + " dado de baja.");
                             } else {
                                 System.out.println("\tNo se pudó borrar el alumno.");
@@ -127,16 +127,16 @@ public class Alumnos {
     public void listar() {
         System.out.print("\n-Listar Alumnos-");
         try {
-            ResultSet alumnos = SQL.todoAlumno();
+            ResultSet alumnos = CRUD.todoAlumno();
 
             if (alumnos.next()) {
-                alumnos = SQL.todoAlumno();
+                alumnos = CRUD.todoAlumno();
                 while (alumnos.next()) {
                     int numMatri = 0;
-                    String nia = alumnos.getString(SQL.alumno_id);
-                    String nombre = alumnos.getString(SQL.alumno_nombre);
+                    String nia = alumnos.getString(CRUD.alumno_id);
+                    String nombre = alumnos.getString(CRUD.alumno_nombre);
                     try {
-                        ResultSet matriculas = SQL.buscarMatriculaAluID(nia);
+                        ResultSet matriculas = CRUD.buscarMatriculaAluID(nia);
                         while (matriculas.next()) {
                             numMatri++;
                         }
@@ -172,7 +172,7 @@ public class Alumnos {
             System.out.print("Introduzca el NIA del alumno: ");
             String nia = sc.leer();
 
-            Document alumno = SQL.buscarAlumnoIDMongo(nia);
+            Document alumno = CRUD.buscarAlumnoIDMongo(nia);
 
             if (nia.equals("0")) {
                 seguir = false;
@@ -185,7 +185,7 @@ public class Alumnos {
                 if (nombre.equalsIgnoreCase("0")) {
                     seguir = false;
                 } else {
-                    if (SQL.insertarAlumnoMongo(nia, nombre)) {
+                    if (CRUD.insertarAlumnoMongo(nia, nombre)) {
                         System.out.println("\tNIA:" + nia + " " + nombre + " dado de alta\n");
                     } else {
                         System.out.println("No se ha podido insertar el alumno");
@@ -208,27 +208,27 @@ public class Alumnos {
             if (nia.equals("0")) {
                 seguir = false;
             } else {
-                Document alumno = SQL.buscarAlumnoIDMongo(nia);
+                Document alumno = CRUD.buscarAlumnoIDMongo(nia);
 
                 if (alumno == null) {
                     System.out.println("-No existe un alumno con ese NIA");
                 } else {
                     try {
-                        String nombre = alumno.getString(SQL.alumno_nombre);
-                        MongoCursor<Document> matricula = SQL.buscarMatriculaAluIDMongo(nia);
+                        String nombre = alumno.getString(CRUD.alumno_nombre);
+                        MongoCursor<Document> matricula = CRUD.buscarMatriculaAluIDMongo(nia);
                         // Borrar notas de cada matricula
                         while (matricula.hasNext()) {
                             Document matri = matricula.next();
-                            String idMatri = matri.getString(SQL.matricula_id);
-                            String idNotas = matri.getString(SQL.notas_id);
+                            String idMatri = matri.getString(CRUD.matricula_id);
+                            String idNotas = matri.getString(CRUD.notas_id);
 
-                            if (!SQL.borrarNotasMongo(idNotas))
+                            if (!CRUD.borrarNotasMongo(idNotas))
                                 System.out.println("No se pudo borrar Notas ID:" + idNotas);
-                            if (!SQL.borrarMatriculaMongo(idMatri))
+                            if (!CRUD.borrarMatriculaMongo(idMatri))
                                 System.out.println("No se pudo borrar Matricula ID:" + idMatri);
                         }
                         matricula.close();
-                        if (SQL.borrarAlumnoMongo(nia)) {
+                        if (CRUD.borrarAlumnoMongo(nia)) {
                             System.out.println("\tNIA: " + nia + " " + nombre + " dado de baja.");
                         } else {
                             System.out.println("NO se pudo borrar el alumno");
@@ -246,16 +246,16 @@ public class Alumnos {
     public void listarMongo() {
         System.out.println("\n-Listar Alumnos-");
         try {
-            MongoCollection<Document> listaAlumnos = SQL.todoAlumnoMongo();
+            MongoCollection<Document> listaAlumnos = CRUD.todoAlumnoMongo();
             MongoCursor<Document> alumnos = listaAlumnos.find().iterator();
 
             if (alumnos.hasNext()) {
                 while (alumnos.hasNext()) {
                     Document alumno = alumnos.next();
 
-                    String nia = alumno.getString(SQL.alumno_id);
-                    String nombre = alumno.getString(SQL.alumno_nombre);
-                    Long numMatri = SQL.todoMatriculaMongo().countDocuments(new Document(SQL.matricula_alumno_id, nia));
+                    String nia = alumno.getString(CRUD.alumno_id);
+                    String nombre = alumno.getString(CRUD.alumno_nombre);
+                    Long numMatri = CRUD.todoMatriculaMongo().countDocuments(new Document(CRUD.matricula_alumno_id, nia));
 
                     System.out.printf("NIA:%-10s %-30s ", nia, nombre);
                     if (numMatri > 0) {

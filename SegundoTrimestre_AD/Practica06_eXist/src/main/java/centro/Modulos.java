@@ -13,7 +13,7 @@ import com.mongodb.MongoException;
 import com.mongodb.client.MongoCursor;
 
 import utilidades.Lector;
-import utilidades.SQL;
+import utilidades.CRUD;
 
 /**
  *
@@ -45,11 +45,11 @@ public class Modulos {
 
         while (seguir) {
             try {
-                ResultSet queryMod = SQL.todoModulo();
+                ResultSet queryMod = CRUD.todoModulo();
                 int id = 0;
                 if (queryMod.last()) {
                     try {
-                        id = Integer.parseInt(queryMod.getString(SQL.modulo_id));
+                        id = Integer.parseInt(queryMod.getString(CRUD.modulo_id));
                     } catch (SQLException ex) {
                         System.out.println("Error retirando lista de modulos para asignar último ID\n" + ex);
                     }
@@ -62,7 +62,7 @@ public class Modulos {
                 if (nombre.equalsIgnoreCase("0")) {
                     seguir = false;
                 } else {
-                    if (SQL.insertarModulo(Integer.toString(id + 1), nombre)) {
+                    if (CRUD.insertarModulo(Integer.toString(id + 1), nombre)) {
                         System.out.println("\tID:" + Integer.toString(id + 1) + " " + nombre + " dado de alta.");
                     } else {
                         System.out.println("\tNo se ha podido dar de alta.\n");
@@ -88,24 +88,24 @@ public class Modulos {
                 seguir = false;
             } else {
                 try {
-                    ResultSet queryMod = SQL.buscarModuloID(id);
+                    ResultSet queryMod = CRUD.buscarModuloID(id);
 
                     if (!queryMod.next()) {
                         System.out.println("-No existe un módulo con ese ID");
                     } else {
                         try {
-                            String nombre = queryMod.getString(SQL.modulo_nombre);
-                            ResultSet queryMat = SQL.buscarMatriculaModID(id);
+                            String nombre = queryMod.getString(CRUD.modulo_nombre);
+                            ResultSet queryMat = CRUD.buscarMatriculaModID(id);
 
                             while (queryMat.next()) {
-                                String idMatri = queryMat.getString(SQL.matricula_id);
-                                String idNotas = queryMat.getString(SQL.notas_id);
-                                if (!SQL.borrarMatricula(idMatri))
+                                String idMatri = queryMat.getString(CRUD.matricula_id);
+                                String idNotas = queryMat.getString(CRUD.notas_id);
+                                if (!CRUD.borrarMatricula(idMatri))
                                     System.out.println("No se ha borrar matricula ID:" + idMatri);
-                                if (SQL.borrarNotas(idNotas))
+                                if (CRUD.borrarNotas(idNotas))
                                     System.out.println("No se ha borrar notas ID:" + idNotas);
                             }
-                            if (SQL.borrarModulo(id)) {
+                            if (CRUD.borrarModulo(id)) {
                                 System.out.println("\tID: " + id + " " + nombre + " dado de baja.");
                             } else {
                                 System.out.println("\tNo se pudó borrar el modulo.");
@@ -138,7 +138,7 @@ public class Modulos {
                 seguir = false;
             } else {
                 try {
-                    ResultSet alumno = SQL.buscarAlumnoID(nia);
+                    ResultSet alumno = CRUD.buscarAlumnoID(nia);
 
                     if (alumno.next()) {
                         String nombre = alumno.getString("alumno_nombre");
@@ -150,26 +150,26 @@ public class Modulos {
                             seguir = false;
                         } else {
                             try {
-                                ResultSet modulo = SQL.buscarModuloID(id);
+                                ResultSet modulo = CRUD.buscarModuloID(id);
 
                                 if (modulo.next()) {
-                                    String moduloNombre = modulo.getString(SQL.modulo_nombre);
+                                    String moduloNombre = modulo.getString(CRUD.modulo_nombre);
                                     String calificacion = "Sin calificar";
 
                                     int matriID = 0;
                                     int notasID = 0;
-                                    ResultSet matricula = SQL.todoMatricula();
-                                    ResultSet notas = SQL.todoNotas();
+                                    ResultSet matricula = CRUD.todoMatricula();
+                                    ResultSet notas = CRUD.todoNotas();
 
                                     if (matricula.last()){
-                                        matriID = matricula.getInt(SQL.matricula_id);
+                                        matriID = matricula.getInt(CRUD.matricula_id);
                                     }
                                     if (notas.last()) {
-                                        notasID = notas.getInt(SQL.notas_id);
+                                        notasID = notas.getInt(CRUD.notas_id);
                                     }
 
-                                    if (SQL.insertarNotas(Integer.toString(notasID + 1), 0, 0, 0)) {
-                                        if (SQL.insertarMatricula(Integer.toString(matriID + 1), nia, id,
+                                    if (CRUD.insertarNotas(Integer.toString(notasID + 1), 0, 0, 0)) {
+                                        if (CRUD.insertarMatricula(Integer.toString(matriID + 1), nia, id,
                                                 Integer.toString(notasID + 1), calificacion)) {
                                             System.out.println("Se creado matricula de " + nombre + " en el módulo "
                                                     + moduloNombre);
@@ -210,16 +210,16 @@ public class Modulos {
     public void listar() {
         System.out.println("\n-Listar Modulos-");
         try {
-            ResultSet modulos = SQL.todoModulo();
+            ResultSet modulos = CRUD.todoModulo();
 
             if (modulos.next()) {
-                modulos = SQL.todoModulo();
+                modulos = CRUD.todoModulo();
                 while (modulos.next()) {
                     int numMatri = 0;
                     String id = modulos.getString("modulo_id");
                     String nombre = modulos.getString("modulo_nombre");
                     try {
-                        ResultSet matriculas = SQL.buscarMatriculaModID(id);
+                        ResultSet matriculas = CRUD.buscarMatriculaModID(id);
                         while (matriculas.next()) {
                             numMatri++;
                         }
@@ -255,13 +255,13 @@ public class Modulos {
         System.out.println("\n-Dar de alta módulo-  (volver con [0])");
 
         while (seguir) {
-            MongoCursor<Document> modulos = SQL.todoModuloMongo().find().sort(new Document(SQL.modulo_id, 1))
+            MongoCursor<Document> modulos = CRUD.todoModuloMongo().find().sort(new Document(CRUD.modulo_id, 1))
                     .iterator();
             int id = 0;
             try {
                 while (modulos.hasNext()) {
                     Document modulo = modulos.next();
-                    id = Integer.parseInt(modulo.getString(SQL.modulo_id));
+                    id = Integer.parseInt(modulo.getString(CRUD.modulo_id));
                 }
                 modulos.close();
 
@@ -271,7 +271,7 @@ public class Modulos {
                 if (nombre.equalsIgnoreCase("0")) {
                     seguir = false;
                 } else {
-                    if (SQL.insertarModuloMongo(Integer.toString(id+1), nombre)) {
+                    if (CRUD.insertarModuloMongo(Integer.toString(id+1), nombre)) {
                         System.out.println("\tID:" + Integer.toString(id+1) + " " + nombre + " dado de alta.");
                     } else {
                         System.out.println("No se pudo dar de alta.");
@@ -297,28 +297,28 @@ public class Modulos {
             if (id.equals("0")) {
                 seguir = false;
             } else {
-                Document modulo = SQL.buscarModuloIDMongo(id);
+                Document modulo = CRUD.buscarModuloIDMongo(id);
 
                 if (modulo == null) {
                     System.out.println("-No existe un módulo con ese ID");
                 } else {
                     try {
-                        String nombre = modulo.getString(SQL.modulo_nombre);
-                        MongoCursor<Document> matricula = SQL.buscarMatriculaModIDMongo(id);
+                        String nombre = modulo.getString(CRUD.modulo_nombre);
+                        MongoCursor<Document> matricula = CRUD.buscarMatriculaModIDMongo(id);
 
                         while (matricula.hasNext()) {
                             Document matri = matricula.next();
-                            String idMatri = matri.getString(SQL.matricula_id);
-                            String idNotas = matri.getString(SQL.notas_id);
+                            String idMatri = matri.getString(CRUD.matricula_id);
+                            String idNotas = matri.getString(CRUD.notas_id);
 
-                            if (!SQL.borrarNotasMongo(idNotas))
+                            if (!CRUD.borrarNotasMongo(idNotas))
                                 System.out.println("No se pudo borrar Notas ID:" + idNotas);
-                            if (!SQL.borrarMatriculaMongo(idMatri))
+                            if (!CRUD.borrarMatriculaMongo(idMatri))
                                 System.out.println("No se pudo borrar Matricula ID:" + idMatri);
                         }
                         matricula.close();
 
-                        if (SQL.borrarModuloMongo(id)){
+                        if (CRUD.borrarModuloMongo(id)){
                             System.out.println("\tID: " + id + " " + nombre + " dado de baja.");
                         }else{
                             System.out.println("No se pudo borrar el modulo");
@@ -345,10 +345,10 @@ public class Modulos {
             if (nia.equals("0")) {
                 seguir = false;
             } else {
-                Document alumno = SQL.buscarAlumnoIDMongo(nia);
+                Document alumno = CRUD.buscarAlumnoIDMongo(nia);
 
                 if (alumno != null) {
-                    String nombre = alumno.getString(SQL.alumno_nombre);
+                    String nombre = alumno.getString(CRUD.alumno_nombre);
                     String id = "";
                     System.out.print("Introduzca ID del módulo: ");
                     id = sc.leer();
@@ -357,7 +357,7 @@ public class Modulos {
                         seguir = false;
                     } else {
                         try {
-                            Document modulo = SQL.buscarModuloIDMongo(id);
+                            Document modulo = CRUD.buscarModuloIDMongo(id);
 
                             if (modulo != null) {
                                 String moduloNombre = modulo.getString("modulo_nombre");
@@ -365,19 +365,19 @@ public class Modulos {
                                 int matriID = 0;
                                 int notasID = 0;
 
-                                MongoCursor<Document> matriculas = SQL.todoMatriculaMongo().find()
-                                        .sort(new Document(SQL.matricula_id, 1)).iterator();
+                                MongoCursor<Document> matriculas = CRUD.todoMatriculaMongo().find()
+                                        .sort(new Document(CRUD.matricula_id, 1)).iterator();
                                 while (matriculas.hasNext()) {
-                                    matriID = Integer.parseInt(matriculas.next().getString(SQL.matricula_id));
+                                    matriID = Integer.parseInt(matriculas.next().getString(CRUD.matricula_id));
                                 }
-                                MongoCursor<Document> notas = SQL.todoNotasMongo().find()
-                                        .sort(new Document(SQL.notas_id, 1)).iterator();
+                                MongoCursor<Document> notas = CRUD.todoNotasMongo().find()
+                                        .sort(new Document(CRUD.notas_id, 1)).iterator();
                                 while (notas.hasNext()) {
-                                    notasID = Integer.parseInt(notas.next().getString(SQL.notas_id));
+                                    notasID = Integer.parseInt(notas.next().getString(CRUD.notas_id));
                                 }
 
-                                if (SQL.insertarNotasMongo(Integer.toString(notasID + 1), 0, 0, 0)) {
-                                    if (SQL.insertarMatriculaMongo(Integer.toString(matriID + 1), nia, id,
+                                if (CRUD.insertarNotasMongo(Integer.toString(notasID + 1), 0, 0, 0)) {
+                                    if (CRUD.insertarMatriculaMongo(Integer.toString(matriID + 1), nia, id,
                                             Integer.toString(notasID + 1), calificacion)) {
                                         System.out.println(
                                                 "Se creado matricula de " + nombre + " en el módulo " + moduloNombre);
@@ -410,15 +410,15 @@ public class Modulos {
     public void listarMongo() {
         System.out.println("\n-Listar Modulos-");
         try {
-            MongoCursor<Document> modulos = SQL.todoModuloMongo().find().sort(new Document(SQL.modulo_id, 1)).iterator();
+            MongoCursor<Document> modulos = CRUD.todoModuloMongo().find().sort(new Document(CRUD.modulo_id, 1)).iterator();
 
             if (modulos.hasNext()) {
                 while (modulos.hasNext()) {
                     Document modulo = modulos.next();
 
-                    String id = modulo.getString(SQL.modulo_id);
-                    String nombre = modulo.getString(SQL.modulo_nombre);
-                    Long numMatri = SQL.todoMatriculaMongo().countDocuments(new Document(SQL.matricula_modulo_id, id));
+                    String id = modulo.getString(CRUD.modulo_id);
+                    String nombre = modulo.getString(CRUD.modulo_nombre);
+                    Long numMatri = CRUD.todoMatriculaMongo().countDocuments(new Document(CRUD.matricula_modulo_id, id));
 
                     System.out.printf("ID:%-10s %-30s ", id, nombre);
                     if (numMatri > 0) {

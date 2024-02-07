@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.util.InputMismatchException;
 
 import org.bson.Document;
+import org.xmldb.api.base.Collection;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -23,7 +24,7 @@ import centro.Modulos;
 
 import utilidades.App;
 import utilidades.Lector;
-import utilidades.SQL;
+import utilidades.CRUD;
 
 public class ORM {
 
@@ -34,10 +35,13 @@ public class ORM {
 
     private static Connection connection;
     private static MongoDatabase mongoDatabase;
+    private static Collection existCollection;
 
     public ORM() {
         if (App.getOpcion() == 3) {
             mongoDatabase = new Conexion().getMongoDatabase();
+        } else if (App.getOpcion() == 4) {
+            existCollection = new Conexion().getExistCollection();
         } else {
             connection = new Conexion().getConnection();
         }
@@ -49,6 +53,10 @@ public class ORM {
 
     public static MongoDatabase getMongoDatabase() {
         return mongoDatabase;
+    }
+
+    public static Collection getExistCollection() {
+        return existCollection;
     }
 
     // MENU DE PROGRAMA
@@ -270,7 +278,7 @@ public class ORM {
             BufferedWriter writer = new BufferedWriter(new FileWriter(importFile));
 
             // ALUMNO
-            ResultSet queryAlu = SQL.todoAlumno();
+            ResultSet queryAlu = CRUD.todoAlumno();
             while (queryAlu.next()) {
                 String id = queryAlu.getString("alumno_nia");
                 String nombre = queryAlu.getString("alumno_nombre");
@@ -280,7 +288,7 @@ public class ORM {
             queryAlu.close();
 
             // MODULO
-            ResultSet queryModu = SQL.todoModulo();
+            ResultSet queryModu = CRUD.todoModulo();
             while (queryModu.next()) {
                 String id = queryModu.getString("modulo_id");
                 String nombre = queryModu.getString("modulo_nombre");
@@ -290,7 +298,7 @@ public class ORM {
             queryModu.close();
 
             // NOTAS
-            ResultSet queryNota = SQL.todoNotas();
+            ResultSet queryNota = CRUD.todoNotas();
             while (queryNota.next()) {
                 String id = queryNota.getString("notas_id");
                 int nota1 = queryNota.getInt("nota1");
@@ -302,7 +310,7 @@ public class ORM {
             queryNota.close();
 
             // MATRICULA
-            ResultSet queryMatri = SQL.todoMatricula();
+            ResultSet queryMatri = CRUD.todoMatricula();
             while (queryMatri.next()) {
                 String id = queryMatri.getString("matricula_id");
                 String alumno = queryMatri.getString("alumno_nia");
@@ -350,48 +358,48 @@ public class ORM {
                     switch (datos[0]) {
                         case "Alumno":
                             System.out.println("Importando ALUMNO NIA: " + datos[1] + " " + datos[2]);
-                            ResultSet rsAlu = SQL.buscarAlumnoID(datos[1]);
+                            ResultSet rsAlu = CRUD.buscarAlumnoID(datos[1]);
                             if (rsAlu.next()) {
                                 System.out.println("Existe un alumno con ese NIA");
                                 switch (menuImport()) {
                                     case 1:
-                                        SQL.actualizarAlumno(datos[1], datos[2]);
+                                        CRUD.actualizarAlumno(datos[1], datos[2]);
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");
                                         break;
                                 }
                             } else {
-                                SQL.insertarAlumno(datos[1], datos[2]);
+                                CRUD.insertarAlumno(datos[1], datos[2]);
                             }
                             rsAlu.close();
                             break;
                         case "Modulo":
                             System.out.println("Importando MODULO ID: " + datos[1] + " " + datos[2]);
-                            ResultSet rsMod = SQL.buscarModuloID(datos[1]);
+                            ResultSet rsMod = CRUD.buscarModuloID(datos[1]);
                             if (rsMod.next()) {
                                 System.out.println("Existe un módulo con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        SQL.actualizarModulo(datos[1], datos[2]);
+                                        CRUD.actualizarModulo(datos[1], datos[2]);
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");
                                         break;
                                 }
                             } else {
-                                SQL.insertarModulo(datos[1], datos[2]);
+                                CRUD.insertarModulo(datos[1], datos[2]);
                             }
                             rsMod.close();
                             break;
                         case "Notas":
                             System.out.println("Importando NOTAS ID: " + datos[1]);
-                            ResultSet rsNot = SQL.buscaNotaID(datos[1]);
+                            ResultSet rsNot = CRUD.buscaNotaID(datos[1]);
                             if (rsNot.next()) {
                                 System.out.println("Existe unas notas con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        SQL.actualizarNota(datos[1], Integer.parseInt(datos[2]),
+                                        CRUD.actualizarNota(datos[1], Integer.parseInt(datos[2]),
                                                 Integer.parseInt(datos[3]), Integer.parseInt(datos[4]));
                                         break;
                                     case 2:
@@ -399,7 +407,7 @@ public class ORM {
                                         break;
                                 }
                             } else {
-                                SQL.insertarNotas(datos[1], Integer.parseInt(datos[2]),
+                                CRUD.insertarNotas(datos[1], Integer.parseInt(datos[2]),
                                         Integer.parseInt(datos[3]), Integer.parseInt(datos[4]));
                             }
                             rsNot.close();
@@ -409,12 +417,12 @@ public class ORM {
                                     + Integer.parseInt(datos[2])
                                     + " Modu: " + Integer.parseInt(datos[3])
                                     + " Notas: " + Integer.parseInt(datos[4]));
-                            ResultSet rsMat = SQL.buscarMatriculaID(datos[1]);
+                            ResultSet rsMat = CRUD.buscarMatriculaID(datos[1]);
                             if (rsMat.next()) {
                                 System.out.println("Existe una matricula con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        SQL.actualizarMatricula(
+                                        CRUD.actualizarMatricula(
                                                 datos[1],
                                                 datos[2],
                                                 datos[3],
@@ -426,7 +434,7 @@ public class ORM {
                                         break;
                                 }
                             } else {
-                                SQL.insertarMatricula(
+                                CRUD.insertarMatricula(
                                         datos[1],
                                         datos[2],
                                         datos[3],
@@ -461,53 +469,53 @@ public class ORM {
             BufferedWriter writer = new BufferedWriter(new FileWriter(importFile));
 
             // ALUMNO
-            MongoCollection<Document> listaAlumnos = SQL.todoAlumnoMongo();
+            MongoCollection<Document> listaAlumnos = CRUD.todoAlumnoMongo();
             MongoCursor<Document> alumnos = listaAlumnos.find().iterator();
             while (alumnos.hasNext()) {
                 Document alumno = alumnos.next();
-                String nia = alumno.getString(SQL.alumno_id);
-                String nombre = alumno.getString(SQL.alumno_nombre);
+                String nia = alumno.getString(CRUD.alumno_id);
+                String nombre = alumno.getString(CRUD.alumno_nombre);
                 writer.write("Alumno::" + nia + "::" + nombre + "\n");
                 System.out.println("Exportando ALUMNO NIA: " + nia + " " + nombre);
             }
             alumnos.close();
 
             // MODULO
-            MongoCollection<Document> listaModulos = SQL.todoModuloMongo();
+            MongoCollection<Document> listaModulos = CRUD.todoModuloMongo();
             MongoCursor<Document> modulos = listaModulos.find().iterator();
             while (modulos.hasNext()) {
                 Document modulo = modulos.next();
-                String id = modulo.getString(SQL.modulo_id);
-                String nombre = modulo.getString(SQL.modulo_nombre);
+                String id = modulo.getString(CRUD.modulo_id);
+                String nombre = modulo.getString(CRUD.modulo_nombre);
                 writer.write("Modulo::" + id + "::" + nombre + "\n");
                 System.out.println("Exportando MODULO ID: " + id + " " + nombre);
             }
             modulos.close();
 
             // NOTAS
-            MongoCollection<Document> listaNotas = SQL.todoNotasMongo();
+            MongoCollection<Document> listaNotas = CRUD.todoNotasMongo();
             MongoCursor<Document> notas = listaNotas.find().iterator();
             while (notas.hasNext()) {
                 Document nota = notas.next();
-                String id = nota.getString(SQL.notas_id);
-                int nota1 = nota.getInteger(SQL.notas_nota1);
-                int nota2 = nota.getInteger(SQL.notas_nota2);
-                int nota3 = nota.getInteger(SQL.notas_nota3);
+                String id = nota.getString(CRUD.notas_id);
+                int nota1 = nota.getInteger(CRUD.notas_nota1);
+                int nota2 = nota.getInteger(CRUD.notas_nota2);
+                int nota3 = nota.getInteger(CRUD.notas_nota3);
                 writer.write("Notas::" + id + "::" + nota1 + "::" + nota2 + "::" + nota3 + "\n");
                 System.out.println("Exportando NOTAS ID: " + id);
             }
             notas.close();
 
             // MATRICULA
-            MongoCollection<Document> listaMatriculas = SQL.todoMatriculaMongo();
+            MongoCollection<Document> listaMatriculas = CRUD.todoMatriculaMongo();
             MongoCursor<Document> matriculas = listaMatriculas.find().iterator();
             while (matriculas.hasNext()) {
                 Document matricula = matriculas.next();
-                String id = matricula.getString(SQL.matricula_id);
-                String alumno = matricula.getString(SQL.matricula_alumno_id);
-                String modulo = matricula.getString(SQL.matricula_modulo_id);
-                String nota = matricula.getString(SQL.matricula_notas_id);
-                String calificacion = matricula.getString(SQL.matricula_calificacion);
+                String id = matricula.getString(CRUD.matricula_id);
+                String alumno = matricula.getString(CRUD.matricula_alumno_id);
+                String modulo = matricula.getString(CRUD.matricula_modulo_id);
+                String nota = matricula.getString(CRUD.matricula_notas_id);
+                String calificacion = matricula.getString(CRUD.matricula_calificacion);
                 writer.write(
                         "Matricula::" + id + "::" + alumno + "::" + modulo + "::" + nota + "::" + calificacion + "\n");
                 System.out.println("Exportando MATRICULAS ID: " + id);
@@ -547,55 +555,55 @@ public class ORM {
                     switch (datos[0]) {
                         case "Alumno":
                             System.out.println("Importando ALUMNO NIA: " + datos[1] + " " + datos[2]);
-                            Document alumno = SQL.buscarAlumnoIDMongo(datos[1]);
+                            Document alumno = CRUD.buscarAlumnoIDMongo(datos[1]);
                             if ( alumno != null ) {
                                 System.out.println("\nExiste un alumno con ese NIA");
                                 switch (menuImport()) {
                                     case 1:
-                                        SQL.actualizarAlumnoMongo(datos[1], datos[2]);
+                                        CRUD.actualizarAlumnoMongo(datos[1], datos[2]);
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");
                                         break;
                                 }
                             } else {
-                                SQL.insertarAlumnoMongo(datos[1], datos[2]);
+                                CRUD.insertarAlumnoMongo(datos[1], datos[2]);
                             }
                             break;
 
                         case "Modulo":
                             System.out.println("Importando MODULO ID: " + datos[1] + " " + datos[2]);
-                            Document modulo = SQL.buscarModuloIDMongo(datos[1]);
+                            Document modulo = CRUD.buscarModuloIDMongo(datos[1]);
                             if ( modulo != null ) {
                                 System.out.println("\nExiste un módulo con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        SQL.actualizarModuloMongo(datos[1], datos[2]);
+                                        CRUD.actualizarModuloMongo(datos[1], datos[2]);
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");
                                         break;
                                 }
                             } else {
-                                SQL.insertarModuloMongo(datos[1], datos[2]);
+                                CRUD.insertarModuloMongo(datos[1], datos[2]);
                             }
                             break;
 
                         case "Notas":
                             System.out.println("Importando NOTAS ID: " + datos[1]);
-                            Document notas = SQL.buscarNotasIDMongo(datos[1]);
+                            Document notas = CRUD.buscarNotasIDMongo(datos[1]);
                             if ( notas != null ) {
                                 System.out.println("\nExiste unas notas con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        SQL.actualizarNotaMongo(datos[1], Integer.parseInt(datos[2]),Integer.parseInt(datos[3]), Integer.parseInt(datos[4]));
+                                        CRUD.actualizarNotaMongo(datos[1], Integer.parseInt(datos[2]),Integer.parseInt(datos[3]), Integer.parseInt(datos[4]));
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");
                                         break;
                                 }
                             } else {
-                                SQL.insertarNotasMongo(datos[1], Integer.parseInt(datos[2]),Integer.parseInt(datos[3]), Integer.parseInt(datos[4]));
+                                CRUD.insertarNotasMongo(datos[1], Integer.parseInt(datos[2]),Integer.parseInt(datos[3]), Integer.parseInt(datos[4]));
                             }
                             break;
 
@@ -604,12 +612,12 @@ public class ORM {
                                     + Integer.parseInt(datos[2])
                                     + " Modu: " + Integer.parseInt(datos[3])
                                     + " Notas: " + Integer.parseInt(datos[4]));
-                            Document matricula = SQL.buscarMatriculaIDMongo(datos[1]);
+                            Document matricula = CRUD.buscarMatriculaIDMongo(datos[1]);
                             if (matricula != null ) {
                                 System.out.println("\nExiste una matricula con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        SQL.actualizarMatriculaMongo(
+                                        CRUD.actualizarMatriculaMongo(
                                                 datos[1],
                                                 datos[2],
                                                 datos[3],
@@ -621,7 +629,7 @@ public class ORM {
                                         break;
                                 }
                             } else {
-                                SQL.insertarMatriculaMongo(
+                                CRUD.insertarMatriculaMongo(
                                         datos[1],
                                         datos[2],
                                         datos[3],

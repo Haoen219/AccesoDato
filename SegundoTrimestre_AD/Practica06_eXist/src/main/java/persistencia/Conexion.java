@@ -1,16 +1,23 @@
 package persistencia;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 
+import org.xmldb.api.DatabaseManager;
+import org.xmldb.api.base.Collection;
+import org.xmldb.api.base.Database;
+import org.xmldb.api.base.XMLDBException;
+
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 
 import utilidades.App;
+import utilidades.CRUD;
 
 public class Conexion {
     final static String mySQL_URL = "jdbc:mysql://127.0.0.1:3306/";
@@ -23,30 +30,24 @@ public class Conexion {
     final static String postgresSQL_USER = "postgres";
     final static String postgresSQL_PASS = "user";
 
-    private static String mongoDB_URL (String user, String password){
-        return "mongodb://"+user+":"+password+"@127.0.0.1:27017/";
+    private static String mongoDB_URL(String user, String password) {
+        return "mongodb://" + user + ":" + password + "@127.0.0.1:27017/";
     }
+
     final static String mongoDB_URL = "mongodb://127.0.0.1:27017/";
     final static String mongoDB_BDD = "Haoen";
     final static String mongoDB_USER = "";
     final static String mongoDB_PASS = "";
 
-    // SQL
-    final private String crearTabAlu = "CREATE TABLE IF NOT EXISTS alumno (alumno_nia VARCHAR(20) PRIMARY KEY, alumno_nombre VARCHAR(75))";
-    final private String crearTabMod = "CREATE TABLE IF NOT EXISTS modulo (modulo_id VARCHAR(20) PRIMARY KEY, modulo_nombre VARCHAR(50))";
-    final private String crearTabNot = "CREATE TABLE IF NOT EXISTS notas (notas_id VARCHAR(20) PRIMARY KEY, nota1 INT, nota2 INT, nota3 INT)";
-    final private String crearTabMat = "CREATE TABLE IF NOT EXISTS matricula (" +
-            "matricula_id VARCHAR(20) PRIMARY KEY," +
-            "alumno_nia VARCHAR(20)," +
-            "modulo_id VARCHAR(20)," +
-            "notas_id VARCHAR(20)," +
-            "calificacion VARCHAR(255)," +
-            "FOREIGN KEY (alumno_nia) REFERENCES alumno(alumno_nia)," +
-            "FOREIGN KEY (modulo_id) REFERENCES modulo(modulo_id)," +
-            "FOREIGN KEY (notas_id) REFERENCES notas(notas_id))";
+    // ExistDB
+    final private String exist_URL = "xmldb:exist://localhost:8080/exist/xmlrpc/";
+    final private String exist_BDD = "10624133";
+    final private String exist_USER = "";
+    final private String exist_PASS = "";
 
     private Connection conection;
     private MongoClient mongoClient;
+    Collection existCollection;
 
     public Conexion() {
         try {
@@ -61,18 +62,26 @@ public class Conexion {
                             postgresSQL_PASS);
                     break;
                 case 3:
-                //DESCOMENTAR SEGUN SI TIENE CONTRASEÑA O NO
-                    //mongoClient = MongoClients.create(mongoDB_URL(mongoDB_USER, mongoDB_PASS));   //Con Contraseña
-                    mongoClient = MongoClients.create(mongoDB_URL);     //Sin contraseña
+                    // DESCOMENTAR SEGUN SI TIENE CONTRASEÑA O NO
+                    // mongoClient = MongoClients.create(mongoDB_URL(mongoDB_USER, mongoDB_PASS));
+                    // Con Contraseña:
+                    mongoClient = MongoClients.create(mongoDB_URL); // Sin contraseña
                     break;
+                case 4:
+                    // INSTANCIAR DRIVER
+                    Database database = (Database) Class.forName("org.exist.xmldb.DatabaseImpl").getDeclaredConstructor().newInstance();
+                    DatabaseManager.registerDatabase(database);
+                    existCollection = DatabaseManager.getCollection(exist_URL + exist_BDD, exist_USER, exist_PASS);
+                    break;
+
             }
 
             if (App.getOpcion() < 3) {
                 Statement statement = conection.createStatement();
-                statement.execute(crearTabAlu);
-                statement.execute(crearTabMod);
-                statement.execute(crearTabNot);
-                statement.execute(crearTabMat);
+                statement.execute(CRUD.crearTabAlu);
+                statement.execute(CRUD.crearTabMod);
+                statement.execute(CRUD.crearTabNot);
+                statement.execute(CRUD.crearTabMat);
                 statement.close();
             }
 
@@ -83,7 +92,32 @@ public class Conexion {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+        } catch (InstantiationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (XMLDBException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
+    }
+
+    public Collection getExistCollection() {
+        return existCollection;
     }
 
     public MongoDatabase getMongoDatabase() {
@@ -91,6 +125,6 @@ public class Conexion {
     }
 
     public Connection getConnection() {
-        return this.conection;
+        return conection;
     }
 }

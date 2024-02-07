@@ -12,7 +12,21 @@ import com.mongodb.client.MongoCursor;
 
 import persistencia.ORM;
 
-public class SQL {
+public class CRUD {
+    // CREAR TABLAS SQL
+    public final static String crearTabAlu = "CREATE TABLE IF NOT EXISTS alumno (alumno_nia VARCHAR(20) PRIMARY KEY, alumno_nombre VARCHAR(75))";
+    public final static String crearTabMod = "CREATE TABLE IF NOT EXISTS modulo (modulo_id VARCHAR(20) PRIMARY KEY, modulo_nombre VARCHAR(50))";
+    public final static String crearTabNot = "CREATE TABLE IF NOT EXISTS notas (notas_id VARCHAR(20) PRIMARY KEY, nota1 INT, nota2 INT, nota3 INT)";
+    public final static String crearTabMat = "CREATE TABLE IF NOT EXISTS matricula (" +
+            "matricula_id VARCHAR(20) PRIMARY KEY," +
+            "alumno_nia VARCHAR(20)," +
+            "modulo_id VARCHAR(20)," +
+            "notas_id VARCHAR(20)," +
+            "calificacion VARCHAR(255)," +
+            "FOREIGN KEY (alumno_nia) REFERENCES alumno(alumno_nia)," +
+            "FOREIGN KEY (modulo_id) REFERENCES modulo(modulo_id)," +
+            "FOREIGN KEY (notas_id) REFERENCES notas(notas_id))";
+
     // tablas
     public final static String alumno_tabla = "alumno";
     public final static String alumno_id = "alumno_nia";
@@ -312,7 +326,7 @@ public class SQL {
     public static boolean insertarNotasMongo(String id, int nota1, int nota2, int nota3) {
         try {
             Document notas = new Document("_id", new ObjectId());
-            notas.append(SQL.notas_id, id)
+            notas.append(CRUD.notas_id, id)
                     .append(notas_nota1, nota1)
                     .append(notas_nota2, nota2)
                     .append(notas_nota3, nota3);
