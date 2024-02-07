@@ -3,11 +3,22 @@ package utilidades;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.lang.model.element.Element;
+import javax.swing.text.Document;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.exist.xmldb.EXistResource;
+import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Collection;
+import org.xmldb.api.base.Resource;
+import org.xmldb.api.base.ResourceSet;
 import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.CollectionManagementService;
+import org.xmldb.api.modules.XMLResource;
+import org.xmldb.api.modules.XPathQueryService;
 
-import persistencia.ORM;
+import persistencia.Gestor;
 
 public class CRUD_EXIST {
     // tablas
@@ -133,18 +144,34 @@ public class CRUD_EXIST {
 
     // CREATE
     public static boolean insertarAlumno(String id, String nombre) {
+        String xpathQuery = "/alumnos";
         try {
-            return ORM.getConnection().createStatement()
-                    .execute("INSERT INTO alumno (alumno_nia, alumno_nombre) VALUES ('" + id + "', '" + nombre + "')");
-        } catch (SQLException ex) {
-            System.out.println("Error buscando alumno con ese NIA\n" + ex);
+            XPathQueryService xpathService = (XPathQueryService) Gestor.getExistCollection().getService("XPathQueryService", "1.0");
+
+            ResourceSet result = xpathService.query(xpathQuery);
+            Resource resource = result.getResource(0);
+
+            // Agregar un nuevo elemento alumno en el recurso XML existente
+            if (resource != null && resource instanceof EXistResource) {
+                String contenidoXML = ((EXistResource) resource).getContent().toString();
+                contenidoXML = contenidoXML.replace("</alumnos>", "<alumno><nombre>Pedro</nombre></alumno></alumnos>");
+                ((EXistResource) resource).setContent(contenidoXML);
+                Gestor.getExistCollection().storeResource((EXistResource) resource);
+                System.out.println("Elemento agregado correctamente.");
+                return true;
+            } else {
+                System.out.println("Recurso XML no encontrado.");
+            }
+        } catch (XMLDBException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
         return false;
     }
 
     public static boolean insertarModulo(String id, String nombre) {
         try {
-            return ORM.getConnection().createStatement()
+            return Gestor.getConnection().createStatement()
                     .execute("INSERT INTO modulo (modulo_id, modulo_nombre) VALUES ('" + id + "', '" + nombre + "')");
         } catch (SQLException ex) {
             System.out.println("Error buscando alumno con ese NIA\n" + ex);
@@ -154,7 +181,7 @@ public class CRUD_EXIST {
 
     public static boolean insertarNotas(String id, int nota1, int nota2, int nota3) {
         try {
-            return ORM.getConnection().createStatement()
+            return Gestor.getConnection().createStatement()
                     .execute("INSERT INTO notas (notas_id, nota1, nota2, nota3) VALUES ('" + id + "', " + nota1 + ", "
                             + nota2
                             + ", " + nota3 + ")");
@@ -166,7 +193,7 @@ public class CRUD_EXIST {
 
     public static boolean insertarMatricula(String id, String alumno, String modulo, String nota, String calificacion) {
         try {
-            return ORM.getConnection().createStatement().execute(
+            return Gestor.getConnection().createStatement().execute(
                     "INSERT INTO matricula (matricula_id, alumno_nia, modulo_id, notas_id, calificacion) VALUES ('"
                             + id + "', '" + alumno + "', '" + modulo + "', '" + nota + "', '" + calificacion + "')");
         } catch (SQLException ex) {
@@ -178,7 +205,7 @@ public class CRUD_EXIST {
     // READ
     public static ResultSet todoAlumno() {
         try {
-            return ORM.getConnection().createStatement().executeQuery("SELECT * FROM alumno ORDER BY " + alumno_id);
+            return Gestor.getConnection().createStatement().executeQuery("SELECT * FROM alumno ORDER BY " + alumno_id);
         } catch (SQLException ex) {
             System.out.println("Error recuperando lista de alumno\n" + ex);
         }
@@ -187,7 +214,7 @@ public class CRUD_EXIST {
 
     public static ResultSet todoModulo() {
         try {
-            return ORM.getConnection().createStatement().executeQuery("SELECT * FROM modulo ORDER BY " + modulo_id);
+            return Gestor.getConnection().createStatement().executeQuery("SELECT * FROM modulo ORDER BY " + modulo_id);
         } catch (SQLException ex) {
             System.out.println("Error recuperando lista de modulo\n" + ex);
         }
@@ -196,7 +223,7 @@ public class CRUD_EXIST {
 
     public static ResultSet todoMatricula() {
         try {
-            return ORM.getConnection().createStatement()
+            return Gestor.getConnection().createStatement()
                     .executeQuery("SELECT * FROM matricula ORDER BY " + matricula_id);
         } catch (SQLException ex) {
             System.out.println("Error recuperando lista de matricula\n" + ex);
@@ -206,7 +233,7 @@ public class CRUD_EXIST {
 
     public static ResultSet todoNotas() {
         try {
-            return ORM.getConnection().createStatement().executeQuery("SELECT * FROM notas ORDER BY " + notas_id);
+            return Gestor.getConnection().createStatement().executeQuery("SELECT * FROM notas ORDER BY " + notas_id);
         } catch (SQLException ex) {
             System.out.println("Error recuperando lista de notas\n" + ex);
         }
@@ -215,7 +242,7 @@ public class CRUD_EXIST {
 
     public static ResultSet buscarAlumnoID(String id) {
         try {
-            return ORM.getConnection().createStatement()
+            return Gestor.getConnection().createStatement()
                     .executeQuery("SELECT * FROM alumno WHERE alumno_nia = '" + id + "'");
         } catch (SQLException ex) {
             System.out.println("Error buscando alumno con ese NIA\n" + ex);
@@ -225,7 +252,7 @@ public class CRUD_EXIST {
 
     public static ResultSet buscarModuloID(String id) {
         try {
-            return ORM.getConnection().createStatement()
+            return Gestor.getConnection().createStatement()
                     .executeQuery("SELECT * FROM modulo WHERE modulo_id = '" + id + "'");
         } catch (SQLException ex) {
             System.out.println("Error buscando alumno con ese NIA\n" + ex);
@@ -235,7 +262,7 @@ public class CRUD_EXIST {
 
     public static ResultSet buscarMatriculaID(String id) {
         try {
-            return ORM.getConnection().createStatement()
+            return Gestor.getConnection().createStatement()
                     .executeQuery("SELECT * FROM matricula WHERE matricula_id = '" + id + "'");
         } catch (SQLException ex) {
             System.out.println("Error buscando alumno con ese NIA\n" + ex);
@@ -245,7 +272,7 @@ public class CRUD_EXIST {
 
     public static ResultSet buscaNotaID(String id) {
         try {
-            return ORM.getConnection().createStatement()
+            return Gestor.getConnection().createStatement()
                     .executeQuery("SELECT * FROM notas WHERE notas_id = '" + id + "'");
         } catch (SQLException ex) {
             System.out.println("Error buscando alumno con ese NIA\n" + ex);
@@ -255,7 +282,7 @@ public class CRUD_EXIST {
 
     public static ResultSet buscarMatriculaAluID(String id) {
         try {
-            return ORM.getConnection().createStatement()
+            return Gestor.getConnection().createStatement()
                     .executeQuery("SELECT * FROM matricula WHERE alumno_nia = '" + id + "'");
         } catch (SQLException ex) {
             System.out.println("Error buscando alumno con ese NIA\n" + ex);
@@ -265,7 +292,7 @@ public class CRUD_EXIST {
 
     public static ResultSet buscarMatriculaModID(String id) {
         try {
-            return ORM.getConnection().createStatement()
+            return Gestor.getConnection().createStatement()
                     .executeQuery("SELECT * FROM matricula WHERE modulo_id = '" + id + "'");
         } catch (SQLException ex) {
             System.out.println("Error buscando alumno con ese NIA\n" + ex);
@@ -275,7 +302,7 @@ public class CRUD_EXIST {
 
     public static ResultSet buscarMatriculaDobleID(String nia, String id) {
         try {
-            return ORM.getConnection().createStatement().executeQuery(
+            return Gestor.getConnection().createStatement().executeQuery(
                     "SELECT * FROM matricula WHERE modulo_id = '" + id + "' AND alumno_nia = '" + nia + "'");
         } catch (SQLException ex) {
             System.out.println("Error buscando alumno con ese NIA\n" + ex);
@@ -286,7 +313,7 @@ public class CRUD_EXIST {
     // UPDATE
     public static boolean actualizarAlumno(String id, String nombre) {
         try {
-            ORM.getConnection().createStatement()
+            Gestor.getConnection().createStatement()
                     .execute("UPDATE alumno SET alumno_nombre = " + nombre + " WHERE alumno_nia = '"
                             + id + "'");
         } catch (SQLException ex) {
@@ -297,7 +324,7 @@ public class CRUD_EXIST {
 
     public static boolean actualizarModulo(String id, String nombre) {
         try {
-            ORM.getConnection().createStatement()
+            Gestor.getConnection().createStatement()
                     .execute("UPDATE modulo SET modulo_nombre = " + nombre + " WHERE modulo_id = '"
                             + id + "'");
         } catch (SQLException ex) {
@@ -308,7 +335,7 @@ public class CRUD_EXIST {
 
     public static boolean actualizarNota(String id, int nota1, int nota2, int nota3) {
         try {
-            ORM.getConnection().createStatement()
+            Gestor.getConnection().createStatement()
                     .execute("UPDATE notas SET nota1 = " + nota1 + ", nota2 = " + nota2 + ", nota3 =" + nota3
                             + " WHERE notas_id = '"
                             + id + "'");
@@ -320,7 +347,7 @@ public class CRUD_EXIST {
 
     public static boolean actualizarMatricula(String id, String calificacion) {
         try {
-            ORM.getConnection().createStatement().execute(
+            Gestor.getConnection().createStatement().execute(
                     "UPDATE matricula SET calificacion = '" + calificacion + "' WHERE matricula_id = '" + id + "'");
         } catch (SQLException ex) {
             System.out.println("Error actualizando matricula\n" + ex);
@@ -331,7 +358,7 @@ public class CRUD_EXIST {
     public static boolean actualizarMatricula(String id, String alu_id, String modu_id, String nota_id,
             String calificacion) {
         try {
-            ORM.getConnection().createStatement().execute(
+            Gestor.getConnection().createStatement().execute(
                     "UPDATE matricula SET calificacion = '" + calificacion + "', alumno_id = '" + alu_id
                             + "', modulo_id = '" + modu_id + "', notas_id = '" + notas_id + "'  WHERE matricula_id = '"
                             + id + "'");
@@ -344,7 +371,8 @@ public class CRUD_EXIST {
     // DELETE
     public static boolean borrarAlumno(String id) {
         try {
-            return ORM.getConnection().createStatement().execute("DELETE FROM alumno WHERE alumno_nia = '" + id + "'");
+            return Gestor.getConnection().createStatement()
+                    .execute("DELETE FROM alumno WHERE alumno_nia = '" + id + "'");
         } catch (SQLException ex) {
             System.out.println("Error borrando alumno NIA:" + id + "\n" + ex);
         }
@@ -353,7 +381,8 @@ public class CRUD_EXIST {
 
     public static boolean borrarModulo(String id) {
         try {
-            return ORM.getConnection().createStatement().execute("DELETE FROM modulo WHERE modulo_id = '" + id + "'");
+            return Gestor.getConnection().createStatement()
+                    .execute("DELETE FROM modulo WHERE modulo_id = '" + id + "'");
         } catch (SQLException ex) {
             System.out.println("Error borrando modulo ID:" + id + "\n" + ex);
         }
@@ -362,7 +391,7 @@ public class CRUD_EXIST {
 
     public static boolean borrarNotas(String id) {
         try {
-            return ORM.getConnection().createStatement().execute("DELETE FROM notas WHERE notas_id = '" + id + "'");
+            return Gestor.getConnection().createStatement().execute("DELETE FROM notas WHERE notas_id = '" + id + "'");
         } catch (SQLException ex) {
             System.out.println("Error borrando notas ID:" + id + "\n" + ex);
         }
@@ -371,7 +400,7 @@ public class CRUD_EXIST {
 
     public static boolean borrarMatricula(String id) {
         try {
-            return ORM.getConnection().createStatement()
+            return Gestor.getConnection().createStatement()
                     .execute("DELETE FROM matricula WHERE matricula_id = '" + id + "'");
         } catch (SQLException ex) {
             System.out.println("Error borrando matricula ID:" + id + "\n" + ex);

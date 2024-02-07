@@ -56,8 +56,7 @@
         <dependency>
             <groupId>org.exist-db</groupId>
             <artifactId>exist-core</artifactId>
-            <version>5.0.0</version>
-            <scope>runtime</scope>
+            <version>6.2.0</version>
         </dependency>
     </dependencies>
     <properties>

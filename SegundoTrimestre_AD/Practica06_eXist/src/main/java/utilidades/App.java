@@ -1,6 +1,6 @@
 package utilidades;
 
-import persistencia.ORM;
+import persistencia.Gestor;
 
 public class App {
     public static final String ANSI_BLACK = "\u001B[30m";
@@ -49,7 +49,7 @@ public class App {
 
     private static int orm() {
         int retorno = 0;
-        ORM orm = new ORM();
+        Gestor orm = new Gestor();
         orm.haz();
         return retorno;
     }

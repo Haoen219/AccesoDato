@@ -26,7 +26,7 @@ import utilidades.App;
 import utilidades.Lector;
 import utilidades.CRUD;
 
-public class ORM {
+public class Gestor {
 
     private static Alumnos alumnos = new Alumnos();
     private static Modulos modulos = new Modulos();
@@ -37,7 +37,7 @@ public class ORM {
     private static MongoDatabase mongoDatabase;
     private static Collection existCollection;
 
-    public ORM() {
+    public Gestor() {
         if (App.getOpcion() == 3) {
             mongoDatabase = new Conexion().getMongoDatabase();
         } else if (App.getOpcion() == 4) {
