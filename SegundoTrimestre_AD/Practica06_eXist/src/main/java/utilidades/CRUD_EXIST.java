@@ -3,7 +3,6 @@ package utilidades;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
-import org.xmldb.api.base.Resource;
 import org.xmldb.api.base.ResourceSet;
 import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.XMLResource;
@@ -403,31 +402,27 @@ public class CRUD_EXIST {
     }
 
     public static boolean actualizarMatricula(String id, String calificacion) {
-        String resourceID = notas_tabla + ".xml";
+        String xquery = "update replace //" + matricula_tabla +"/"+matricula_calificacion+ "[../" + matricula_id + " = " + id + "] with " +
+                        "<"+matricula_calificacion+">"+calificacion+"</"+matricula_calificacion+">";
+        Element matricula = null;
         try {
-            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(resourceID);
-            if (resource != null) {
-                Element matricula = buscarMatriculaID(id);
-                Element calificacioElement = (Element) matricula.getElementsByTagName(matricula_calificacion)
-                        .item(0);
-                calificacioElement.setTextContent(calificacion);
-
-                // Actualizar el recurso en la colección
-                resource.setContent(matricula);
-                Gestor.getExistCollection().storeResource(resource);
+            matricula = buscarMatriculaID(id);
+            if (matricula != null) {
+                XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
+                queryService.query(xquery);
                 return true;
             } else {
-                System.out.println("Recurso XML no encontrado.");
+                System.out.println("No existe esta Matricula");
             }
         } catch (XMLDBException e) {
-            System.out.println("Error actualizando Matricula (calificacion)");
+            System.out.println("Error actualizando Matricula");
             e.printStackTrace();
         }
         return false;
     }
 
     public static boolean actualizarMatricula(String id, String alu_id, String modu_id, String nota_id, String calificacion) {
-        String xquery = "update replace //" + matricula_tabla + "[" + notas_id + " = " + id + "] with " +
+        String xquery = "update replace //" + matricula_tabla + "[" + matricula_id + " = " + id + "] with " +
                         "<"+matricula_tabla+">"+
                         "<"+matricula_id+">"+id+"</"+matricula_id+">"+
                         "<"+matricula_alumno_id+">"+alu_id+"</"+matricula_alumno_id+">"+
@@ -435,18 +430,18 @@ public class CRUD_EXIST {
                         "<"+matricula_notas_id+">"+nota_id+"</"+matricula_notas_id+">"+
                         "<"+matricula_calificacion+">"+calificacion+"</"+matricula_calificacion+">"+
                         "</"+matricula_tabla+">";
-        Element modulo = null;
+        Element matricula = null;
         try {
-            modulo = buscarModuloID(id);
-            if (modulo != null) {
+            matricula = buscarMatriculaID(id);
+            if (matricula != null) {
                 XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
                 queryService.query(xquery);
                 return true;
             } else {
-                System.out.println("No existe esta Nota");
+                System.out.println("No existe esta Matricula");
             }
         } catch (XMLDBException e) {
-            System.out.println("Error actualizando Notas");
+            System.out.println("Error actualizando Matricula");
             e.printStackTrace();
         }
         return false;
