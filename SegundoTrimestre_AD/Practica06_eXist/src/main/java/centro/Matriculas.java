@@ -624,7 +624,7 @@ public class Matriculas {
     public int evaluarModuloExist() {
         Lector sc2 = new Lector(System.in);
 
-        if (hayMatriculas()) {
+        if (CRUD_EXIST.recuperarLista(CRUD_EXIST.modulo_tabla) != null) {
             System.out.println("\n-Modificar notas-");
             boolean seguir = true;
 
@@ -749,7 +749,7 @@ public class Matriculas {
 
                 Element notas = CRUD_EXIST.buscarNotaID(notasId);
                 int nota1 = Integer
-                        .getInteger(notas.getElementsByTagName(CRUD_EXIST.notas_nota1).item(0).getTextContent());
+                        .parseInt(notas.getElementsByTagName(CRUD_EXIST.notas_nota1).item(0).getTextContent());
                 int nota2 = Integer
                         .getInteger(notas.getElementsByTagName(CRUD_EXIST.notas_nota2).item(0).getTextContent());
                 int nota3 = Integer

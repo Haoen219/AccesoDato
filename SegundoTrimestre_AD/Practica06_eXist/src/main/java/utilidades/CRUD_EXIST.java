@@ -262,8 +262,10 @@ public class CRUD_EXIST {
         try {
             XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
             ResourceSet result = queryService.query(xquery);
-            XMLResource resource = (XMLResource) result.getResource(0);
-            elemento = (Element) resource.getContentAsDOM();
+            if (result.getSize() > 0) {
+                XMLResource resource = (XMLResource) result.getResource(0);
+                elemento = (Element) resource.getContentAsDOM();
+            }
         } catch (XMLDBException e) {
             System.out.println("Error recuperando Modulo");
             e.printStackTrace();
@@ -278,8 +280,10 @@ public class CRUD_EXIST {
         try {
             XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
             ResourceSet result = queryService.query(xquery);
-            XMLResource resource = (XMLResource) result.getResource(0);
-            elemento = (Element) resource.getContentAsDOM();
+            if (result.getSize() > 0) {
+                XMLResource resource = (XMLResource) result.getResource(0);
+                elemento = (Element) resource.getContentAsDOM();
+            }
         } catch (XMLDBException e) {
             System.out.println("Error recuperando Notas");
             e.printStackTrace();
@@ -294,8 +298,10 @@ public class CRUD_EXIST {
         try {
             XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
             ResourceSet result = queryService.query(xquery);
-            XMLResource resource = (XMLResource) result.getResource(0);
-            elemento = (Element) resource.getContentAsDOM();
+            if (result.getSize() > 0) {
+                XMLResource resource = (XMLResource) result.getResource(0);
+                elemento = (Element) resource.getContentAsDOM();
+            }
         } catch (XMLDBException e) {
             System.out.println("Error recuperando Matricula");
             e.printStackTrace();
@@ -338,8 +344,10 @@ public class CRUD_EXIST {
         try {
             XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
             ResourceSet result = queryService.query(xquery);
-            XMLResource resource = (XMLResource) result.getResource(0);
-            elemento = (Element) resource.getContentAsDOM();
+            if (result.getSize() > 0) {
+                XMLResource resource = (XMLResource) result.getResource(0);
+                elemento = (Element) resource.getContentAsDOM();
+            }
         } catch (XMLDBException e) {
             System.out.println("Error recuperando Matricula");
             e.printStackTrace();
