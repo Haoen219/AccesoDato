@@ -8,12 +8,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.bson.Document;
+import org.w3c.dom.Element;
+import org.xmldb.api.base.ResourceIterator;
+import org.xmldb.api.base.ResourceSet;
+import org.xmldb.api.modules.XMLResource;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 
 import utilidades.Lector;
 import utilidades.CRUD;
+import utilidades.CRUD_EXIST;
 
 /**
  *
@@ -36,6 +41,7 @@ public class Alumnos {
         return opcion;
     }
 
+    // SQL
     public int darDeAlta() {
         Lector sc = new Lector(System.in);
         boolean seguir = true;
@@ -123,7 +129,6 @@ public class Alumnos {
         return 0;
     }
 
-    // IMPRIMIR
     public void listar() {
         System.out.print("\n-Listar Alumnos-");
         try {
@@ -241,7 +246,6 @@ public class Alumnos {
         return 0;
     }
 
-    // IMPRIMIR
     public void listarMongo() {
         System.out.println("\n-Listar Alumnos-");
         try {
@@ -273,8 +277,6 @@ public class Alumnos {
         }
     }
 
-
-
     // EXIST
     public int darDeAltaExist() {
         Lector sc = new Lector(System.in);
@@ -285,7 +287,7 @@ public class Alumnos {
             System.out.print("Introduzca el NIA del alumno: ");
             String nia = sc.leer();
 
-            Document alumno = CRUD.buscarAlumnoIDMongo(nia);
+            Element alumno = CRUD_EXIST.buscarAlumnoID(nia);
 
             if (nia.equals("0")) {
                 seguir = false;
@@ -298,7 +300,7 @@ public class Alumnos {
                 if (nombre.equalsIgnoreCase("0")) {
                     seguir = false;
                 } else {
-                    if (CRUD.insertarAlumnoMongo(nia, nombre)) {
+                    if (CRUD_EXIST.insertarAlumno(nia, nombre)) {
                         System.out.println("\tNIA:" + nia + " " + nombre + " dado de alta\n");
                     } else {
                         System.out.println("No se ha podido insertar el alumno");
@@ -321,27 +323,31 @@ public class Alumnos {
             if (nia.equals("0")) {
                 seguir = false;
             } else {
-                Document alumno = CRUD.buscarAlumnoIDMongo(nia);
+                Element alumno = CRUD_EXIST.buscarAlumnoID(nia);
 
                 if (alumno == null) {
                     System.out.println("-No existe un alumno con ese NIA");
                 } else {
                     try {
-                        String nombre = alumno.getString(CRUD.alumno_nombre);
-                        MongoCursor<Document> matricula = CRUD.buscarMatriculaAluIDMongo(nia);
-                        // Borrar notas de cada matricula
-                        while (matricula.hasNext()) {
-                            Document matri = matricula.next();
-                            String idMatri = matri.getString(CRUD.matricula_id);
-                            String idNotas = matri.getString(CRUD.notas_id);
+                        String nombre = alumno.getElementsByTagName(CRUD_EXIST.alumno_nombre).item(0).getTextContent();
+                        ResourceSet matriculas = CRUD_EXIST.buscarMatriculaAluID(nia);
+                        ResourceIterator iterator = matriculas.getIterator();
 
-                            if (!CRUD.borrarNotasMongo(idNotas))
+                        while (iterator.hasMoreResources()) {
+                            XMLResource resource = (XMLResource) iterator.nextResource();
+                            Element matricula = (Element) resource.getContentAsDOM();
+                            String idMatri = matricula.getElementsByTagName(CRUD_EXIST.matricula_id).item(0)
+                                    .getTextContent();
+                            String idNotas = matricula.getElementsByTagName(CRUD_EXIST.matricula_notas_id).item(0)
+                                    .getTextContent();
+
+                            if (!CRUD_EXIST.borrarMatricula(idMatri))
                                 System.out.println("No se pudo borrar Notas ID:" + idNotas);
-                            if (!CRUD.borrarMatriculaMongo(idMatri))
+                            if (!CRUD_EXIST.borrarNotas(idNotas))
                                 System.out.println("No se pudo borrar Matricula ID:" + idMatri);
                         }
-                        matricula.close();
-                        if (CRUD.borrarAlumnoMongo(nia)) {
+                        
+                        if (CRUD_EXIST.borrarAlumno(nia)) {
                             System.out.println("\tNIA: " + nia + " " + nombre + " dado de baja.");
                         } else {
                             System.out.println("NO se pudo borrar el alumno");
@@ -355,35 +361,33 @@ public class Alumnos {
         return 0;
     }
 
-    // IMPRIMIR
     public void listarExist() {
         System.out.println("\n-Listar Alumnos-");
         try {
-            MongoCollection<Document> listaAlumnos = CRUD.todoAlumnoMongo();
-            MongoCursor<Document> alumnos = listaAlumnos.find().iterator();
+            ResourceSet alumnos = CRUD_EXIST.recuperarLista(CRUD_EXIST.alumno_tabla);
+            ResourceIterator iterator = alumnos.getIterator();
 
-            if (alumnos.hasNext()) {
-                while (alumnos.hasNext()) {
-                    Document alumno = alumnos.next();
+            if (alumnos.getSize() == 0){
+                while (iterator.hasMoreResources()) {
+                XMLResource resource = (XMLResource) iterator.nextResource();
+                Element modulo = (Element) resource.getContentAsDOM();
 
-                    String nia = alumno.getString(CRUD.alumno_id);
-                    String nombre = alumno.getString(CRUD.alumno_nombre);
-                    Long numMatri = CRUD.todoMatriculaMongo().countDocuments(new Document(CRUD.matricula_alumno_id, nia));
+                String id = modulo.getElementsByTagName(CRUD_EXIST.alumno_id).item(0).getTextContent();
+                String nombre = modulo.getElementsByTagName(CRUD_EXIST.alumno_nombre).item(0).getTextContent();
+                Long numMatri = CRUD_EXIST.buscarMatriculaAluID(id).getSize();
 
-                    System.out.printf("NIA:%-10s %-30s ", nia, nombre);
-                    if (numMatri > 0) {
-                        System.out.println("Matriculas: " + numMatri);
-                    } else {
-                        System.out.println("-Sin Matriculas-");
-                    }
+                System.out.printf("ID:%-10s %-30s ", id, nombre);
+                if (numMatri > 0) {
+                    System.out.println("Matriculas: " + numMatri);
+                } else {
+                    System.out.println("-Sin Matriculas-");
                 }
-                System.out.println("--Fin de la lista--");
-            } else {
-                System.out.println("Lista de alumno vacio");
             }
-            alumnos.close();
+            }else{
+                System.out.println("Lista de modulos vacio");
+            }
         } catch (Exception ex) {
-            System.out.println("Error de SQL al retirar todos los alumnos\n" + ex);
+            System.out.println("Error al imprimir los alumnos\n" + ex);
         }
     }
 }
