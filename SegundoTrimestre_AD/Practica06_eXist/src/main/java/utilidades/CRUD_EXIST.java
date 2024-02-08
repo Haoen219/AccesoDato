@@ -324,6 +324,16 @@ public class CRUD_EXIST {
     }
 
     // UPDATE
+
+    /*
+     * let $alumnos := doc("alumnos.xml")/alumnos
+     * for $alumno in $alumnos/alumno
+     * where $alumno/nombre = "María"
+     * return (
+     * (: Actualizar la edad a 22 :)
+     * replace value of node $alumno/edad with 22
+     * )
+     */
     public static boolean actualizarAlumno(String id, String nombre) {
         String resourceID = alumno_tabla + ".xml";
         try {
