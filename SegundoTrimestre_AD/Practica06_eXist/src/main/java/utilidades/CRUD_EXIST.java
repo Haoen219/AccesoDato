@@ -1,7 +1,9 @@
 package utilidades;
 
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Document;
+import org.xmldb.api.base.Resource;
 import org.xmldb.api.base.ResourceSet;
 import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.XMLResource;
@@ -178,6 +180,8 @@ public class CRUD_EXIST {
                 nuevoMatricula.appendChild(notasElement);
                 nuevoMatricula.appendChild(calificacionElement);
 
+                System.out.println(doc.toString());
+
                 // Obtener el nodo raíz y añadir el nuevo nodo
                 Element raiz = doc.getDocumentElement();
                 raiz.appendChild(nuevoMatricula);
@@ -198,7 +202,7 @@ public class CRUD_EXIST {
 
     // READ
     public static ResourceSet recuperarLista(String lista_elemento) {
-        String xpathQuery = "/" + lista_elemento;
+        String xpathQuery = "for $elem in //" + modulo_tabla+" return $elem";
         ResourceSet result = null;
         try {
             XPathQueryService xpathService = (XPathQueryService) Gestor.getExistCollection()
@@ -212,7 +216,7 @@ public class CRUD_EXIST {
     }
 
     public static Element buscarAlumnoID(String id) {
-        String xquery = "for $elem in //" + alumno_tabla + "[" + alumno_id + "='" + id + "'] return $elem";
+        String xquery = "for $elem in //" + alumno_tabla + "[" + alumno_id + "=" + id + "] return $elem";
         Element elemento = null;
         try {
             XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
@@ -222,6 +226,9 @@ public class CRUD_EXIST {
                 elemento = (Element) resource.getContentAsDOM();
             }
         } catch (XMLDBException e) {
+            System.out.println("Error recuperando Alumno");
+            e.printStackTrace();
+        } catch (Exception e) {
             System.out.println("Error recuperando Alumno");
             e.printStackTrace();
         }
@@ -325,35 +332,22 @@ public class CRUD_EXIST {
 
     // UPDATE
     public static boolean actualizarAlumno(String id, String nombre) {
-        /*
-         * update replace //alumno[alumno_nia = 5030] with
-	<alumno>
-    	<id>5030</id>
-        <alumno_nombre>AMOGUS</alumno_nombre>
-    </alumno>
-         */
-
-
-        String xquery = "let $alumnos := doc("alumnos.xml")/alumnos
-        for $alumno in $alumnos/alumno
-        where $alumno/nombre = "María"
-        return (
-        (: Actualizar la edad a 22 :)
-        replace value of node $alumno/edad with 22
-        )";
+        Element alumno = null;
         try {
-            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(xquery);
-            if (resource != null) {
-                Element alumno = buscarAlumnoID(id);
+            alumno = buscarAlumnoID(id);
+            if (alumno != null) {
                 Element nombreElement = (Element) alumno.getElementsByTagName(alumno_nombre).item(0);
                 nombreElement.setTextContent(nombre);
+                System.out.println(alumno.getElementsByTagName(alumno_nombre).item(0));
 
-                // Actualizar el recurso en la colección
-                // resource.setContent(alumno);
-                Gestor.getExistCollection().storeResource(resource);
+                String xquery = "update replace //" + alumno_tabla + "[" + alumno_id + " = " + id + "] with "
+                        + alumno.toString();
+                XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService",
+                        "1.0");
+                queryService.query(xquery);
                 return true;
             } else {
-                System.out.println("Recurso XML no encontrado.");
+                System.out.println("No existe este alumno");
             }
         } catch (XMLDBException e) {
             System.out.println("Error actualizando Alumno");
