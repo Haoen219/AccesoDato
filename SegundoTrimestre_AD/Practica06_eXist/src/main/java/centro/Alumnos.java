@@ -368,7 +368,7 @@ public class Alumnos {
             ResourceSet alumnos = CRUD_EXIST.recuperarLista(CRUD_EXIST.alumno_tabla);
             ResourceIterator iterator = alumnos.getIterator();
 
-            if (alumnos.getSize() == 0) {
+            if (alumnos.getSize() > 0) {
                 while (iterator.hasMoreResources()) {
                     XMLResource resource = (XMLResource) iterator.nextResource();
                     Element alumno = (Element) resource.getContentAsDOM();

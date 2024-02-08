@@ -16,7 +16,6 @@ import org.w3c.dom.Element;
 import org.xmldb.api.base.Collection;
 import org.xmldb.api.base.ResourceIterator;
 import org.xmldb.api.base.ResourceSet;
-import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.XMLResource;
 
 import com.mongodb.client.MongoCollection;
@@ -41,13 +40,13 @@ public class Gestor {
 
     private static Connection connection;
     private static MongoDatabase mongoDatabase;
-    private static Collection existCollection;
 
     public Gestor() {
         if (App.getOpcion() == 3) {
             mongoDatabase = new Conexion().getMongoDatabase();
         } else if (App.getOpcion() == 4) {
-            existCollection = new Conexion().getExistCollection();
+            //para que cree las tablas al inicio (se puede quitar)
+            new Conexion().getExistCollection();
         } else {
             connection = new Conexion().getConnection();
         }
@@ -62,7 +61,7 @@ public class Gestor {
     }
 
     public static Collection getExistCollection() {
-        return existCollection;
+        return new Conexion().getExistCollection();
     }
 
     // MENU DE PROGRAMA
@@ -83,7 +82,7 @@ public class Gestor {
             System.out.print("OPCIÓN: ");
             option = in.leerEntero(0, 5);
         }
-        CRUD_EXIST.actualizarAlumno("5030", "AMOGUS");
+        //CRUD_EXIST.actualizarAlumno("5030", "AMOGUS");
         return option;
     }
 
@@ -311,15 +310,10 @@ public class Gestor {
                 realizarOpcion(opcion);
                 if (App.getOpcion() < 3) {
                     connection.close();
-                } else if (App.getOpcion() == 4) {
-                    existCollection.close();
                 }
             } while (opcion != 0);
         } catch (SQLException e) {
             System.out.println("Error con la conexión a la BDD.");
-            e.printStackTrace();
-        } catch (XMLDBException e) {
-            System.out.println("Error cerrando la colección de ExistDB");
             e.printStackTrace();
         }
     }

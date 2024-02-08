@@ -530,7 +530,7 @@ public class Matriculas {
         Lector sc2 = new Lector(System.in);
 
         try {
-            if (CRUD_EXIST.recuperarLista(CRUD_EXIST.modulo_tabla).getSize() > 0) {
+            if (CRUD_EXIST.recuperarLista(CRUD_EXIST.matricula_tabla).getSize() > 0) {
                 System.out.println("\n-Modificar notas-");
                 boolean seguir = true;
 
@@ -552,11 +552,12 @@ public class Matriculas {
                                     .getTextContent();
                             System.out.println(alumnoNombre + ":\n----");
 
-                            if (CRUD_EXIST.buscarMatriculaAluID(nia) == null) {
+                            ResourceSet matriculas = CRUD_EXIST.buscarMatriculaAluID(nia);
+                            if (matriculas.getSize() == 0) {
                                 seguirAlumno = false;
                                 System.out.println("Este alumno no tiene matricula aún.");
                             } else {
-                                imprimirAlumnoMongo(CRUD.buscarMatriculaAluIDMongo(nia));
+                                imprimirAlumnoExist(matriculas);
                             }
                         } else {
                             seguirAlumno = false;
@@ -632,9 +633,8 @@ public class Matriculas {
 
     public int evaluarModuloExist() {
         Lector sc2 = new Lector(System.in);
-
         try {
-            if (CRUD_EXIST.recuperarLista(CRUD_EXIST.modulo_tabla).getSize() > 0) {
+            if (CRUD_EXIST.recuperarLista(CRUD_EXIST.matricula_tabla).getSize() > 0) {
                 System.out.println("\n-Modificar notas-");
                 boolean seguir = true;
 
@@ -656,11 +656,12 @@ public class Matriculas {
                                     .getTextContent();
                             System.out.println(alumnoNombre + ":\n----");
 
-                            if (CRUD_EXIST.buscarMatriculaAluID(nia) == null) {
+                            ResourceSet matriculas = CRUD_EXIST.buscarMatriculaAluID(nia);
+                            if (CRUD_EXIST.buscarMatriculaAluID(nia).getSize() == 0) {
                                 seguirAlumno = false;
                                 System.out.println("Este alumno no tiene matricula aún.");
                             } else {
-                                imprimirAlumnoMongo(CRUD.buscarMatriculaAluIDMongo(nia));
+                                imprimirAlumnoExist(matriculas);
                             }
                         } else {
                             seguirAlumno = false;
@@ -736,10 +737,15 @@ public class Matriculas {
             System.out.println("\nMatricula de " + nombreAlu + ":");
 
             ResourceSet matriculas = CRUD_EXIST.buscarMatriculaAluID(nia);
-            if (matriculas != null) {
-                imprimirAlumnoExist(matriculas);
-            } else {
-                System.out.println("Este alumno no tiene matricula aún.");
+            try {
+                if (matriculas.getSize() > 0) {
+                    imprimirAlumnoExist(matriculas);
+                } else {
+                    System.out.println("Este alumno no tiene matricula aún.");
+                }
+            } catch (XMLDBException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
         } else {
             System.out.println("-El alumno no existe.");
@@ -768,9 +774,9 @@ public class Matriculas {
                 int nota1 = Integer
                         .parseInt(notas.getElementsByTagName(CRUD_EXIST.notas_nota1).item(0).getTextContent());
                 int nota2 = Integer
-                        .getInteger(notas.getElementsByTagName(CRUD_EXIST.notas_nota2).item(0).getTextContent());
+                        .parseInt(notas.getElementsByTagName(CRUD_EXIST.notas_nota2).item(0).getTextContent());
                 int nota3 = Integer
-                        .getInteger(notas.getElementsByTagName(CRUD_EXIST.notas_nota3).item(0).getTextContent());
+                        .parseInt(notas.getElementsByTagName(CRUD_EXIST.notas_nota3).item(0).getTextContent());
 
                 System.out.printf("\tID:%-10s %-20s Notas: %-2d|%-2d|%-2d [%s]\n", moduloId, nombreMod, nota1, nota2,
                         nota3, calificacion);

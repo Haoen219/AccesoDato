@@ -39,6 +39,41 @@ public class CRUD_EXIST {
     public final static String matricula_calificacion = "calificacion";
 
     // CREATE
+    public static boolean insertarAlumno2(String id, String nombre) {
+        String resourceID = alumno_tabla + ".xml";
+        try {
+            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(resourceID);
+            if (resource != null) {
+                Document doc = (Document) resource.getContentAsDOM();
+
+                Element nuevoAlumno = doc.createElement(alumno_tabla);
+
+                Element idElement = doc.createElement(alumno_id);
+                idElement.setTextContent(id);
+                Element nombreElement = doc.createElement(alumno_nombre);
+                nombreElement.setTextContent(nombre);
+
+                nuevoAlumno.appendChild(idElement);
+                nuevoAlumno.appendChild(nombreElement);
+
+                // Obtener el nodo raíz y añadir el nuevo nodo
+                Element raiz = doc.getDocumentElement();
+                raiz.appendChild(nuevoAlumno);
+                resource.setContentAsDOM(doc);
+
+                // Actualizar el recurso en la colección
+                Gestor.getExistCollection().storeResource(resource);
+                return true;
+            } else {
+                System.out.println("Recurso XML no encontrado.");
+            }
+        } catch (XMLDBException e) {
+            System.out.println("Error insertando Alumno");
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static boolean insertarAlumno(String id, String nombre) {
         String resourceID = alumno_tabla + ".xml";
         try {
@@ -104,7 +139,7 @@ public class CRUD_EXIST {
                 System.out.println("Recurso XML no encontrado.");
             }
         } catch (XMLDBException e) {
-            System.out.println("Error insertando Alumno");
+            System.out.println("Error insertando Modulo");
             e.printStackTrace();
         }
         return false;
@@ -146,7 +181,7 @@ public class CRUD_EXIST {
                 System.out.println("Recurso XML no encontrado.");
             }
         } catch (XMLDBException e) {
-            System.out.println("Error insertando Alumno");
+            System.out.println("Error insertando Notas");
             e.printStackTrace();
         }
         return false;
@@ -160,7 +195,7 @@ public class CRUD_EXIST {
             if (resource != null) {
                 Document doc = (Document) resource.getContentAsDOM();
 
-                Element nuevoMatricula = doc.createElement(notas_tabla);
+                Element nuevoMatricula = doc.createElement(matricula_tabla);
 
                 Element idElement = doc.createElement(matricula_id);
                 idElement.setTextContent(id);
@@ -179,8 +214,6 @@ public class CRUD_EXIST {
                 nuevoMatricula.appendChild(notasElement);
                 nuevoMatricula.appendChild(calificacionElement);
 
-                System.out.println(doc.toString());
-
                 // Obtener el nodo raíz y añadir el nuevo nodo
                 Element raiz = doc.getDocumentElement();
                 raiz.appendChild(nuevoMatricula);
@@ -193,7 +226,7 @@ public class CRUD_EXIST {
                 System.out.println("Recurso XML no encontrado.");
             }
         } catch (XMLDBException e) {
-            System.out.println("Error insertando Alumno");
+            System.out.println("Error insertando Matricula");
             e.printStackTrace();
         }
         return false;
@@ -201,7 +234,7 @@ public class CRUD_EXIST {
 
     // READ
     public static ResourceSet recuperarLista(String lista_elemento) {
-        String xpathQuery = "for $elem in //" + modulo_tabla+" return $elem";
+        String xpathQuery = "for $elem in //" + lista_elemento +" return $elem";
         ResourceSet result = null;
         try {
             XPathQueryService xpathService = (XPathQueryService) Gestor.getExistCollection()

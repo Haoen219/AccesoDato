@@ -610,23 +610,23 @@ public class Modulos {
             ResourceSet modulos = CRUD_EXIST.recuperarLista(CRUD_EXIST.modulo_tabla);
             ResourceIterator iterator = modulos.getIterator();
 
-            if (modulos.getSize() == 0){
+            if (modulos.getSize() > 0) {
                 while (iterator.hasMoreResources()) {
-                XMLResource resource = (XMLResource) iterator.nextResource();
-                Element modulo = (Element) resource.getContentAsDOM();
+                    XMLResource resource = (XMLResource) iterator.nextResource();
+                    Element modulo = (Element) resource.getContentAsDOM();
 
-                String id = modulo.getElementsByTagName(CRUD_EXIST.modulo_id).item(0).getTextContent();
-                String nombre = modulo.getElementsByTagName(CRUD_EXIST.modulo_nombre).item(0).getTextContent();
-                Long numMatri = CRUD_EXIST.buscarMatriculaModID(id).getSize();
+                    String id = modulo.getElementsByTagName(CRUD_EXIST.modulo_id).item(0).getTextContent();
+                    String nombre = modulo.getElementsByTagName(CRUD_EXIST.modulo_nombre).item(0).getTextContent();
+                    Long numMatri = CRUD_EXIST.buscarMatriculaModID(id).getSize();
 
-                System.out.printf("ID:%-10s %-30s ", id, nombre);
-                if (numMatri > 0) {
-                    System.out.println("Matriculas: " + numMatri);
-                } else {
-                    System.out.println("-Sin Matriculas-");
+                    System.out.printf("ID:%-10s %-30s ", id, nombre);
+                    if (numMatri > 0) {
+                        System.out.println("Matriculas: " + numMatri);
+                    } else {
+                        System.out.println("-Sin Matriculas-");
+                    }
                 }
-            }
-            }else{
+            } else {
                 System.out.println("Lista de modulos vacio");
             }
         } catch (Exception ex) {
