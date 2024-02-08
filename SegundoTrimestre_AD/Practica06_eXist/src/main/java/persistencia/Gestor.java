@@ -13,6 +13,7 @@ import java.util.InputMismatchException;
 
 import org.bson.Document;
 import org.xmldb.api.base.Collection;
+import org.xmldb.api.base.XMLDBException;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -106,21 +107,21 @@ public class Gestor {
                 menuMatriculas();
                 break;
             case 4:
-                if(App.getOpcion()==3){
+                if (App.getOpcion() == 3) {
                     exportarDatosMongo();
-                }else{
+                } else {
                     exportarDatos();
                 }
                 break;
             case 5:
-                if(App.getOpcion()==3){
+                if (App.getOpcion() == 3) {
                     importarDatosMongo();
-                }else{
+                } else {
                     importarDatos();
                 }
                 break;
             default:
-                System.out.println(App.ANSI_CYAN + "Hay que elegit una de las opciones (numero entre parentesis)"
+                System.out.println(App.ANSI_CYAN + "Hay que elegir una de las opciones (numero entre parentesis)"
                         + App.ANSI_WHITE);
         }
     }
@@ -131,26 +132,32 @@ public class Gestor {
             try {
                 opcion = alumnos.menu();
                 switch (opcion) {
-                    case 0: System.out.println("Volviendo al menu previo...\n"); break;
-                    case 1: if (App.getOpcion()==3){
-                                alumnos.darDeAltaMongo();
-                            } else {
-                                alumnos.darDeAlta();
-                            }
-                            break;
-                    case 2: if (App.getOpcion()==3){
-                                alumnos.darDeBajaMongo();
-                            } else {
-                                alumnos.darDeBaja();
-                            }
-                            break;
-                    case 3: if (App.getOpcion()==3){
-                                alumnos.listarMongo();
-                            } else {
-                                alumnos.listar();
-                            }
-                            break;
-                    default : System.out.println("--Opción no valida");
+                    case 0:
+                        System.out.println("Volviendo al menu previo...\n");
+                        break;
+                    case 1:
+                        if (App.getOpcion() == 3) {
+                            alumnos.darDeAltaMongo();
+                        } else {
+                            alumnos.darDeAlta();
+                        }
+                        break;
+                    case 2:
+                        if (App.getOpcion() == 3) {
+                            alumnos.darDeBajaMongo();
+                        } else {
+                            alumnos.darDeBaja();
+                        }
+                        break;
+                    case 3:
+                        if (App.getOpcion() == 3) {
+                            alumnos.listarMongo();
+                        } else {
+                            alumnos.listar();
+                        }
+                        break;
+                    default:
+                        System.out.println("--Opción no valida");
                 }
             } catch (InputMismatchException ex) {
                 System.out.println("\n###ERROR: ha introducido un valor que no es entero.");
@@ -168,32 +175,39 @@ public class Gestor {
             try {
                 opcion = modulos.menu();
                 switch (opcion) {
-                    case 0: System.out.println("Volviendo al menu previo...\n"); break;
-                    case 1: if (App.getOpcion()==3){
-                                modulos.darDeAltaMongo();
-                            } else {
-                                modulos.darDeAlta();
-                            }
-                            break;
-                    case 2: if (App.getOpcion()==3){
-                                modulos.darDeBajaMongo();
-                            } else {
-                                modulos.darDeBaja();
-                            }
-                            break;
-                    case 3: if (App.getOpcion()==3){
-                                modulos.listarMongo();
-                            } else {
-                                modulos.listar();
-                            }
-                            break;
-                    case 4: if (App.getOpcion()==3){
-                                modulos.matricularAlumnoMongo();
-                            } else {
-                                modulos.matricularAlumno();
-                            }
-                            break;
-                    default: System.out.println("--Opción no valida");
+                    case 0:
+                        System.out.println("Volviendo al menu previo...\n");
+                        break;
+                    case 1:
+                        if (App.getOpcion() == 3) {
+                            modulos.darDeAltaMongo();
+                        } else {
+                            modulos.darDeAlta();
+                        }
+                        break;
+                    case 2:
+                        if (App.getOpcion() == 3) {
+                            modulos.darDeBajaMongo();
+                        } else {
+                            modulos.darDeBaja();
+                        }
+                        break;
+                    case 3:
+                        if (App.getOpcion() == 3) {
+                            modulos.listarMongo();
+                        } else {
+                            modulos.listar();
+                        }
+                        break;
+                    case 4:
+                        if (App.getOpcion() == 3) {
+                            modulos.matricularAlumnoMongo();
+                        } else {
+                            modulos.matricularAlumno();
+                        }
+                        break;
+                    default:
+                        System.out.println("--Opción no valida");
                 }
             } catch (InputMismatchException ex) {
                 System.out.println("\n###ERROR: ha introducido un valor que no es entero.");
@@ -211,26 +225,33 @@ public class Gestor {
             try {
                 opcion = matriculas.menu();
                 switch (opcion) {
-                    case 0: System.out.println("Volviendo al menu previo...\n"); break;
-                    case 1: if (App.getOpcion()==3){
-                                matriculas.modificarNotasMongo();
-                            } else {
-                                matriculas.modificarNotas();
-                            }
-                            break;
-                    case 2: if (App.getOpcion()==3){
-                                matriculas.evaluarModuloMongo();
-                            } else {
-                                matriculas.evaluarModulo();
-                            }
-                            break;
-                    case 3: if (App.getOpcion()==3){
-                                matriculas.mostrarMongo();
-                            } else {
-                                matriculas.mostrar();;
-                            }
-                            break;
-                    default: System.out.println("--Opción no valida");
+                    case 0:
+                        System.out.println("Volviendo al menu previo...\n");
+                        break;
+                    case 1:
+                        if (App.getOpcion() == 3) {
+                            matriculas.modificarNotasMongo();
+                        } else {
+                            matriculas.modificarNotas();
+                        }
+                        break;
+                    case 2:
+                        if (App.getOpcion() == 3) {
+                            matriculas.evaluarModuloMongo();
+                        } else {
+                            matriculas.evaluarModulo();
+                        }
+                        break;
+                    case 3:
+                        if (App.getOpcion() == 3) {
+                            matriculas.mostrarMongo();
+                        } else {
+                            matriculas.mostrar();
+                            ;
+                        }
+                        break;
+                    default:
+                        System.out.println("--Opción no valida");
                 }
             } catch (InputMismatchException ex) {
                 System.out.println("\n###ERROR: ha introducido un valor que no es entero.");
@@ -258,12 +279,17 @@ public class Gestor {
             do {
                 opcion = menu();
                 realizarOpcion(opcion);
-                if (opcion == 0 && App.getOpcion() < 3) {
+                if (App.getOpcion() < 3) {
                     connection.close();
+                } else if (App.getOpcion() == 4){
+                    existCollection.close();
                 }
             } while (opcion != 0);
         } catch (SQLException e) {
             System.out.println("Error con la conexión a la BDD.");
+            e.printStackTrace();
+        } catch (XMLDBException e) {
+            System.out.println("Error cerrando la colección de ExistDB");
             e.printStackTrace();
         }
     }
@@ -558,7 +584,7 @@ public class Gestor {
                         case "Alumno":
                             System.out.println("Importando ALUMNO NIA: " + datos[1] + " " + datos[2]);
                             Document alumno = CRUD.buscarAlumnoIDMongo(datos[1]);
-                            if ( alumno != null ) {
+                            if (alumno != null) {
                                 System.out.println("\nExiste un alumno con ese NIA");
                                 switch (menuImport()) {
                                     case 1:
@@ -576,7 +602,7 @@ public class Gestor {
                         case "Modulo":
                             System.out.println("Importando MODULO ID: " + datos[1] + " " + datos[2]);
                             Document modulo = CRUD.buscarModuloIDMongo(datos[1]);
-                            if ( modulo != null ) {
+                            if (modulo != null) {
                                 System.out.println("\nExiste un módulo con ese ID");
                                 switch (menuImport()) {
                                     case 1:
@@ -594,18 +620,20 @@ public class Gestor {
                         case "Notas":
                             System.out.println("Importando NOTAS ID: " + datos[1]);
                             Document notas = CRUD.buscarNotasIDMongo(datos[1]);
-                            if ( notas != null ) {
+                            if (notas != null) {
                                 System.out.println("\nExiste unas notas con ese ID");
                                 switch (menuImport()) {
                                     case 1:
-                                        CRUD.actualizarNotaMongo(datos[1], Integer.parseInt(datos[2]),Integer.parseInt(datos[3]), Integer.parseInt(datos[4]));
+                                        CRUD.actualizarNotaMongo(datos[1], Integer.parseInt(datos[2]),
+                                                Integer.parseInt(datos[3]), Integer.parseInt(datos[4]));
                                         break;
                                     case 2:
                                         System.out.println("\tNo se importará");
                                         break;
                                 }
                             } else {
-                                CRUD.insertarNotasMongo(datos[1], Integer.parseInt(datos[2]),Integer.parseInt(datos[3]), Integer.parseInt(datos[4]));
+                                CRUD.insertarNotasMongo(datos[1], Integer.parseInt(datos[2]),
+                                        Integer.parseInt(datos[3]), Integer.parseInt(datos[4]));
                             }
                             break;
 
@@ -615,7 +643,7 @@ public class Gestor {
                                     + " Modu: " + Integer.parseInt(datos[3])
                                     + " Notas: " + Integer.parseInt(datos[4]));
                             Document matricula = CRUD.buscarMatriculaIDMongo(datos[1]);
-                            if (matricula != null ) {
+                            if (matricula != null) {
                                 System.out.println("\nExiste una matricula con ese ID");
                                 switch (menuImport()) {
                                     case 1:

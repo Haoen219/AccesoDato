@@ -11,7 +11,6 @@ import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Collection;
 import org.xmldb.api.base.Database;
 import org.xmldb.api.base.XMLDBException;
-import org.xmldb.api.modules.CollectionManagementService;
 import org.xmldb.api.modules.XMLResource;
 
 import com.mongodb.client.MongoClient;
@@ -20,6 +19,7 @@ import com.mongodb.client.MongoDatabase;
 
 import utilidades.App;
 import utilidades.CRUD;
+import utilidades.CRUD_EXIST;
 
 public class Conexion {
     final static String mySQL_URL = "jdbc:mysql://127.0.0.1:3306/";
@@ -32,9 +32,9 @@ public class Conexion {
     final static String postgresSQL_USER = "postgres";
     final static String postgresSQL_PASS = "user";
 
-    private static String mongoDB_URL(String user, String password) {
-        return "mongodb://" + user + ":" + password + "@127.0.0.1:27017/";
-    }
+    // private static String mongoDB_URL(String user, String password) {
+    //     return "mongodb://" + user + ":" + password + "@127.0.0.1:27017/";
+    // }
 
     final static String mongoDB_URL = "mongodb://127.0.0.1:27017/";
     final static String mongoDB_BDD = "Haoen";
@@ -90,10 +90,10 @@ public class Conexion {
 
             if (App.getOpcion() == 4) {
                 if (existCollection.getChildCollectionCount() < 4) {
-                    crearTabla(CRUD.alumno_tabla, "alumnos");
-                    crearTabla(CRUD.modulo_tabla, "modulos");
-                    crearTabla(CRUD.matricula_tabla, "matriculas");
-                    crearTabla(CRUD.notas_tabla, "notas");
+                    crearTabla(CRUD.alumno_tabla, CRUD_EXIST.alumno_raiz);
+                    crearTabla(CRUD.modulo_tabla, CRUD_EXIST.modulo_raiz);
+                    crearTabla(CRUD.matricula_tabla, CRUD_EXIST.matricula_raiz);
+                    crearTabla(CRUD.notas_tabla, CRUD_EXIST.notas_raiz);
                 }
             }
 
@@ -126,7 +126,6 @@ public class Conexion {
 
     public boolean crearTabla(String tabla, String raizBase) {
         try {
-            CollectionManagementService mgtService = (CollectionManagementService) existCollection.getService("CollectionManagementService", "1.0");
             XMLResource resource = (XMLResource) existCollection.createResource(tabla + ".xml", "XMLResource");
             String baseRoot = "<"+raizBase+"></"+raizBase+">";
             resource.setContent(baseRoot);
