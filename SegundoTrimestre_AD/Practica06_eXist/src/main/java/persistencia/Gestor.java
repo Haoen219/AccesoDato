@@ -83,6 +83,7 @@ public class Gestor {
             System.out.print("OPCIÓN: ");
             option = in.leerEntero(0, 5);
         }
+        CRUD_EXIST.actualizarAlumno("5030", "AMOGUS");
         return option;
     }
 

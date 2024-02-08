@@ -38,42 +38,10 @@ public class CRUD_EXIST {
     public final static String matricula_calificacion = "calificacion";
 
     // CREATE
-    /*
-     * public static boolean insertarAlumno(String id, String nombre) {
-     * String xpathQuery = "/" + alumno_tabla;
-     * try {
-     * XPathQueryService xpathService = (XPathQueryService)
-     * Gestor.getExistCollection()
-     * .getService("XPathQueryService", "1.0");
-     * ResourceSet result = xpathService.query(xpathQuery);
-     * Resource resource = result.getResource(0);
-     * 
-     * if (resource != null && resource instanceof EXistResource) {
-     * String contenidoXML = ((EXistResource) resource).getContent().toString();
-     * contenidoXML = contenidoXML.replace("</" + alumno_raiz + ">",
-     * "<" + alumno_tabla +
-     * "><" + alumno_id + ">" + id + "</" + alumno_id +
-     * "><" + alumno_nombre + ">" + nombre + "</" + alumno_nombre +
-     * "></" + alumno_tabla +
-     * "></" + alumno_raiz + ">");
-     * ((EXistResource) resource).setContent(contenidoXML);
-     * Gestor.getExistCollection().storeResource((EXistResource) resource);
-     * return true;
-     * } else {
-     * System.out.println("Recurso XML no encontrado.");
-     * }
-     * } catch (XMLDBException e) {
-     * System.out.println("Error insertando Alumno");
-     * e.printStackTrace();
-     * }
-     * return false;
-     * }
-     */
     public static boolean insertarAlumno(String id, String nombre) {
-        String xpathQuery = "/" + alumno_tabla;
+        String resourceID = alumno_tabla + ".xml";
         try {
-            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(xpathQuery);
-
+            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(resourceID);
             if (resource != null) {
                 Document doc = (Document) resource.getContentAsDOM();
 
@@ -90,6 +58,7 @@ public class CRUD_EXIST {
                 // Obtener el nodo raíz y añadir el nuevo nodo
                 Element raiz = doc.getDocumentElement();
                 raiz.appendChild(nuevoAlumno);
+                resource.setContentAsDOM(doc);
 
                 // Actualizar el recurso en la colección
                 Gestor.getExistCollection().storeResource(resource);
@@ -105,9 +74,9 @@ public class CRUD_EXIST {
     }
 
     public static boolean insertarModulo(String id, String nombre) {
-        String xpathQuery = "/" + modulo_tabla;
+        String resourceID = modulo_tabla + ".xml";
         try {
-            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(xpathQuery);
+            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(resourceID);
 
             if (resource != null) {
                 Document doc = (Document) resource.getContentAsDOM();
@@ -125,6 +94,7 @@ public class CRUD_EXIST {
                 // Obtener el nodo raíz y añadir el nuevo nodo
                 Element raiz = doc.getDocumentElement();
                 raiz.appendChild(nuevoModulo);
+                resource.setContentAsDOM(doc);
 
                 // Actualizar el recurso en la colección
                 Gestor.getExistCollection().storeResource(resource);
@@ -140,9 +110,9 @@ public class CRUD_EXIST {
     }
 
     public static boolean insertarNotas(String id, int nota1, int nota2, int nota3) {
-        String xpathQuery = "/" + notas_tabla;
+        String resourceID = notas_tabla + ".xml";
         try {
-            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(xpathQuery);
+            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(resourceID);
 
             if (resource != null) {
                 Document doc = (Document) resource.getContentAsDOM();
@@ -166,6 +136,7 @@ public class CRUD_EXIST {
                 // Obtener el nodo raíz y añadir el nuevo nodo
                 Element raiz = doc.getDocumentElement();
                 raiz.appendChild(nuevoNotas);
+                resource.setContentAsDOM(doc);
 
                 // Actualizar el recurso en la colección
                 Gestor.getExistCollection().storeResource(resource);
@@ -181,9 +152,9 @@ public class CRUD_EXIST {
     }
 
     public static boolean insertarMatricula(String id, String alumno, String modulo, String nota, String calificacion) {
-        String xpathQuery = "/" + matricula_tabla;
+        String resourceID = matricula_tabla + ".xml";
         try {
-            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(xpathQuery);
+            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(resourceID);
 
             if (resource != null) {
                 Document doc = (Document) resource.getContentAsDOM();
@@ -210,6 +181,7 @@ public class CRUD_EXIST {
                 // Obtener el nodo raíz y añadir el nuevo nodo
                 Element raiz = doc.getDocumentElement();
                 raiz.appendChild(nuevoMatricula);
+                resource.setContentAsDOM(doc);
 
                 // Actualizar el recurso en la colección
                 Gestor.getExistCollection().storeResource(resource);
@@ -240,14 +212,15 @@ public class CRUD_EXIST {
     }
 
     public static Element buscarAlumnoID(String id) {
-        String xquery = "for $elem in collection('" + alumno_tabla + "')//" + alumno_tabla + "[" + alumno_id + "='" + id
-                + "'] return $elem";
+        String xquery = "for $elem in //" + alumno_tabla + "[" + alumno_id + "='" + id + "'] return $elem";
         Element elemento = null;
         try {
             XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
             ResourceSet result = queryService.query(xquery);
-            XMLResource resource = (XMLResource) result.getResource(0);
-            elemento = (Element) resource.getContentAsDOM();
+            if (result.getSize() > 0) {
+                XMLResource resource = (XMLResource) result.getResource(0);
+                elemento = (Element) resource.getContentAsDOM();
+            }
         } catch (XMLDBException e) {
             System.out.println("Error recuperando Alumno");
             e.printStackTrace();
@@ -256,8 +229,7 @@ public class CRUD_EXIST {
     }
 
     public static Element buscarModuloID(String id) {
-        String xquery = "for $elem in collection('" + modulo_tabla + "')//" + modulo_tabla + "[" + modulo_id + "='" + id
-                + "'] return $elem";
+        String xquery = "for $elem in //" + modulo_tabla + "[" + modulo_id + "='" + id + "'] return $elem";
         Element elemento = null;
         try {
             XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
@@ -274,8 +246,7 @@ public class CRUD_EXIST {
     }
 
     public static Element buscarNotaID(String id) {
-        String xquery = "for $elem in collection('" + notas_tabla + "')//" + notas_tabla + "[" + notas_id + "='" + id
-                + "'] return $elem";
+        String xquery = "for $elem in //" + notas_tabla + "[" + notas_id + "='" + id + "'] return $elem";
         Element elemento = null;
         try {
             XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
@@ -292,8 +263,7 @@ public class CRUD_EXIST {
     }
 
     public static Element buscarMatriculaID(String id) {
-        String xquery = "for $elem in collection('" + matricula_tabla + "')//" + matricula_tabla + "[" + matricula_id
-                + "='" + id + "'] return $elem";
+        String xquery = "for $elem in //" + matricula_tabla + "[" + matricula_id + "='" + id + "'] return $elem";
         Element elemento = null;
         try {
             XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
@@ -310,8 +280,7 @@ public class CRUD_EXIST {
     }
 
     public static ResourceSet buscarMatriculaAluID(String id) {
-        String xquery = "for $elem in collection('" + matricula_tabla + "')//" + matricula_tabla + "["
-                + matricula_alumno_id + "='" + id + "'] return $elem";
+        String xquery = "for $elem in //" + matricula_tabla + "[" + matricula_alumno_id + "='" + id + "'] return $elem";
         ResourceSet matriculas = null;
         try {
             XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
@@ -324,8 +293,7 @@ public class CRUD_EXIST {
     }
 
     public static ResourceSet buscarMatriculaModID(String id) {
-        String xquery = "for $elem in collection('" + matricula_tabla + "')//" + matricula_tabla + "["
-                + matricula_modulo_id + "='" + id + "'] return $elem";
+        String xquery = "for $elem in //" + matricula_tabla + "[" + matricula_modulo_id + "='" + id + "'] return $elem";
         ResourceSet matriculas = null;
         try {
             XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
@@ -338,8 +306,8 @@ public class CRUD_EXIST {
     }
 
     public static Element buscarMatriculaDobleID(String nia, String id) {
-        String xquery = "for $elem in collection('" + matricula_tabla + "')//" + matricula_tabla + "["
-                + matricula_alumno_id + "='" + nia + "' and " + matricula_modulo_id + "='" + id + "'] return $elem";
+        String xquery = "for $elem in //" + matricula_tabla + "[" + matricula_alumno_id + "='" + nia + "' and "
+                + matricula_modulo_id + "='" + id + "'] return $elem";
         Element elemento = null;
         try {
             XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
@@ -356,44 +324,17 @@ public class CRUD_EXIST {
     }
 
     // UPDATE
-    // String xpathQuery = "/" + alumno_tabla;try
-    // {
-    // XPathQueryService xpathService = (XPathQueryService)
-    // Gestor.getExistCollection()
-    // .getService("XPathQueryService", "1.0");
-    // ResourceSet result = xpathService.query(xpathQuery);
-    // Resource resource = result.getResource(0);
-    // if (resource != null && resource instanceof EXistResource) {
-    // String contenidoXML = ((EXistResource) resource).getContent().toString();
-    // contenidoXML = contenidoXML.replace(buscarAlumnoID(id).toString(),
-    // "<" + alumno_tabla +
-    // "><" + alumno_id + ">" + id + "</" + alumno_id +
-    // "><" + alumno_nombre + ">" + nombre + "</" + alumno_nombre +
-    // "></" + alumno_tabla +
-    // "></" + alumno_raiz + ">");
-    // ((EXistResource) resource).setContent(contenidoXML);
-    // Gestor.getExistCollection().storeResource((EXistResource) resource);
-    // return true;
-    // } else {
-    // System.out.println("Recurso XML no encontrado.");
-    // }
-    // }catch(
-    // XMLDBException e)
-    // {
-    // System.out.println("Error insertando Alumno");
-    // e.printStackTrace();
-    // }return false;
-
     public static boolean actualizarAlumno(String id, String nombre) {
-        String xpathQuery = "/" + alumno_tabla;
+        String resourceID = alumno_tabla + ".xml";
         try {
-            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(xpathQuery);
+            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(resourceID);
             if (resource != null) {
                 Element alumno = buscarAlumnoID(id);
                 Element nombreElement = (Element) alumno.getElementsByTagName(alumno_nombre).item(0);
                 nombreElement.setTextContent(nombre);
 
                 // Actualizar el recurso en la colección
+                // resource.setContent(alumno);
                 Gestor.getExistCollection().storeResource(resource);
                 return true;
             } else {
@@ -407,15 +348,16 @@ public class CRUD_EXIST {
     }
 
     public static boolean actualizarModulo(String id, String nombre) {
-        String xpathQuery = "/" + modulo_tabla;
+        String resourceID = modulo_tabla + ".xml";
         try {
-            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(xpathQuery);
+            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(resourceID);
             if (resource != null) {
                 Element modulo = buscarModuloID(id);
                 Element nombreElement = (Element) modulo.getElementsByTagName(modulo_nombre).item(0);
                 nombreElement.setTextContent(nombre);
 
                 // Actualizar el recurso en la colección
+                resource.setContent(modulo);
                 Gestor.getExistCollection().storeResource(resource);
                 return true;
             } else {
@@ -429,9 +371,9 @@ public class CRUD_EXIST {
     }
 
     public static boolean actualizarNota(String id, int nota1, int nota2, int nota3) {
-        String xpathQuery = "/" + notas_tabla;
+        String resourceID = notas_tabla + ".xml";
         try {
-            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(xpathQuery);
+            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(resourceID);
             if (resource != null) {
                 Element nota = buscarNotaID(id);
                 Element nota1Element = (Element) nota.getElementsByTagName(notas_nota1).item(0);
@@ -442,6 +384,7 @@ public class CRUD_EXIST {
                 nota3Element.setTextContent(Integer.toString(nota3));
 
                 // Actualizar el recurso en la colección
+                resource.setContent(nota);
                 Gestor.getExistCollection().storeResource(resource);
                 return true;
             } else {
@@ -455,9 +398,9 @@ public class CRUD_EXIST {
     }
 
     public static boolean actualizarMatricula(String id, String calificacion) {
-        String xpathQuery = "/" + notas_tabla;
+        String resourceID = notas_tabla + ".xml";
         try {
-            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(xpathQuery);
+            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(resourceID);
             if (resource != null) {
                 Element matricula = buscarMatriculaID(id);
                 Element calificacioElement = (Element) matricula.getElementsByTagName(matricula_calificacion)
@@ -465,6 +408,7 @@ public class CRUD_EXIST {
                 calificacioElement.setTextContent(calificacion);
 
                 // Actualizar el recurso en la colección
+                resource.setContent(matricula);
                 Gestor.getExistCollection().storeResource(resource);
                 return true;
             } else {
@@ -479,9 +423,9 @@ public class CRUD_EXIST {
 
     public static boolean actualizarMatricula(String id, String alu_id, String modu_id, String nota_id,
             String calificacion) {
-        String xpathQuery = "/" + notas_tabla;
+        String resourceID = notas_tabla + ".xml";
         try {
-            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(xpathQuery);
+            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(resourceID);
             if (resource != null) {
                 Element matricula = buscarMatriculaID(id);
                 Element alumnoElement = (Element) matricula.getElementsByTagName(matricula_alumno_id).item(0);
@@ -495,6 +439,7 @@ public class CRUD_EXIST {
                 calificacioElement.setTextContent(calificacion);
 
                 // Actualizar el recurso en la colección
+                resource.setContent(matricula);
                 Gestor.getExistCollection().storeResource(resource);
                 return true;
             } else {
@@ -509,9 +454,7 @@ public class CRUD_EXIST {
 
     // DELETE
     public static boolean borrarAlumno(String id) {
-        String xquery = "update delete collection('" + alumno_tabla + "')//" + alumno_tabla + "[" + alumno_id + "='"
-                + id + "']";
-
+        String xquery = "update delete //" + alumno_tabla + "[" + alumno_id + "='" + id + "']";
         try {
             XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
             queryService.query(xquery);
@@ -525,9 +468,7 @@ public class CRUD_EXIST {
     }
 
     public static boolean borrarModulo(String id) {
-        String xquery = "update delete collection('" + modulo_tabla + "')//" + modulo_tabla + "[" + modulo_id + "='"
-                + id + "']";
-
+        String xquery = "update delete //" + modulo_tabla + "[" + modulo_id + "='" + id + "']";
         try {
             XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
             queryService.query(xquery);
@@ -541,9 +482,7 @@ public class CRUD_EXIST {
     }
 
     public static boolean borrarNotas(String id) {
-        String xquery = "update delete collection('" + notas_tabla + "')//" + notas_tabla + "[" + notas_id + "='" + id
-                + "']";
-
+        String xquery = "update delete //" + notas_tabla + "[" + notas_id + "='" + id + "']";
         try {
             XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
             queryService.query(xquery);
@@ -557,9 +496,7 @@ public class CRUD_EXIST {
     }
 
     public static boolean borrarMatricula(String id) {
-        String xquery = "update delete collection('" + matricula_tabla + "')//" + matricula_tabla + "[" + matricula_id
-                + "='" + id + "']";
-
+        String xquery = "update delete //" + matricula_tabla + "[" + matricula_id + "='" + id + "']";
         try {
             XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
             queryService.query(xquery);

@@ -302,7 +302,7 @@ public class Alumnos {
                     seguir = false;
                 } else {
                     if (CRUD_EXIST.insertarAlumno(nia, nombre)) {
-                        System.out.println("\tNIA:" + nia + " " + nombre + " dado de alta\n");
+                        System.out.println("\tNIA:" + nia + " " + nombre + " dado de alta");
                     } else {
                         System.out.println("No se ha podido insertar el alumno");
                     }
@@ -351,7 +351,7 @@ public class Alumnos {
                         if (CRUD_EXIST.borrarAlumno(nia)) {
                             System.out.println("\tNIA: " + nia + " " + nombre + " dado de baja.");
                         } else {
-                            System.out.println("NO se pudo borrar el alumno");
+                            System.out.println("No se pudo borrar el alumno");
                         }
                     } catch (Exception ex) {
                         System.out.println("Error cerrando MongoCursor de las matriculas.\n" + ex);
