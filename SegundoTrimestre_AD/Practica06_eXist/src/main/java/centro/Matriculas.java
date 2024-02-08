@@ -5,6 +5,9 @@ import java.sql.SQLException;
 
 import org.bson.Document;
 import org.w3c.dom.Element;
+import org.xmldb.api.base.ResourceIterator;
+import org.xmldb.api.base.ResourceSet;
+import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.XMLResource;
 
 import utilidades.Lector;
@@ -43,6 +46,7 @@ public class Matriculas {
         return opcion;
     }
 
+    //SQL
     private boolean hayMatriculas() {
         try (ResultSet matriculas = CRUD.todoMatricula()) {
             if (matriculas.next()) {
@@ -665,7 +669,8 @@ public class Matriculas {
                                 Element matricula = CRUD_EXIST.buscarMatriculaDobleID(nia, id);
 
                                 if (matricula != null) {
-                                    String matriculaId = matricula.getElementsByTagName(CRUD_EXIST.matricula_id).item(0).getTextContent();
+                                    String matriculaId = matricula.getElementsByTagName(CRUD_EXIST.matricula_id).item(0)
+                                            .getTextContent();
                                     String calificacion = "";
                                     switch (menuCalificar()) {
                                         case 1 ->
@@ -707,53 +712,54 @@ public class Matriculas {
         System.out.print("Introduzca ID del alumno: ");
         String nia = sc.leer();
 
-        try {
-            Element alumno = CRUD_EXIST.buscarAlumnoID(nia);
-            String nombreAlu = "";
-            if (alumno != null) {
-                nombreAlu = alumno.getElementsByTagName(CRUD_EXIST.alumno_nombre).item(0).getTextContent();
-                System.out.println("\nMatricula de " + nombreAlu + ":");
+        Element alumno = CRUD_EXIST.buscarAlumnoID(nia);
+        String nombreAlu = "";
+        if (alumno != null) {
+            nombreAlu = alumno.getElementsByTagName(CRUD_EXIST.alumno_nombre).item(0).getTextContent();
+            System.out.println("\nMatricula de " + nombreAlu + ":");
 
-                ResultSet matriculas = CRUD_EXIST.buscarMatriculaAluID(nia);
-                if (matriculas.next()) {
-                    imprimirAlumno(CRUD.buscarMatriculaAluID(nia));
-                } else {
-                    System.out.println("Este alumno no tiene matricula aún.");
-                }
-                matriculas.close();
+            ResourceSet matriculas = CRUD_EXIST.buscarMatriculaAluID(nia);
+            if (matriculas != null) {
+                imprimirAlumnoExist(matriculas);
             } else {
-                System.out.println("-El alumno no existe.");
+                System.out.println("Este alumno no tiene matricula aún.");
             }
-            alumno.close();
-        } catch (SQLException ex) {
-            System.out.println("Error cerrando ResultSet alumno/matriculas.\n" + ex);
+        } else {
+            System.out.println("-El alumno no existe.");
         }
     }
 
-    private void imprimirAlumnoExist(ResultSet matriculas) {
+    private void imprimirAlumnoExist(ResourceSet matriculas) {
+        ResourceIterator iterator;
         try {
-            while (matriculas.next()) {
-                String moduloId = matriculas.getString("modulo_id");
-                String notasId = matriculas.getString("notas_id");
-                String calificacion = matriculas.getString("calificacion");
-                ResultSet modulo = CRUD.buscarModuloID(moduloId);
-                ResultSet notas = CRUD.buscaNotaID(notasId);
+            iterator = matriculas.getIterator();
 
-                modulo.next();
-                notas.next();
+            while (iterator.hasMoreResources()) {
+                XMLResource resource = (XMLResource) iterator.nextResource();
+                Element matricula = (Element) resource.getContentAsDOM();
 
-                String nombreMod = modulo.getString("modulo_nombre");
-                int nota1 = notas.getInt("nota1");
-                int nota2 = notas.getInt("nota2");
-                int nota3 = notas.getInt("nota3");
+                String moduloId = matricula.getElementsByTagName(CRUD_EXIST.matricula_modulo_id).item(0)
+                        .getTextContent();
+                String notasId = matricula.getElementsByTagName(CRUD_EXIST.matricula_notas_id).item(0).getTextContent();
+                String calificacion = matricula.getElementsByTagName(CRUD_EXIST.matricula_calificacion).item(0)
+                        .getTextContent();
+
+                Element modulo = CRUD_EXIST.buscarModuloID(moduloId);
+                String nombreMod = modulo.getElementsByTagName(CRUD_EXIST.modulo_nombre).item(0).getTextContent();
+
+                Element notas = CRUD_EXIST.buscarNotaID(notasId);
+                int nota1 = Integer
+                        .getInteger(notas.getElementsByTagName(CRUD_EXIST.notas_nota1).item(0).getTextContent());
+                int nota2 = Integer
+                        .getInteger(notas.getElementsByTagName(CRUD_EXIST.notas_nota2).item(0).getTextContent());
+                int nota3 = Integer
+                        .getInteger(notas.getElementsByTagName(CRUD_EXIST.notas_nota3).item(0).getTextContent());
 
                 System.out.printf("\tID:%-10s %-20s Notas: %-2d|%-2d|%-2d [%s]\n", moduloId, nombreMod, nota1, nota2,
                         nota3, calificacion);
-                modulo.close();
-                notas.close();
             }
-        } catch (SQLException e) {
-            System.out.println("Error imprimiendo matriculas.");
+        } catch (XMLDBException e) {
+            System.out.println("Error imprimiendo alumno");
             e.printStackTrace();
         }
     }
