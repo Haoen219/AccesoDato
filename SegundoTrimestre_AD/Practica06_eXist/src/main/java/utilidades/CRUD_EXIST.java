@@ -332,18 +332,16 @@ public class CRUD_EXIST {
 
     // UPDATE
     public static boolean actualizarAlumno(String id, String nombre) {
+        String xquery = "update replace //" + alumno_tabla + "[" + alumno_id + " = " + id + "] with " +
+                        "<"+alumno_tabla+">"+
+                        "<"+alumno_id+">"+id+"</"+alumno_id+">"+
+                        "<"+alumno_nombre+">"+nombre+"</"+alumno_nombre+">"+
+                        "</"+alumno_tabla+">";
         Element alumno = null;
         try {
             alumno = buscarAlumnoID(id);
             if (alumno != null) {
-                Element nombreElement = (Element) alumno.getElementsByTagName(alumno_nombre).item(0);
-                nombreElement.setTextContent(nombre);
-                System.out.println(alumno.getElementsByTagName(alumno_nombre).item(0));
-
-                String xquery = "update replace //" + alumno_tabla + "[" + alumno_id + " = " + id + "] with "
-                        + alumno.toString();
-                XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService",
-                        "1.0");
+                XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
                 queryService.query(xquery);
                 return true;
             } else {
@@ -355,48 +353,22 @@ public class CRUD_EXIST {
         }
         return false;
     }
-    /*
-     * public static boolean actualizarAlumno(String id, String nombre) {
-     * String resourceID = alumno_tabla + ".xml";
-     * try {
-     * XMLResource resource = (XMLResource)
-     * Gestor.getExistCollection().getResource(resourceID);
-     * if (resource != null) {
-     * Element alumno = buscarAlumnoID(id);
-     * Element nombreElement = (Element)
-     * alumno.getElementsByTagName(alumno_nombre).item(0);
-     * nombreElement.setTextContent(nombre);
-     * 
-     * // Actualizar el recurso en la colección
-     * // resource.setContent(alumno);
-     * Gestor.getExistCollection().storeResource(resource);
-     * return true;
-     * } else {
-     * System.out.println("Recurso XML no encontrado.");
-     * }
-     * } catch (XMLDBException e) {
-     * System.out.println("Error actualizando Alumno");
-     * e.printStackTrace();
-     * }
-     * return false;
-     * }
-     */
 
     public static boolean actualizarModulo(String id, String nombre) {
-        String resourceID = modulo_tabla + ".xml";
+        String xquery = "update replace //" + modulo_tabla + "[" + modulo_id + " = " + id + "] with " +
+                        "<"+modulo_tabla+">"+
+                        "<"+modulo_id+">"+id+"</"+modulo_id+">"+
+                        "<"+modulo_nombre+">"+nombre+"</"+modulo_nombre+">"+
+                        "</"+modulo_tabla+">";
+        Element modulo = null;
         try {
-            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(resourceID);
-            if (resource != null) {
-                Element modulo = buscarModuloID(id);
-                Element nombreElement = (Element) modulo.getElementsByTagName(modulo_nombre).item(0);
-                nombreElement.setTextContent(nombre);
-
-                // Actualizar el recurso en la colección
-                resource.setContent(modulo);
-                Gestor.getExistCollection().storeResource(resource);
+            modulo = buscarModuloID(id);
+            if (modulo != null) {
+                XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
+                queryService.query(xquery);
                 return true;
             } else {
-                System.out.println("Recurso XML no encontrado.");
+                System.out.println("No existe este modulo");
             }
         } catch (XMLDBException e) {
             System.out.println("Error actualizando Modulo");
@@ -406,24 +378,22 @@ public class CRUD_EXIST {
     }
 
     public static boolean actualizarNota(String id, int nota1, int nota2, int nota3) {
-        String resourceID = notas_tabla + ".xml";
+        String xquery = "update replace //" + notas_tabla + "[" + notas_id + " = " + id + "] with " +
+                        "<"+notas_tabla+">"+
+                        "<"+notas_id+">"+id+"</"+notas_id+">"+
+                        "<"+notas_nota1+">"+nota1+"</"+notas_nota1+">"+
+                        "<"+notas_nota2+">"+nota2+"</"+notas_nota2+">"+
+                        "<"+notas_nota3+">"+nota3+"</"+notas_nota3+">"+
+                        "</"+notas_tabla+">";
+        Element nota = null;
         try {
-            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(resourceID);
-            if (resource != null) {
-                Element nota = buscarNotaID(id);
-                Element nota1Element = (Element) nota.getElementsByTagName(notas_nota1).item(0);
-                nota1Element.setTextContent(Integer.toString(nota1));
-                Element nota2Element = (Element) nota.getElementsByTagName(notas_nota2).item(0);
-                nota2Element.setTextContent(Integer.toString(nota2));
-                Element nota3Element = (Element) nota.getElementsByTagName(notas_nota3).item(0);
-                nota3Element.setTextContent(Integer.toString(nota3));
-
-                // Actualizar el recurso en la colección
-                resource.setContent(nota);
-                Gestor.getExistCollection().storeResource(resource);
+            nota = buscarNotaID(id);
+            if (nota != null) {
+                XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
+                queryService.query(xquery);
                 return true;
             } else {
-                System.out.println("Recurso XML no encontrado.");
+                System.out.println("No existe esta Nota");
             }
         } catch (XMLDBException e) {
             System.out.println("Error actualizando Notas");
@@ -456,32 +426,27 @@ public class CRUD_EXIST {
         return false;
     }
 
-    public static boolean actualizarMatricula(String id, String alu_id, String modu_id, String nota_id,
-            String calificacion) {
-        String resourceID = notas_tabla + ".xml";
+    public static boolean actualizarMatricula(String id, String alu_id, String modu_id, String nota_id, String calificacion) {
+        String xquery = "update replace //" + matricula_tabla + "[" + notas_id + " = " + id + "] with " +
+                        "<"+matricula_tabla+">"+
+                        "<"+matricula_id+">"+id+"</"+matricula_id+">"+
+                        "<"+matricula_alumno_id+">"+alu_id+"</"+matricula_alumno_id+">"+
+                        "<"+matricula_modulo_id+">"+modu_id+"</"+matricula_modulo_id+">"+
+                        "<"+matricula_notas_id+">"+nota_id+"</"+matricula_notas_id+">"+
+                        "<"+matricula_calificacion+">"+calificacion+"</"+matricula_calificacion+">"+
+                        "</"+matricula_tabla+">";
+        Element modulo = null;
         try {
-            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(resourceID);
-            if (resource != null) {
-                Element matricula = buscarMatriculaID(id);
-                Element alumnoElement = (Element) matricula.getElementsByTagName(matricula_alumno_id).item(0);
-                alumnoElement.setTextContent(alu_id);
-                Element moduloElement = (Element) matricula.getElementsByTagName(matricula_modulo_id).item(0);
-                moduloElement.setTextContent(modu_id);
-                Element notasElement = (Element) matricula.getElementsByTagName(matricula_notas_id).item(0);
-                notasElement.setTextContent(nota_id);
-                Element calificacioElement = (Element) matricula.getElementsByTagName(matricula_calificacion)
-                        .item(0);
-                calificacioElement.setTextContent(calificacion);
-
-                // Actualizar el recurso en la colección
-                resource.setContent(matricula);
-                Gestor.getExistCollection().storeResource(resource);
+            modulo = buscarModuloID(id);
+            if (modulo != null) {
+                XQueryService queryService = (XQueryService) Gestor.getExistCollection().getService("XQueryService", "1.0");
+                queryService.query(xquery);
                 return true;
             } else {
-                System.out.println("Recurso XML no encontrado.");
+                System.out.println("No existe esta Nota");
             }
         } catch (XMLDBException e) {
-            System.out.println("Error actualizando Matricula");
+            System.out.println("Error actualizando Notas");
             e.printStackTrace();
         }
         return false;
