@@ -4,9 +4,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.bson.Document;
+import org.w3c.dom.Element;
+import org.xmldb.api.modules.XMLResource;
 
 import utilidades.Lector;
 import utilidades.CRUD;
+import utilidades.CRUD_EXIST;
 
 import com.mongodb.client.MongoCursor;
 
@@ -517,4 +520,241 @@ public class Matriculas {
         }
     }
 
+    // EXIST
+    public int modificarNotasExist() {
+        Lector sc2 = new Lector(System.in);
+
+        if (hayMatriculas()) {
+            System.out.println("\n-Modificar notas-");
+            boolean seguir = true;
+
+            while (seguir) {
+                String nia = "";
+                System.out.println("Introduzca NIA del alumno: (Volver con [0])");
+                nia = sc2.leer();
+
+                if (nia.equals("0")) {
+                    seguir = false;
+                } else {
+                    // Buscar Alumno
+                    boolean seguirAlumno = true;
+
+                    Element alumno = CRUD_EXIST.buscarAlumnoID(nia);
+
+                    if (alumno != null) {
+                        String alumnoNombre = alumno.getElementsByTagName(CRUD_EXIST.alumno_nombre).item(0)
+                                .getTextContent();
+                        System.out.println(alumnoNombre + ":\n----");
+
+                        if (CRUD_EXIST.buscarMatriculaAluID(nia) == null) {
+                            seguirAlumno = false;
+                            System.out.println("Este alumno no tiene matricula aún.");
+                        } else {
+                            imprimirAlumnoMongo(CRUD.buscarMatriculaAluIDMongo(nia));
+                        }
+                    } else {
+                        seguirAlumno = false;
+                        System.out.println("-El alumno no existe.");
+                    }
+
+                    while (seguirAlumno) {
+                        String id = "";
+                        System.out.println("Introduzca ID del módulo: (Volver con [0])");
+                        id = sc2.leer();
+
+                        if (id.equals("0")) {
+                            seguirAlumno = false;
+                        } else {
+                            try {
+                                Element matricula = CRUD_EXIST.buscarMatriculaDobleID(nia, id);
+
+                                if (matricula != null) {
+                                    String notasId = matricula.getElementsByTagName(CRUD_EXIST.matricula_notas_id)
+                                            .item(0).getTextContent();
+
+                                    Element notas = CRUD_EXIST.buscarNotaID(notasId);
+                                    Lector sc = new Lector(System.in);
+                                    int nota1 = -1;
+                                    int nota2 = -1;
+                                    int nota3 = -1;
+
+                                    System.out.println("Introduzca las notas por orden: ");
+                                    System.out.print("Nota 1: ");
+                                    nota1 = sc.leerEntero(0, 10);
+                                    if (nota1 < 0 || nota1 > 10)
+                                        nota1 = Integer.getInteger(notas.getElementsByTagName(CRUD_EXIST.notas_nota1)
+                                                .item(0).getTextContent());
+                                    System.out.print("Nota 2: ");
+                                    nota2 = sc.leerEntero(0, 10);
+                                    if (nota2 < 0 || nota2 > 10)
+                                        nota2 = Integer.getInteger(notas.getElementsByTagName(CRUD_EXIST.notas_nota2)
+                                                .item(0).getTextContent());
+                                    System.out.print("Nota 3: ");
+                                    nota3 = sc.leerEntero(0, 10);
+                                    if (nota3 < 0 || nota3 > 10)
+                                        nota3 = Integer.getInteger(notas.getElementsByTagName(CRUD_EXIST.notas_nota3)
+                                                .item(0).getTextContent());
+
+                                    if (CRUD_EXIST.actualizarNota(notasId, nota1, nota2, nota3)) {
+                                        System.out.println("Modificaciones realizadas");
+                                    } else {
+                                        System.out.println("No se ha podido modificar");
+                                    }
+                                } else {
+                                    System.out.println("-No existe matricula con este modulo.");
+                                }
+                            } catch (Exception ex) {
+                                System.out.println("Error cerrando MongoCursor matriculas.\n" + ex);
+                            }
+                        }
+                    }
+
+                }
+            }
+        } else {
+            System.out.println("No tienes ninguna matricula aún.");
+        }
+        return 0;
+    }
+
+    public int evaluarModuloExist() {
+        Lector sc2 = new Lector(System.in);
+
+        if (hayMatriculas()) {
+            System.out.println("\n-Modificar notas-");
+            boolean seguir = true;
+
+            while (seguir) {
+                String nia = "";
+                System.out.println("Introduzca NIA del alumno: (Volver con [0])");
+                nia = sc2.leer();
+
+                if (nia.equals("0")) {
+                    seguir = false;
+                } else {
+                    // Buscar Alumno
+                    boolean seguirAlumno = true;
+
+                    Element alumno = CRUD_EXIST.buscarAlumnoID(nia);
+
+                    if (alumno != null) {
+                        String alumnoNombre = alumno.getElementsByTagName(CRUD_EXIST.alumno_nombre).item(0)
+                                .getTextContent();
+                        System.out.println(alumnoNombre + ":\n----");
+
+                        if (CRUD_EXIST.buscarMatriculaAluID(nia) == null) {
+                            seguirAlumno = false;
+                            System.out.println("Este alumno no tiene matricula aún.");
+                        } else {
+                            imprimirAlumnoMongo(CRUD.buscarMatriculaAluIDMongo(nia));
+                        }
+                    } else {
+                        seguirAlumno = false;
+                        System.out.println("-El alumno no existe.");
+                    }
+
+                    while (seguirAlumno) {
+                        String id = "";
+                        System.out.println("Introduzca ID del módulo: (Volver con [0])");
+                        id = sc2.leer();
+
+                        if (id.equals("0")) {
+                            seguirAlumno = false;
+                        } else {
+                            try {
+                                Element matricula = CRUD_EXIST.buscarMatriculaDobleID(nia, id);
+
+                                if (matricula != null) {
+                                    String matriculaId = matricula.getElementsByTagName(CRUD_EXIST.matricula_id).item(0).getTextContent();
+                                    String calificacion = "";
+                                    switch (menuCalificar()) {
+                                        case 1 ->
+                                            calificacion = "Suspendido";
+                                        case 2 ->
+                                            calificacion = "Bien";
+                                        case 3 ->
+                                            calificacion = "Notable";
+                                        case 4 ->
+                                            calificacion = "Excelente";
+                                    }
+
+                                    if (CRUD_EXIST.actualizarMatricula(matriculaId, calificacion)) {
+                                        System.out.println("+Se ha modificado la matricula.");
+                                    } else {
+                                        System.out.println("No se ha podido modificar.");
+                                    }
+
+                                } else {
+                                    System.out.println("-No existe matricula con este modulo.");
+                                }
+                            } catch (Exception ex) {
+                                System.out.println("Error cerrando MongoCursor matriculas.\n" + ex);
+                            }
+                        }
+                    }
+
+                }
+            }
+        } else {
+            System.out.println("No tienes ninguna matricula aún.");
+        }
+        return 0;
+    }
+
+    public void mostrarExist() {
+        Lector sc = new Lector(System.in);
+        System.out.println("\n-Boletín-");
+        System.out.print("Introduzca ID del alumno: ");
+        String nia = sc.leer();
+
+        try {
+            Element alumno = CRUD_EXIST.buscarAlumnoID(nia);
+            String nombreAlu = "";
+            if (alumno != null) {
+                nombreAlu = alumno.getElementsByTagName(CRUD_EXIST.alumno_nombre).item(0).getTextContent();
+                System.out.println("\nMatricula de " + nombreAlu + ":");
+
+                ResultSet matriculas = CRUD_EXIST.buscarMatriculaAluID(nia);
+                if (matriculas.next()) {
+                    imprimirAlumno(CRUD.buscarMatriculaAluID(nia));
+                } else {
+                    System.out.println("Este alumno no tiene matricula aún.");
+                }
+                matriculas.close();
+            } else {
+                System.out.println("-El alumno no existe.");
+            }
+            alumno.close();
+        } catch (SQLException ex) {
+            System.out.println("Error cerrando ResultSet alumno/matriculas.\n" + ex);
+        }
+    }
+
+    private void imprimirAlumnoExist(ResultSet matriculas) {
+        try {
+            while (matriculas.next()) {
+                String moduloId = matriculas.getString("modulo_id");
+                String notasId = matriculas.getString("notas_id");
+                String calificacion = matriculas.getString("calificacion");
+                ResultSet modulo = CRUD.buscarModuloID(moduloId);
+                ResultSet notas = CRUD.buscaNotaID(notasId);
+
+                modulo.next();
+                notas.next();
+
+                String nombreMod = modulo.getString("modulo_nombre");
+                int nota1 = notas.getInt("nota1");
+                int nota2 = notas.getInt("nota2");
+                int nota3 = notas.getInt("nota3");
+
+                System.out.printf("\tID:%-10s %-20s Notas: %-2d|%-2d|%-2d [%s]\n", moduloId, nombreMod, nota1, nota2,
+                        nota3, calificacion);
+                modulo.close();
+                notas.close();
+            }
+        } catch (SQLException e) {
+            System.out.println("Error imprimiendo matriculas.");
+            e.printStackTrace();
+        }
+    }
 }
