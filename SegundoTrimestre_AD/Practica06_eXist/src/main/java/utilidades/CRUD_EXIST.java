@@ -324,20 +324,25 @@ public class CRUD_EXIST {
     }
 
     // UPDATE
-
-    /*
-     * let $alumnos := doc("alumnos.xml")/alumnos
-     * for $alumno in $alumnos/alumno
-     * where $alumno/nombre = "María"
-     * return (
-     * (: Actualizar la edad a 22 :)
-     * replace value of node $alumno/edad with 22
-     * )
-     */
     public static boolean actualizarAlumno(String id, String nombre) {
-        String resourceID = alumno_tabla + ".xml";
+        /*
+         * update replace //alumno[alumno_nia = 5030] with
+	<alumno>
+    	<id>5030</id>
+        <alumno_nombre>AMOGUS</alumno_nombre>
+    </alumno>
+         */
+
+
+        String xquery = "let $alumnos := doc("alumnos.xml")/alumnos
+        for $alumno in $alumnos/alumno
+        where $alumno/nombre = "María"
+        return (
+        (: Actualizar la edad a 22 :)
+        replace value of node $alumno/edad with 22
+        )";
         try {
-            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(resourceID);
+            XMLResource resource = (XMLResource) Gestor.getExistCollection().getResource(xquery);
             if (resource != null) {
                 Element alumno = buscarAlumnoID(id);
                 Element nombreElement = (Element) alumno.getElementsByTagName(alumno_nombre).item(0);
@@ -356,6 +361,32 @@ public class CRUD_EXIST {
         }
         return false;
     }
+    /*
+     * public static boolean actualizarAlumno(String id, String nombre) {
+     * String resourceID = alumno_tabla + ".xml";
+     * try {
+     * XMLResource resource = (XMLResource)
+     * Gestor.getExistCollection().getResource(resourceID);
+     * if (resource != null) {
+     * Element alumno = buscarAlumnoID(id);
+     * Element nombreElement = (Element)
+     * alumno.getElementsByTagName(alumno_nombre).item(0);
+     * nombreElement.setTextContent(nombre);
+     * 
+     * // Actualizar el recurso en la colección
+     * // resource.setContent(alumno);
+     * Gestor.getExistCollection().storeResource(resource);
+     * return true;
+     * } else {
+     * System.out.println("Recurso XML no encontrado.");
+     * }
+     * } catch (XMLDBException e) {
+     * System.out.println("Error actualizando Alumno");
+     * e.printStackTrace();
+     * }
+     * return false;
+     * }
+     */
 
     public static boolean actualizarModulo(String id, String nombre) {
         String resourceID = modulo_tabla + ".xml";
