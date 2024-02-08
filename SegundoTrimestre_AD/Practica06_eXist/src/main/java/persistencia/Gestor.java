@@ -12,8 +12,12 @@ import java.sql.SQLException;
 import java.util.InputMismatchException;
 
 import org.bson.Document;
+import org.w3c.dom.Element;
 import org.xmldb.api.base.Collection;
+import org.xmldb.api.base.ResourceIterator;
+import org.xmldb.api.base.ResourceSet;
 import org.xmldb.api.base.XMLDBException;
+import org.xmldb.api.modules.XMLResource;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -26,6 +30,7 @@ import centro.Modulos;
 import utilidades.App;
 import utilidades.Lector;
 import utilidades.CRUD;
+import utilidades.CRUD_EXIST;
 
 public class Gestor {
 
@@ -109,6 +114,8 @@ public class Gestor {
             case 4:
                 if (App.getOpcion() == 3) {
                     exportarDatosMongo();
+                } else if (App.getOpcion() == 4) {
+                    exportarDatosExist();
                 } else {
                     exportarDatos();
                 }
@@ -116,6 +123,8 @@ public class Gestor {
             case 5:
                 if (App.getOpcion() == 3) {
                     importarDatosMongo();
+                } else if (App.getOpcion() == 4) {
+                    importarDatosExist();
                 } else {
                     importarDatos();
                 }
@@ -138,6 +147,8 @@ public class Gestor {
                     case 1:
                         if (App.getOpcion() == 3) {
                             alumnos.darDeAltaMongo();
+                        } else if (App.getOpcion() == 4) {
+                            alumnos.darDeAltaExist();
                         } else {
                             alumnos.darDeAlta();
                         }
@@ -145,6 +156,8 @@ public class Gestor {
                     case 2:
                         if (App.getOpcion() == 3) {
                             alumnos.darDeBajaMongo();
+                        } else if (App.getOpcion() == 4) {
+                            alumnos.darDeBajaExist();
                         } else {
                             alumnos.darDeBaja();
                         }
@@ -152,6 +165,8 @@ public class Gestor {
                     case 3:
                         if (App.getOpcion() == 3) {
                             alumnos.listarMongo();
+                        } else if (App.getOpcion() == 4) {
+                            alumnos.listarExist();
                         } else {
                             alumnos.listar();
                         }
@@ -181,6 +196,8 @@ public class Gestor {
                     case 1:
                         if (App.getOpcion() == 3) {
                             modulos.darDeAltaMongo();
+                        } else if (App.getOpcion() == 4) {
+                            modulos.darDeAltaExist();
                         } else {
                             modulos.darDeAlta();
                         }
@@ -188,6 +205,8 @@ public class Gestor {
                     case 2:
                         if (App.getOpcion() == 3) {
                             modulos.darDeBajaMongo();
+                        } else if (App.getOpcion() == 4) {
+                            modulos.darDeBajaExist();
                         } else {
                             modulos.darDeBaja();
                         }
@@ -195,6 +214,8 @@ public class Gestor {
                     case 3:
                         if (App.getOpcion() == 3) {
                             modulos.listarMongo();
+                        } else if (App.getOpcion() == 4) {
+                            modulos.listarExist();
                         } else {
                             modulos.listar();
                         }
@@ -202,6 +223,8 @@ public class Gestor {
                     case 4:
                         if (App.getOpcion() == 3) {
                             modulos.matricularAlumnoMongo();
+                        } else if (App.getOpcion() == 4) {
+                            modulos.matricularAlumnoExist();
                         } else {
                             modulos.matricularAlumno();
                         }
@@ -231,6 +254,8 @@ public class Gestor {
                     case 1:
                         if (App.getOpcion() == 3) {
                             matriculas.modificarNotasMongo();
+                        } else if (App.getOpcion() == 4) {
+                            matriculas.modificarNotasExist();
                         } else {
                             matriculas.modificarNotas();
                         }
@@ -238,6 +263,8 @@ public class Gestor {
                     case 2:
                         if (App.getOpcion() == 3) {
                             matriculas.evaluarModuloMongo();
+                        } else if (App.getOpcion() == 4) {
+                            matriculas.evaluarModuloExist();
                         } else {
                             matriculas.evaluarModulo();
                         }
@@ -245,6 +272,8 @@ public class Gestor {
                     case 3:
                         if (App.getOpcion() == 3) {
                             matriculas.mostrarMongo();
+                        } else if (App.getOpcion() == 4) {
+                            matriculas.mostrarExist();
                         } else {
                             matriculas.mostrar();
                             ;
@@ -281,7 +310,7 @@ public class Gestor {
                 realizarOpcion(opcion);
                 if (App.getOpcion() < 3) {
                     connection.close();
-                } else if (App.getOpcion() == 4){
+                } else if (App.getOpcion() == 4) {
                     existCollection.close();
                 }
             } while (opcion != 0);
@@ -293,8 +322,6 @@ public class Gestor {
             e.printStackTrace();
         }
     }
-
-    // Hay que adaptar los id de las clases y los _id de mongo
 
     private void exportarDatos() {
         System.out.println("\nEXPORTANDO...");
@@ -362,12 +389,6 @@ public class Gestor {
         System.out.println("Se han exportado los datos.");
     }
 
-    /*
-     * Alumno: Alumno::NIA::NOMBRE
-     * Modulo: Modulo::ID::NOMBRE
-     * Notas: Notas::ID::NOTA01::NOTA02::NOTA03
-     * Matricula: Matricula::ID::ID_ALU::ID_MODU::ID_NOTA::CALIFICACION
-     */
     private void importarDatos() {
         System.out.println("\nIMPORTANDO...");
         try {
@@ -559,12 +580,6 @@ public class Gestor {
         System.out.println("Se han exportado los datos.");
     }
 
-    /*
-     * Alumno: Alumno::NIA::NOMBRE
-     * Modulo: Modulo::ID::NOMBRE
-     * Notas: Notas::ID::NOTA01::NOTA02::NOTA03
-     * Matricula: Matricula::ID::ID_ALU::ID_MODU::ID_NOTA::CALIFICACION
-     */
     private void importarDatosMongo() {
         System.out.println("\nIMPORTANDO...");
         try {
@@ -665,6 +680,208 @@ public class Gestor {
                                         datos[3],
                                         datos[4],
                                         datos[5]);
+                            }
+                            break;
+                        default:
+                            System.out.println("Formato de línea no admitida en la línea " + lineNum);
+                    }
+                }
+                System.out.println("Se han importado los datos.");
+            }
+
+            reader.close();
+        } catch (IOException ex) {
+            System.out.println(
+                    "Error de tipo IOException. Error al acceder al fichero o al leer.\nPuede que el fichero no exista.\n"
+                            + ex);
+            return;
+        } catch (Exception ex) {
+            System.out.println("Error inesperado importando.\n" + ex);
+        }
+    }
+
+    private void exportarDatosExist() {
+        System.out.println("\nEXPORTANDO...");
+        try {
+            if (!importFile.exists()) {
+                System.out.println("Creando archivo de importe...");
+            }
+            BufferedWriter writer = new BufferedWriter(new FileWriter(importFile));
+
+            // ALUMNO
+            ResourceSet alumnos = CRUD_EXIST.recuperarLista(CRUD_EXIST.alumno_tabla);
+            ResourceIterator listaAlumnos = alumnos.getIterator();
+            while (listaAlumnos.hasMoreResources()) {
+                XMLResource resource = (XMLResource) listaAlumnos.nextResource();
+                Element alumno = (Element) resource.getContentAsDOM();
+                String nia = alumno.getElementsByTagName(CRUD_EXIST.alumno_id).item(0).getTextContent();
+                String nombre = alumno.getElementsByTagName(CRUD_EXIST.alumno_nombre).item(0).getTextContent();
+
+                writer.write("Alumno::" + nia + "::" + nombre + "\n");
+                System.out.println("Exportando ALUMNO NIA: " + nia + " " + nombre);
+            }
+
+            // MODULO
+            ResourceSet modulos = CRUD_EXIST.recuperarLista(CRUD_EXIST.modulo_tabla);
+            ResourceIterator listaModulos = modulos.getIterator();
+            while (listaModulos.hasMoreResources()) {
+                XMLResource resource = (XMLResource) listaModulos.nextResource();
+                Element modulo = (Element) resource.getContentAsDOM();
+                String id = modulo.getElementsByTagName(CRUD_EXIST.modulo_id).item(0).getTextContent();
+                String nombre = modulo.getElementsByTagName(CRUD_EXIST.modulo_nombre).item(0).getTextContent();
+
+                writer.write("Modulo::" + id + "::" + nombre + "\n");
+                System.out.println("Exportando MODULO ID: " + id + " " + nombre);
+            }
+
+            // NOTAS
+            ResourceSet notas = CRUD_EXIST.recuperarLista(CRUD_EXIST.modulo_tabla);
+            ResourceIterator listaNotas = notas.getIterator();
+            while (listaNotas.hasMoreResources()) {
+                XMLResource resource = (XMLResource) listaNotas.nextResource();
+                Element nota = (Element) resource.getContentAsDOM();
+                String id = nota.getElementsByTagName(CRUD_EXIST.modulo_id).item(0).getTextContent();
+                String nota1 = nota.getElementsByTagName(CRUD_EXIST.notas_nota1).item(0).getTextContent();
+                String nota2 = nota.getElementsByTagName(CRUD_EXIST.notas_nota2).item(0).getTextContent();
+                String nota3 = nota.getElementsByTagName(CRUD_EXIST.notas_nota3).item(0).getTextContent();
+                writer.write("Notas::" + id + "::" + nota1 + "::" + nota2 + "::" + nota3 + "\n");
+                System.out.println("Exportando NOTAS ID: " + id);
+            }
+
+            // MATRICULA
+            ResourceSet matriculas = CRUD_EXIST.recuperarLista(CRUD_EXIST.modulo_tabla);
+            ResourceIterator listaMatriculas = matriculas.getIterator();
+            while (listaMatriculas.hasMoreResources()) {
+                XMLResource resource = (XMLResource) listaMatriculas.nextResource();
+                Element matricula = (Element) resource.getContentAsDOM();
+                String id = matricula.getElementsByTagName(CRUD_EXIST.modulo_id).item(0).getTextContent();
+                String alumno = matricula.getElementsByTagName(CRUD_EXIST.matricula_alumno_id).item(0).getTextContent();
+                String modulo = matricula.getElementsByTagName(CRUD_EXIST.matricula_modulo_id).item(0).getTextContent();
+                String nota = matricula.getElementsByTagName(CRUD_EXIST.matricula_notas_id).item(0).getTextContent();
+                String calificacion = matricula.getElementsByTagName(CRUD_EXIST.matricula_calificacion).item(0)
+                        .getTextContent();
+                writer.write(
+                        "Matricula::" + id + "::" + alumno + "::" + modulo + "::" + nota + "::" + calificacion + "\n");
+                System.out.println("Exportando MATRICULAS ID: " + id);
+            }
+            writer.close();
+        } catch (IOException ex) {
+            System.out.println("Error de tipo IOException. Error al acceder al fichero o al excribir.\n" + ex);
+        } catch (Exception ex) {
+            System.out.println("Error inesperado exportando.\n" + ex);
+        }
+        System.out.println("Se han exportado los datos.");
+    }
+
+    private void importarDatosExist() {
+        System.out.println("\nIMPORTANDO...");
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(importFile));
+
+            String line;
+            int lineNum = 0;
+
+            if (!importFile.exists()) {
+                System.out.println("Fichero de importe no existe. Cancelando...");
+            } else {
+                while ((line = reader.readLine()) != null) {
+                    lineNum++;
+                    String[] datos = line.split("::");
+
+                    switch (datos[0]) {
+                        case "Alumno":
+                            System.out.println("Importando ALUMNO NIA: " + datos[1] + " " + datos[2]);
+                            Element alumno = CRUD_EXIST.buscarAlumnoID(datos[1]);
+                            if (alumno != null) {
+                                System.out.println("\nExiste un alumno con ese NIA");
+                                switch (menuImport()) {
+                                    case 1:
+                                        if (!CRUD_EXIST.actualizarAlumno(datos[1], datos[2])) {
+                                            System.out.println("No se pudo actualizar: " + line);
+                                        }
+                                        break;
+                                    case 2:
+                                        System.out.println("\tNo se importará");
+                                        break;
+                                }
+                            } else {
+                                if (!CRUD_EXIST.insertarAlumno(datos[1], datos[2]))
+                                    System.out.println("No se pudo importar: " + line);
+                            }
+                            break;
+
+                        case "Modulo":
+                            System.out.println("Importando MODULO ID: " + datos[1] + " " + datos[2]);
+                            Element modulo = CRUD_EXIST.buscarModuloID(datos[1]);
+                            if (modulo != null) {
+                                System.out.println("\nExiste un módulo con ese ID");
+                                switch (menuImport()) {
+                                    case 1:
+                                        if (!CRUD_EXIST.actualizarModulo(datos[1], datos[2]))
+                                            System.out.println("No se pudo actualizar: " + line);
+                                        break;
+                                    case 2:
+                                        System.out.println("\tNo se importará");
+                                        break;
+                                }
+                            } else {
+                                if (!CRUD_EXIST.insertarModulo(datos[1], datos[2]))
+                                    System.out.println("No se pudo importar: " + line);
+                            }
+                            break;
+
+                        case "Notas":
+                            System.out.println("Importando NOTAS ID: " + datos[1]);
+                            Element notas = CRUD_EXIST.buscarNotaID(datos[1]);
+                            if (notas != null) {
+                                System.out.println("\nExiste unas notas con ese ID");
+                                switch (menuImport()) {
+                                    case 1:
+                                        if (!CRUD_EXIST.actualizarNota(datos[1], Integer.parseInt(datos[2]),
+                                                Integer.parseInt(datos[3]), Integer.parseInt(datos[4])))
+                                            System.out.println("No se pudo actualizar: " + line);
+                                        break;
+                                    case 2:
+                                        System.out.println("\tNo se importará");
+                                        break;
+                                }
+                            } else {
+                                if (!CRUD_EXIST.insertarNotas(datos[1], Integer.parseInt(datos[2]),
+                                        Integer.parseInt(datos[3]), Integer.parseInt(datos[4])))
+                                    System.out.println("No se pudo importar: " + line);
+                            }
+                            break;
+
+                        case "Matricula":
+                            System.out.println("Importando MATRICULA ID: " + datos[1] + " Alu: "
+                                    + Integer.parseInt(datos[2])
+                                    + " Modu: " + Integer.parseInt(datos[3])
+                                    + " Notas: " + Integer.parseInt(datos[4]));
+                            Element matricula = CRUD_EXIST.buscarMatriculaID(datos[1]);
+                            if (matricula != null) {
+                                System.out.println("\nExiste una matricula con ese ID");
+                                switch (menuImport()) {
+                                    case 1:
+                                        if (!CRUD_EXIST.actualizarMatricula(
+                                                datos[1],
+                                                datos[2],
+                                                datos[3],
+                                                datos[4],
+                                                datos[5]))
+                                            System.out.println("No se pudo actualizar: " + line);
+                                        break;
+                                    case 2:
+                                        System.out.println("\tNo se importará");
+                                        break;
+                                }
+                            } else {
+                                if (!CRUD_EXIST.insertarMatricula(
+                                        datos[1],
+                                        datos[2],
+                                        datos[3],
+                                        datos[4],
+                                        datos[5]))
+                                    System.out.println("No se pudo importar: " + line);
                             }
                             break;
                         default:

@@ -89,7 +89,7 @@ public class Conexion {
             }
 
             if (App.getOpcion() == 4) {
-                if (existCollection.getChildCollectionCount() < 4) {
+                if (existCollection.getResourceCount() < 4) {
                     crearTabla(CRUD.alumno_tabla, CRUD_EXIST.alumno_raiz);
                     crearTabla(CRUD.modulo_tabla, CRUD_EXIST.modulo_raiz);
                     crearTabla(CRUD.matricula_tabla, CRUD_EXIST.matricula_raiz);

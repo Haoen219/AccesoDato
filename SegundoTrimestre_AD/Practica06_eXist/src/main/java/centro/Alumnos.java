@@ -258,7 +258,8 @@ public class Alumnos {
 
                     String nia = alumno.getString(CRUD.alumno_id);
                     String nombre = alumno.getString(CRUD.alumno_nombre);
-                    Long numMatri = CRUD.todoMatriculaMongo().countDocuments(new Document(CRUD.matricula_alumno_id, nia));
+                    Long numMatri = CRUD.todoMatriculaMongo()
+                            .countDocuments(new Document(CRUD.matricula_alumno_id, nia));
 
                     System.out.printf("NIA:%-10s %-30s ", nia, nombre);
                     if (numMatri > 0) {
@@ -346,7 +347,7 @@ public class Alumnos {
                             if (!CRUD_EXIST.borrarNotas(idNotas))
                                 System.out.println("No se pudo borrar Matricula ID:" + idMatri);
                         }
-                        
+
                         if (CRUD_EXIST.borrarAlumno(nia)) {
                             System.out.println("\tNIA: " + nia + " " + nombre + " dado de baja.");
                         } else {
@@ -367,23 +368,23 @@ public class Alumnos {
             ResourceSet alumnos = CRUD_EXIST.recuperarLista(CRUD_EXIST.alumno_tabla);
             ResourceIterator iterator = alumnos.getIterator();
 
-            if (alumnos.getSize() == 0){
+            if (alumnos.getSize() == 0) {
                 while (iterator.hasMoreResources()) {
-                XMLResource resource = (XMLResource) iterator.nextResource();
-                Element modulo = (Element) resource.getContentAsDOM();
+                    XMLResource resource = (XMLResource) iterator.nextResource();
+                    Element alumno = (Element) resource.getContentAsDOM();
 
-                String id = modulo.getElementsByTagName(CRUD_EXIST.alumno_id).item(0).getTextContent();
-                String nombre = modulo.getElementsByTagName(CRUD_EXIST.alumno_nombre).item(0).getTextContent();
-                Long numMatri = CRUD_EXIST.buscarMatriculaAluID(id).getSize();
+                    String id = alumno.getElementsByTagName(CRUD_EXIST.alumno_id).item(0).getTextContent();
+                    String nombre = alumno.getElementsByTagName(CRUD_EXIST.alumno_nombre).item(0).getTextContent();
+                    Long numMatri = CRUD_EXIST.buscarMatriculaAluID(id).getSize();
 
-                System.out.printf("ID:%-10s %-30s ", id, nombre);
-                if (numMatri > 0) {
-                    System.out.println("Matriculas: " + numMatri);
-                } else {
-                    System.out.println("-Sin Matriculas-");
+                    System.out.printf("ID:%-10s %-30s ", id, nombre);
+                    if (numMatri > 0) {
+                        System.out.println("Matriculas: " + numMatri);
+                    } else {
+                        System.out.println("-Sin Matriculas-");
+                    }
                 }
-            }
-            }else{
+            } else {
                 System.out.println("Lista de modulos vacio");
             }
         } catch (Exception ex) {
